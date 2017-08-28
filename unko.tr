@@ -1,0 +1,5 @@
+#!/bin/bash
+# Get current directory
+__THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
+
+sed -f <(cat "$__THIS_DIR/unko.ls" | sed '1,2d;$d' | sed 's|^|s/|;s|$|/💩/g|;')
