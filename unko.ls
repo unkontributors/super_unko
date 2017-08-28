@@ -1,3 +1,4 @@
+#!/bin/bash
 # Please jot down your unacceptable knowledge or memory / 受け入れがたい思い出を記載して下さい.
 cat << __EOS__
 下痢
