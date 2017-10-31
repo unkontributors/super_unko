@@ -1,6 +1,10 @@
 #!/bin/bash
+# Jot down any expression that means 💩.
 echo うんこ         # Japanese
 echo うんち         # Japanese
+echo 下痢           # Japanese
+echo うんこっこ     # Japanese
+echo うんこもりもり # Japanese
 echo poo            # English
 echo feces          # English
 echo shit           # English
