@@ -10,8 +10,8 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 うんこなコマンドを作りましょう。
 
 ```
-unko.tr  -- Convert all the nonsence words, sentences into dummy character. Somehow, default value is 💩 (shit).
-unko.ls  -- List all the nonsence phrases.
+unko.tr  -- Convert various expressions equals to shit into 💩 (shit).
+unko.ls  -- Shows various shit expression.
 unko.yes -- Generate 💩 shit forever.
 unko.grep -- TBD
 unko.date -- TBD
@@ -23,10 +23,10 @@ Usage
 ========================
 
 ```
-$ echo "下痢" | unko.tr
+$ echo "うんこ" | unko.tr
 💩
 
-$ echo "厨二病" | unko.tr
+$ echo "うんち" | unko.tr
 💩
 
 $ ./unko.yes
