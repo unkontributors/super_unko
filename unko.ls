@@ -1,14 +1,25 @@
 #!/bin/bash
-# Please jot down your unacceptable knowledge or memory / 受け入れがたい思い出を記載して下さい.
-cat << __EOS__
-下痢
-腹痛
-夏休み最終日
-手書きの履歴書
-センター試験
-お漏らし
-厨二病
-好きな子への告白
-東京小池築地豊洲
-Web魚拓
-__EOS__
+echo うんこ         # Japanese
+echo うんち         # Japanese
+echo poo            # English
+echo feces          # English
+echo shit           # English
+echo crap           # English
+echo caca           # French
+echo merde          # French
+echo Caga           # Spanish
+echo mierda         # Spanish
+echo Kacke          # German
+echo Scheiße        # German
+echo Feci           # Italian
+echo Merda          # Italian
+echo Merda          # Portuguese
+echo Cocô           # Portuguese
+echo Fezes          # Portuguese
+echo σκατά          # Greek
+echo Какашка        # Russian
+echo 㞎㞎           # Chinese
+echo 狗屁           # Chinese
+echo 똥             # Korian
+echo ขี้              # Thai
+echo 💩             # Emoji
