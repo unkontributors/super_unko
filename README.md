@@ -1,4 +1,4 @@
-Super UNacceptable Knowledge Operators
+super_unko
 ===========================================
 [![License](https://img.shields.io/badge/license-%F0%9F%92%A9-orange.svg)](./LICENSE)
 [![Build Status](https://travis-ci.org/greymd/super_unko.svg?branch=master)](https://travis-ci.org/greymd/super_unko)
