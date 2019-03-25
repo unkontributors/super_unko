@@ -21,6 +21,34 @@ unko.awk -- TBD
 unko.xargs -- TBD
 ```
 
+Installation
+========================
+
+### Linux
+
+* With `yum` (RHEL compatible distros)
+
+```
+$ sudo yum install https://git.io/super_unko.rpm
+```
+
+* With `apt` (Debian base distros)
+
+```
+$ sudo yum install https://git.io/super_unko.deb
+```
+
+
+### macOS
+
+* With Homebrew
+
+```
+$ brew tap greymd/tools
+$ brew install super_unko
+```
+
+
 Usage
 ========================
 
@@ -51,4 +79,11 @@ LICENSE
 💩 LICENSE
  (Something like BSD license)
 
-
+<!--
+Generate packages
+==============
+tar zcvf super_unko.tar.gz -C "$PWD" bin .tar2package.yml \
+ && docker run -i greymd/tar2rpm < super_unko.tar.gz > pkg/super_unko.rpm \
+ && docker run -i greymd/tar2deb < super_unko.tar.gz > pkg/super_unko.deb \
+ && rm super_unko.tar.gz
+-->
