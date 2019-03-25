@@ -1,0 +1,9 @@
+name : super_unko
+cmdname : super_unko
+summary : Super Unko
+description : super_unko project is the one of the awesome, clean and sophisticated OSS project in the world. Let's us create shit commands.
+version : 1.0.0
+changelog : shit
+url : https://github.com/greymd/super_unko
+author : Awesome Unkontributors
+email : super@unko
