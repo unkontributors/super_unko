@@ -26,18 +26,31 @@ Installation
 
 ### Linux
 
-* With `yum` (RHEL compatible distros)
+#### With `yum` (RHEL compatible distros)
 
 ```
 $ sudo yum install https://git.io/super_unko.rpm
 ```
 
-* With `apt` (Debian base distros)
+Uninstall (not `super_unko`)
 
 ```
-$ sudo yum install https://git.io/super_unko.deb
+$ sudo yum remove superunko
 ```
 
+
+#### With `apt` (Debian base distros)
+
+```
+$ wget https://git.io/super_unko.deb
+$ sudo dpkg -i ./super_unko.deb
+```
+
+Uninstall (not `super_unko`)
+
+```
+$ sudo apt remove superunko
+```
 
 ### macOS
 
@@ -48,6 +61,11 @@ $ brew tap greymd/tools
 $ brew install super_unko
 ```
 
+Uninstall
+
+```
+$ brew remove super_unko
+```
 
 Usage
 ========================
@@ -78,12 +96,3 @@ LICENSE
 ==============
 💩 LICENSE
  (Something like BSD license)
-
-<!--
-Generate packages
-==============
-tar zcvf super_unko.tar.gz -C "$PWD" bin .tar2package.yml \
- && docker run -i greymd/tar2rpm < super_unko.tar.gz > pkg/super_unko.rpm \
- && docker run -i greymd/tar2deb < super_unko.tar.gz > pkg/super_unko.deb \
- && rm super_unko.tar.gz
--->
