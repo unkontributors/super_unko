@@ -4,7 +4,7 @@ super_unko
 [![Build Status](https://travis-ci.org/greymd/super_unko.svg?branch=master)](https://travis-ci.org/greymd/super_unko)
 
 super_unko project is the one of the awesome, clean and sophisticated OSS project in the world.
-Let's us create shit commands.
+Let's create shit commands!
 
 super_unko プロジェクトは世界で最もクリーンで洗練されたOSSプロジェクトの一つです。
 うんこなコマンドを作りましょう。
@@ -29,7 +29,7 @@ Installation
 #### With `yum` (RHEL compatible distros)
 
 ```
-$ sudo yum install https://git.io/super_unko.rpm
+$ sudo yum install https://git.io/superunko.rpm
 ```
 
 Uninstall (not `super_unko`)
@@ -42,8 +42,8 @@ $ sudo yum remove superunko
 #### With `apt` (Debian base distros)
 
 ```
-$ wget https://git.io/super_unko.deb
-$ sudo dpkg -i ./super_unko.deb
+$ wget https://git.io/superunko.deb
+$ sudo dpkg -i ./superunko.deb
 ```
 
 Uninstall (not `super_unko`)
@@ -57,7 +57,7 @@ $ sudo apt remove superunko
 * With Homebrew
 
 ```
-$ brew tap greymd/tools
+$ brew tap unkontributors/tools
 $ brew install super_unko
 ```
 
