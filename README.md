@@ -96,3 +96,9 @@ LICENSE
 ==============
 💩 LICENSE
  (Something like BSD license)
+
+For Unkontributors (開発者向け)
+========================
+bin 以下になんか思いついたコマンドを放り投げてください。
+決まったルールとか運用は特に無いです。
+docker が入った環境で `bash package.sh` すると pkg 以下に各種インストーラーが作成されることだけ知っておいてください。
