@@ -1,11 +1,136 @@
 #!/bin/bash
+set -u
 
-_LEVEL="${1:-3}"
-_LEVEL=$((_LEVEL + 1))
-_PADDING="　"
+readonly THIS_CMD="${0##*/}"
+readonly DEFAULT_PADDING="　"
+readonly DEFAULT_HEIGHT=3
+readonly UNKO_TOP="人"
 
-for (( i=_LEVEL; i>0; i--));do
-    echo "$i"
-done \
-  | perl -snle '$l="$pad"x$_;$m="$pad"x($num-$_);print $l."（$m　$m）"' -- -num="${_LEVEL}" -pad="${_PADDING}" \
-  | sed "s/（${_PADDING}）/${_PADDING}人/"
+repeat_str () {
+  local _num="$1" ;shift
+  local _str="$1" ;shift
+  printf "%${_num}s\\n" "" | sed "s/ /${_str}/g"
+}
+
+print_unko () {
+  local _level="${1:-3}" ;shift
+  local _msg=("$@")
+  local _msg_idx=0
+  local _padding="　"
+  local _left=
+  local _result=
+  local _mid1 _num1
+  local _mid2 _num2
+  (( _level = _level + 1 ))
+  _left="$(repeat_str "$_level" "$_padding")"
+  _result="${_left}${_padding}${UNKO_TOP}"
+  for (( i = _level - 1; i > 0; i--));do
+    _left="$(repeat_str "$i" "$_padding")"
+    _num1="$(( _level - i + 1))"
+    _mid1="$(print_array "${_msg[@]:$_msg_idx:$_num1}")"
+    (( _msg_idx = _msg_idx + _num1 ))
+
+    _num2="$(( _level - i ))"
+    _mid2="$(print_array "${_msg[@]:$_msg_idx:$_num2}")"
+    (( _msg_idx = _msg_idx + _num2 ))
+
+    _result="${_result}"$'\n'"${_left}（${_mid1}${_mid2}）"
+  done
+  printf "%s\\n" "${_result}"
+}
+
+unk_msg_error () {
+  printf "%s\\n" "$THIS_CMD:error:${1-}"
+}
+
+unk_command_help () {
+  cat << _EOS_
+Usage:
+  ${THIS_CMD} [OPTIONS] <NUMBER OF HEIGHT OF UNKO>
+
+OPTIONS:
+  --help         Display this help and exit
+  -m <message|-> Fill an unko with the message. Read from stdin if '-'.
+  -s <string>    String for padding
+_EOS_
+}
+
+# Calculate sum of the number of character to be filled in the Unko.
+char_sum () {
+  local n="$1"
+  echo "$(( n * n + 2 * n ))"
+}
+
+print_array () {
+  for s in "$@"; do
+    _pat='[ -~]' # cover all the ascii chars
+    if [[ $s =~ $_pat ]] ;then
+      printf "%s " "$s" # padding
+    else
+      printf "%s" "$s"
+    fi
+  done
+}
+
+
+main () {
+  local _msg=()
+  local _opt_msg=0
+  local _raw_msg=
+  local _total_char=
+  while (( $# > 0 )); do
+    local _opt="$1"; shift
+
+    ## -ovalue → -o value (inspired by echo-sd)
+    if [[ -n "${_opt}" ]] && [[ -z "${_opt##-[sm]?*}" ]]; then
+      set -- "${_opt#??}" ${1+"$@"}
+      _opt="${_opt%$1}"
+    fi
+
+    case "$_opt" in
+      --help)
+        unk_command_help
+        return 0
+        ;;
+      -m)
+        _opt_msg=1
+        _raw_msg="${1-}"
+        shift
+        ;;
+      -s)
+        _padding="${1-}"
+        shift
+        ;;
+      *)
+        _num="$_opt"
+        ;;
+    esac
+  done
+
+  _padding=${_padding:-$DEFAULT_PADDING}
+  _num=${_num:-$DEFAULT_HEIGHT}
+  if ! [[ ${_num} =~ ^[[:digit:]]+$ ]]; then
+    unk_msg_error "Invalid number '${_num}'"
+    return 0
+  fi
+  _total_char="$(char_sum "${_num}")"
+  if [[ ${_opt_msg} -eq 0 ]]; then
+    IFS=$'\n' read -r -a _msg -d '' <<< "$(repeat_str "$_total_char" "$_padding" | grep -o .)"
+  elif [[ ${_opt_msg} -eq 1 ]]; then
+    if [[ ${_raw_msg} == "-" ]]; then
+      IFS=$'\n' read -r -a _msg -d '' <<<"$(cat | grep -o .)"
+    else
+      IFS=$'\n' read -r -a _msg -d '' <<< "$(printf "%s" "${_raw_msg}" | grep -o .)"
+    fi
+    _gap=$(( _total_char - ${#_msg[@]} ))
+    if (( _gap > 0 )) ;then
+      IFS=$'\n' read -r -a _rest_msg -d '' <<< "$(repeat_str "$_gap" "$_padding" | grep -o .)"
+      _msg=("${_msg[@]:-"$_padding"}" "${_rest_msg[@]}")
+    fi
+  fi
+  print_unko "${_num}" "${_msg[@]:-}"
+  return 0
+}
+
+main "${1+"$@"}"
+exit $?
