@@ -106,7 +106,6 @@ main () {
       -r)
         _opt_msg=1
         _opt_stdin=1
-        shift
         ;;
       *)
         _num="$_opt"
