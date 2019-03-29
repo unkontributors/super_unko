@@ -46,12 +46,13 @@ unk_msg_error () {
 unk_command_help () {
   cat << _EOS_
 Usage:
-  ${THIS_CMD} [OPTIONS] <NUMBER OF HEIGHT OF UNKO>
+  ${THIS_CMD} [OPTIONS] NUMBER
 
 OPTIONS:
   --help         Display this help and exit
-  -m <message|-> Fill an unko with the message. Read from stdin if '-'.
-  -s <string>    String for padding
+  -m <message>   Fill with the message
+  -r             Read message from stdin
+  -s <string>    Change default stuffed string
 _EOS_
 }
 
@@ -76,6 +77,7 @@ print_array () {
 main () {
   local _msg=()
   local _opt_msg=0
+  local _opt_stdin=0
   local _raw_msg=
   local _total_char=
   while (( $# > 0 )); do
@@ -101,6 +103,11 @@ main () {
         _padding="${1-}"
         shift
         ;;
+      -r)
+        _opt_msg=1
+        _opt_stdin=1
+        shift
+        ;;
       *)
         _num="$_opt"
         ;;
@@ -117,7 +124,7 @@ main () {
   if [[ ${_opt_msg} -eq 0 ]]; then
     IFS=$'\n' read -r -a _msg -d '' <<< "$(repeat_str "$_total_char" "$_padding" | grep -o .)"
   elif [[ ${_opt_msg} -eq 1 ]]; then
-    if [[ ${_raw_msg} == "-" ]]; then
+    if [[ ${_opt_stdin} -eq 1 ]]; then
       IFS=$'\n' read -r -a _msg -d '' <<<"$(cat | grep -o .)"
     else
       IFS=$'\n' read -r -a _msg -d '' <<< "$(printf "%s" "${_raw_msg}" | grep -o .)"
