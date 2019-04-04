@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -u
 
 readonly THIS_CMD="${0##*/}"
@@ -138,5 +138,5 @@ main () {
   return 0
 }
 
-main "${1+"$@"}"
+main ${1+"$@"}
 exit $?
