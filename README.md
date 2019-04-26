@@ -15,6 +15,7 @@ unko.ls  -- Shows various shit expression.
 unko.yes -- Generate 💩 shit forever.
 unko.tower -- Buid your shit tower.
 bigunko.show -- Big shit.
+unko.printpnm -- Generate 💩 PNM image file.
 unko.grep -- TBD
 unko.date -- TBD
 unko.awk -- TBD

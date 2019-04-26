@@ -1,0 +1,294 @@
+#!/bin/bash
+
+readonly SCRIPT_NAME=$(basename $0)
+readonly VERSION=v1.0.0
+
+## main はメイン関数である。スクリプトの末尾で呼び出す。
+##
+## @param level    うんこの段数
+## @param color_r  RGB値のR (0~255)
+## @param color_g  RGB値のG (0~255)
+## @param color_b  RGB値のB (0~255)
+main() {
+  local level=$1
+  local color_r=$2
+  local color_g=$3
+  local color_b=$4
+  local col=$(max_stage_col $level)
+  local row=$(max_stage_row $level)
+  local rgb=$(max_value $color_r $color_g $color_b)
+  cat << EOS
+P3
+$col $row
+$rgb
+EOS
+  cat << EOS | align_center 0 | sed -r "s/ /0/g;s/0/0 0 0 /g;s/[^ 0]/$color_r $color_g $color_b /g"
+1
+1
+111
+11111
+$(stages $level)
+EOS
+}
+
+## max_stage_col は段のカラム幅を返す。
+##
+## @param n うんこの段数
+## @return うんこの横幅
+max_stage_col() {
+  local n=$1
+  echo $((11 + 8 * (n - 1) + 2))
+}
+
+## max_stage_col は段数を返す。
+##
+## @param n うんこの段数
+## @return うんこの高さ
+max_stage_row() {
+  local n=$1
+  echo $((4 + 4 * n))
+}
+
+## max_value は引数のうち最も大きな値を返す。
+##
+## @param  1
+## @param  2
+## @param  3
+## @return 前述の3つの値のうち、もっとも数値として大きい値
+max_value() {
+  echo -e "$1\n$2\n$3" | sort -n | tail -n 1
+}
+
+## repeat は渡された引数の数分だけ1を出力して返す。
+## 返す文字列は1行である。
+##
+## @param n 何文字繰り返すか
+## @param c 出力する文字 (デフォルト: 1)
+## @return n回繰り返した1
+repeat() {
+  local n=$1
+  local c=${2:-1}
+  seq $n | xargs -I@ echo -n $c
+}
+
+## stage はうんこの段を返す。
+## 引数は段の横幅を指定する。
+## 段、はうんこの横野箇所をさす。
+## （    ） <- のこと
+##
+## @param i うんこの段の番号
+## @param i番目のうんこ段
+stage() {
+  local i=$1
+  local j=$((i+2))
+  cat << EOS
+$(repeat $i)
+$(repeat $j)
+$(repeat $j)
+$(repeat $i)
+EOS
+}
+
+## stages は引数に指定した数だけうんこの段を返す。
+## たとえば、2を指定したときは以下のようなイメージになる。
+##  （   ）
+## （     ）
+##
+## @param n うんこが何段か
+## @param n回くりかえしたうんこの段
+stages() {
+  local n=$1
+  seq $n | while read i; do stage $((11 + 8 * (i - 1))) ; done
+}
+
+## align_center は標準入力を指定の文字列で埋めて中央寄せする。
+##
+## @param pad 中央寄せのために詰める文字列
+##            全角文字はNG
+## @return 中央寄せされた文字列
+align_center() {
+  local pad="$1"
+  # 最も大きい横幅を取得
+  local max_width=0
+  local lines=()
+  while read -r line; do
+    local w=$(echo "$line" | wc -c)
+    if [ "$max_width" -lt "$w" ]; then
+      max_width=$w
+    fi
+    lines+=("$line")
+  done
+  for line in "${lines[@]}"; do
+    local w=$(echo "$line" | wc -c)
+    local left_width=$(((max_width - w) / 2))
+    local right_width=$((max_width - left_width - w))
+    echo "$(repeat $left_width $pad)$line$(repeat $right_width $pad)"
+  done
+}
+
+## usage はこのスクリプトの使い方を標準出力する。
+usage() {
+  cat << EOS
+$SCRIPT_NAME はうんこをPNM画像として出力するためのコマンドです。
+
+Usage:
+
+    $SCRIPT_NAME [flags] [unko_level]
+
+Examples:
+
+    # 通常の使用方法
+    $SCRIPT_NAME 3 > unko3.pnm
+
+    # RGB値を指定する例
+    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 > unko_rgb.pnm
+
+    # PNG画像に変換する例（ImageMagickに依存）
+    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 | convert - -scale 100x100 /images/t.png
+
+Flags:
+
+    -h, --help          このヘルプを出力する
+        --version       バージョン情報を出力する
+    -r, --red int       RGB値のRを指定 (0~255) (default: 255)
+    -g, --green int     RGB値のGを指定 (0~255) (default: 255)
+    -b, --blue int      RGB値のBを指定 (0~255) (default: 255)
+    -u, --unko-color    RGB値にうんこ色を指定する
+
+EOS
+}
+
+## get_opts はコマンドライン引数を解析して変数にセットする。
+## セットする変数は下記の通り。
+## - opt_red
+## - opt_green
+## - opt_blue
+## - opt_unko_level
+## これらの変数はトップレベルの変数として初期値を設定しておくこと。
+get_opts() {
+  local opt_use_unko_color=false
+  while (( 0 < $# )); do
+    local opt=$1
+    shift
+
+    case "$opt" in
+      '-h'|'--help')
+        usage
+        exit
+        ;;
+
+      '--version')
+        echo $VERSION
+        exit
+        ;;
+
+      '-r'|'--red')
+        if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
+          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
+          exit 1
+        fi
+        opt_red=$1
+        shift 1
+        ;;
+
+      '-g'|'--green')
+        if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
+          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
+          exit 1
+        fi
+        opt_green=$1
+        shift 1
+        ;;
+
+      '-b'|'--blue')
+        if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
+          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
+          exit 1
+        fi
+        opt_blue=$1
+        shift 1
+        ;;
+
+      '-u'|'--unko-color')
+        opt_use_unko_color=true
+        ;;
+
+      -*)
+        echo "$SCRIPT_NAME: illegal option -- $1" >&2
+        exit 1
+        ;;
+
+      *)
+        opt_unko_level=$opt
+        ;;
+    esac
+  done
+
+  if [ "$opt_use_unko_color" = true ]; then
+    opt_red=217
+    opt_green=112
+    opt_blue=2
+  fi
+}
+
+################################################################################
+#
+#   ここからテストコード
+#   テストを実行する場合は以下のヒアドキュメントの先頭に'#'をつける。
+#
+#   '#'を外すとコメントアウトされるためテストは実行されない。
+#   リリース時はコメントアウトを外しておくこと。
+#
+################################################################################
+
+: << '#TEST_CODE'
+
+green() {
+  echo -e "\x1b[32m$1\x1b[0m"
+}
+
+red() {
+  echo -e "\x1b[31m$1\x1b[0m"
+}
+
+assert_eq() {
+  local desc="$1"
+  local expect="$2"
+  local got="$3"
+  if [ "$expect" = "$got" ]; then
+    echo "$(green [OK]) $desc" >&2
+    return 0
+  else
+    echo "$(red [NG]) $desc (expect = $expect, got = $got)" >&2
+    return 1
+  fi
+}
+
+assert_eq "max_stage_col 正常系" 13 $(max_stage_col 1)
+assert_eq "max_stage_row 正常系" 8 $(max_stage_row 1)
+assert_eq "max_value 正常系" 3 $(max_value 1 2 3)
+assert_eq "max_value 正常系(逆)" 3 $(max_value 3 2 1)
+assert_eq "max_value 2桁の整数" 10 $(max_value 10 2 3)
+assert_eq "repeat 正常系" 111 $(repeat 3)
+assert_eq "repeat 正常系 出力文字指定" 000 $(repeat 3 0)
+assert_eq "align_center 正常系" "$(echo -e '010\n111')" "$(echo -e "1\n111" | align_center 0)"
+assert_eq "align_center 正常系 幅が偶数" "$(echo -e '0100\n1111')" "$(echo -e "1\n1111" | align_center 0)"
+
+exit 0
+
+#TEST_CODE
+
+################################################################################
+#
+#   ここまでテストコード
+#
+################################################################################
+
+# コマンドライン引数を取得
+opt_red=255
+opt_green=255
+opt_blue=255
+opt_unko_level=3
+get_opts "$@"
+
+main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
