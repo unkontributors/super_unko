@@ -112,11 +112,30 @@ stages() {
 
 usage() {
   cat << EOS
+$SCRIPT_NAME はうんこをPNM画像として出力するためのコマンドです。
+
+Usage:
+
+    $SCRIPT_NAME [flags] [unko_level]
 
 Examples:
 
-    $ $SCRIPT_NAME 3 > unko3.pnm
-    $ $SCRIPT_NAME 3 -r 255 -g 0 -b 0 > unko_rgb.pnm
+    # 通常の使用方法
+    $SCRIPT_NAME 3 > unko3.pnm
+
+    # RGB値を指定する例
+    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 > unko_rgb.pnm
+
+    # PNG画像に変換する例（ImageMagickに依存）
+    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 | convert - -scale 100x100 /images/t.png
+
+Flags:
+
+    -h, --help          このヘルプを出力する
+    -r, --red int       RGB値のRを指定 (0~255) (default: 255)
+    -g, --green int     RGB値のGを指定 (0~255) (default: 255)
+    -b, --blue int      RGB値のBを指定 (0~255) (default: 255)
+    -u, --unko-color    RGB値にうんこ色を指定する
 
 EOS
 }
