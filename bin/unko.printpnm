@@ -2,6 +2,12 @@
 
 readonly SCRIPT_NAME=$(basename $0)
 
+## main はメイン関数である。スクリプトの末尾で呼び出す。
+##
+## @param level    うんこの段数
+## @param color_r  RGB値のR (0~255)
+## @param color_g  RGB値のG (0~255)
+## @param color_b  RGB値のB (0~255)
 main() {
   local level=$1
   local color_r=$2
@@ -24,7 +30,114 @@ $(stages $level)
 EOS
 }
 
+## max_stage_col は段のカラム幅を返す。
+##
+## @param n うんこの段数
+## @return うんこの横幅
+max_stage_col() {
+  local n=$1
+  echo $((11 + 8 * (n - 1) + 2))
+}
+
+## max_stage_col は段数を返す。
+##
+## @param n うんこの段数
+## @return うんこの高さ
+max_stage_row() {
+  local n=$1
+  echo $((4 + 4 * n))
+}
+
+## max_value は引数のうち最も大きな値を返す。
+##
+## @param  1
+## @param  2
+## @param  3
+## @return 前述の3つの値のうち、もっとも数値として大きい値
+max_value() {
+  echo -e "$1\n$2\n$3" | sort -n | tail -n 1
+}
+
+## repeat は渡された引数の数分だけ1を出力して返す。
+## 返す文字列は1行である。
+##
+## @param n 何文字繰り返すか
+## @return n回繰り返した1
+repeat() {
+  local n=$1
+  seq $n | xargs -I@ echo -n 1
+}
+
+## stage はうんこの段を返す。
+## 引数は段の横幅を指定する。
+## 段、はうんこの横野箇所をさす。
+## （    ） <- のこと
+##
+## @param i うんこの段の番号
+## @param i番目のうんこ段
+stage() {
+  local i=$1
+  local j=$((i+2))
+  cat << EOS
+$(repeat $i)
+$(repeat $j)
+$(repeat $j)
+$(repeat $i)
+EOS
+}
+
+## stages は引数に指定した数だけうんこの段を返す。
+## たとえば、2を指定したときは以下のようなイメージになる。
+##  （   ）
+## （     ）
+##
+## @param n うんこが何段か
+## @param n回くりかえしたうんこの段
+stages() {
+  local n=$1
+  seq $n | while read i; do stage $((11 + 8 * (i - 1))) ; done
+}
+
+## usage はこのスクリプトの使い方を標準出力する。
+usage() {
+  cat << EOS
+$SCRIPT_NAME はうんこをPNM画像として出力するためのコマンドです。
+
+Usage:
+
+    $SCRIPT_NAME [flags] [unko_level]
+
+Examples:
+
+    # 通常の使用方法
+    $SCRIPT_NAME 3 > unko3.pnm
+
+    # RGB値を指定する例
+    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 > unko_rgb.pnm
+
+    # PNG画像に変換する例（ImageMagickに依存）
+    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 | convert - -scale 100x100 /images/t.png
+
+Flags:
+
+    -h, --help          このヘルプを出力する
+    -r, --red int       RGB値のRを指定 (0~255) (default: 255)
+    -g, --green int     RGB値のGを指定 (0~255) (default: 255)
+    -b, --blue int      RGB値のBを指定 (0~255) (default: 255)
+    -u, --unko-color    RGB値にうんこ色を指定する
+
+EOS
+}
+
+## get_opts はコマンドライン引数を解析して変数にセットする。
+## セットする変数は下記の通り。
+## - opt_red
+## - opt_green
+## - opt_blue
+## - opt_unko_level
+## これらの変数はトップレベルの変数として初期値を設定しておくこと。
 get_opts() {
+  local opt_use_unko_color=false
   for opt in "$@"; do
     case "$opt" in
       '-h'|'--help')
@@ -64,9 +177,7 @@ get_opts() {
         exit 1
         ;;
       *)
-        opt_unko_level=$1
-        shift 1
-        ;;
+        opt_unko_level=$1 shift 1 ;;
     esac
   done
 
@@ -77,77 +188,14 @@ get_opts() {
   fi
 }
 
-max_stage_col() {
-  local n=$1
-  echo $((11 + 8 * (n - 1) + 2))
-}
-
-max_stage_row() {
-  local n=$1
-  echo $((4 + 4 * n))
-}
-
-max_value() {
-  echo -e "$1\n$2\n$3" | sort -n | tail -n 1
-}
-
-repeat() {
-  seq $1 | xargs -I@ echo -n 1
-}
-
-stage() {
-  local i=$1
-  local j=$((i+2))
-  cat << EOS
-$(repeat $i)
-$(repeat $j)
-$(repeat $j)
-$(repeat $i)
-EOS
-}
-
-stages() {
-  seq $1 | while read n; do stage $((11 + 8 * (n - 1))) ; done
-}
-
-usage() {
-  cat << EOS
-$SCRIPT_NAME はうんこをPNM画像として出力するためのコマンドです。
-
-Usage:
-
-    $SCRIPT_NAME [flags] [unko_level]
-
-Examples:
-
-    # 通常の使用方法
-    $SCRIPT_NAME 3 > unko3.pnm
-
-    # RGB値を指定する例
-    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 > unko_rgb.pnm
-
-    # PNG画像に変換する例（ImageMagickに依存）
-    $SCRIPT_NAME 3 -r 255 -g 0 -b 0 | convert - -scale 100x100 /images/t.png
-
-Flags:
-
-    -h, --help          このヘルプを出力する
-    -r, --red int       RGB値のRを指定 (0~255) (default: 255)
-    -g, --green int     RGB値のGを指定 (0~255) (default: 255)
-    -b, --blue int      RGB値のBを指定 (0~255) (default: 255)
-    -u, --unko-color    RGB値にうんこ色を指定する
-
-EOS
-}
-
 ################################################################################
-##
-##   ここからテストコード
-##   テストを実行する場合は以下のヒアドキュメントの先頭に'#'をつける。
-##
-##   '#'を外すとコメントアウトされるためテストは実行されない。
-##   リリース時はコメントアウトを外しておくこと。
-##
+#
+#   ここからテストコード
+#   テストを実行する場合は以下のヒアドキュメントの先頭に'#'をつける。
+#
+#   '#'を外すとコメントアウトされるためテストは実行されない。
+#   リリース時はコメントアウトを外しておくこと。
+#
 ################################################################################
 
 : << '#TEST_CODE'
@@ -184,12 +232,17 @@ exit 0
 
 #TEST_CODE
 
+################################################################################
+#
+#   ここまでテストコード
+#
+################################################################################
+
+# コマンドライン引数を取得
 opt_red=255
 opt_green=255
 opt_blue=255
-opt_use_unko_color=false
 opt_unko_level=3
-
 get_opts "$@"
-main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
 
+main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
