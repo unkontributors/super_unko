@@ -1,0 +1,176 @@
+#!/bin/bash
+
+readonly SCRIPT_NAME=$(basename $0)
+
+main() {
+  local level=$1
+  local color_r=$2
+  local color_g=$3
+  local color_b=$4
+  local col=$(max_stage_col $level)
+  local row=$(max_stage_row $level)
+  local rgb=$(max_value $color_r $color_g $color_b)
+  cat << EOS
+P3
+$col $row
+$rgb
+EOS
+  cat << EOS | align center -p 0 | sed -r "s/ /0/g;s/0/0 0 0 /g;s/[^ 0]/$color_r $color_g $color_b /g"
+1
+1
+111
+11111
+$(stages $level)
+EOS
+}
+
+get_opts() {
+  for opt in "$@"; do
+    case "$opt" in
+      '-h'|'--help')
+        usage
+        exit 0
+        ;;
+      '-r'|'--red')
+        if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
+          exit 1
+        fi
+        opt_red=$2
+        shift 2
+        ;;
+      '-g'|'--green')
+        if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
+          exit 1
+        fi
+        opt_green=$2
+        shift 2
+        ;;
+      '-b'|'--blue')
+        if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
+          exit 1
+        fi
+        opt_blue=$2
+        shift 2
+        ;;
+      '-u'|'--unko-color')
+        opt_use_unko_color=true
+        shift 1
+        ;;
+      -*)
+        echo "$SCRIPT_NAME: illegal option -- $1" >&2
+        exit 1
+        ;;
+      *)
+        opt_unko_level=$1
+        shift 1
+        ;;
+    esac
+  done
+
+  if [ "$opt_use_unko_color" = true ]; then
+    opt_red=217
+    opt_green=112
+    opt_blue=2
+  fi
+}
+
+max_stage_col() {
+  local n=$1
+  echo $((11 + 8 * (n - 1) + 2))
+}
+
+max_stage_row() {
+  local n=$1
+  echo $((4 + 4 * n))
+}
+
+max_value() {
+  echo -e "$1\n$2\n$3" | sort -n | tail -n 1
+}
+
+repeat() {
+  seq $1 | xargs -I@ echo -n 1
+}
+
+stage() {
+  local i=$1
+  local j=$((i+2))
+  cat << EOS
+$(repeat $i)
+$(repeat $j)
+$(repeat $j)
+$(repeat $i)
+EOS
+}
+
+stages() {
+  seq $1 | while read n; do stage $((11 + 8 * (n - 1))) ; done
+}
+
+usage() {
+  cat << EOS
+
+Examples:
+
+    $ $SCRIPT_NAME 3 > unko3.pnm
+    $ $SCRIPT_NAME 3 -r 255 -g 0 -b 0 > unko_rgb.pnm
+
+EOS
+}
+
+################################################################################
+##
+##   ここからテストコード
+##   テストを実行する場合は以下のヒアドキュメントの先頭に'#'をつける。
+##
+##   '#'を外すとコメントアウトされるためテストは実行されない。
+##   リリース時はコメントアウトを外しておくこと。
+##
+################################################################################
+
+: << '#TEST_CODE'
+
+green() {
+  echo -e "\x1b[32m$1\x1b[0m"
+}
+
+red() {
+  echo -e "\x1b[31m$1\x1b[0m"
+}
+
+assert_eq() {
+  local desc=$1
+  local expect=$2
+  local got=$3
+  if [ "$expect" = "$got" ]; then
+    echo "$(green [OK]) $desc" >&2
+    return 0
+  else
+    echo "$(red [NG]) $desc (expect = $expect, got = $got)" >&2
+    return 1
+  fi
+}
+
+assert_eq "max_stage_col 正常系" 13 $(max_stage_col 1)
+assert_eq "max_stage_row 正常系" 8 $(max_stage_row 1)
+assert_eq "max_value 正常系" 3 $(max_value 1 2 3)
+assert_eq "max_value 正常系(逆)" 3 $(max_value 3 2 1)
+assert_eq "max_value 2桁の整数" 10 $(max_value 10 2 3)
+assert_eq "repeat 正常系" 111 $(repeat 3)
+
+exit 0
+
+#TEST_CODE
+
+opt_red=255
+opt_green=255
+opt_blue=255
+opt_use_unko_color=false
+opt_unko_level=3
+
+get_opts "$@"
+main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
+
