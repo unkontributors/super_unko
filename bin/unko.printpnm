@@ -22,7 +22,7 @@ P3
 $col $row
 $rgb
 EOS
-  cat << EOS | align center -p 0 | sed -r "s/ /0/g;s/0/0 0 0 /g;s/[^ 0]/$color_r $color_g $color_b /g"
+  cat << EOS | align_center 0 | sed -r "s/ /0/g;s/0/0 0 0 /g;s/[^ 0]/$color_r $color_g $color_b /g"
 1
 1
 111
@@ -63,10 +63,12 @@ max_value() {
 ## 返す文字列は1行である。
 ##
 ## @param n 何文字繰り返すか
+## @param c 出力する文字 (デフォルト: 1)
 ## @return n回繰り返した1
 repeat() {
   local n=$1
-  seq $n | xargs -I@ echo -n 1
+  local c=${2:-1}
+  seq $n | xargs -I@ echo -n $c
 }
 
 ## stage はうんこの段を返す。
@@ -97,6 +99,31 @@ EOS
 stages() {
   local n=$1
   seq $n | while read i; do stage $((11 + 8 * (i - 1))) ; done
+}
+
+## align_center は標準入力を指定の文字列で埋めて中央寄せする。
+##
+## @param pad 中央寄せのために詰める文字列
+##            全角文字はNG
+## @return 中央寄せされた文字列
+align_center() {
+  local pad="$1"
+  # 最も大きい横幅を取得
+  local max_width=0
+  local lines=()
+  while read -r line; do
+    local w=$(echo "$line" | wc -c)
+    if [ "$max_width" -lt "$w" ]; then
+      max_width=$w
+    fi
+    lines+=("$line")
+  done
+  for line in "${lines[@]}"; do
+    local w=$(echo "$line" | wc -c)
+    local left_width=$(((max_width - w) / 2))
+    local right_width=$((max_width - left_width - w))
+    echo "$(repeat $left_width $pad)$line$(repeat $right_width $pad)"
+  done
 }
 
 ## usage はこのスクリプトの使い方を標準出力する。
@@ -225,9 +252,9 @@ red() {
 }
 
 assert_eq() {
-  local desc=$1
-  local expect=$2
-  local got=$3
+  local desc="$1"
+  local expect="$2"
+  local got="$3"
   if [ "$expect" = "$got" ]; then
     echo "$(green [OK]) $desc" >&2
     return 0
@@ -243,6 +270,9 @@ assert_eq "max_value 正常系" 3 $(max_value 1 2 3)
 assert_eq "max_value 正常系(逆)" 3 $(max_value 3 2 1)
 assert_eq "max_value 2桁の整数" 10 $(max_value 10 2 3)
 assert_eq "repeat 正常系" 111 $(repeat 3)
+assert_eq "repeat 正常系 出力文字指定" 000 $(repeat 3 0)
+assert_eq "align_center 正常系" "$(echo -e '010\n111')" "$(echo -e "1\n111" | align_center 0)"
+assert_eq "align_center 正常系 幅が偶数" "$(echo -e '0100\n1111')" "$(echo -e "1\n1111" | align_center 0)"
 
 exit 0
 
