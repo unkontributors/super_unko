@@ -2,4 +2,4 @@
 
 DIR="$(cd "$(dirname "${BASH_SOURCE:-$0}")";pwd)"
 
-echo -e $(cat $DIR/bigunko.txt|base64 --decode)
+echo -ne $(cat $DIR/bigunko.txt|base64 --decode|tr -d \\n)
