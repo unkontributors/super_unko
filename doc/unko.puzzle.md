@@ -51,10 +51,30 @@ $ brew install xdotool
 
 1. Launch xterm.
     ```sh
-    $ /opt/X11/bin/xterm &
+    $ PATH=$PATH:/opt/X11/bin xterm &
     ```sh
 1. Run `unko.puzzle` on xterm.
     ```sh
     $ unko.puzzle
     ```
 1. Enjoy!
+
+## for development
+
+- tile map
+
+```
++-+-+-+
+|x|1|2|
++-+-+-+
+|3|4|5|
++-+-+-+
+|6|7|8|
++-+-+-+
+```
+
+- debug
+
+```sh
+$ DEBUG_UNKO=true TILES=2 unko.puzzle 2>>/tmp/unko.log
+```

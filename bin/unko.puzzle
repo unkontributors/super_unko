@@ -11,15 +11,6 @@ WINDOW_NAME="$(basename $0)"
 BIGUNKO=""
 WIDS=()
 
-# tile map
-# +-+-+-+
-# |x|1|2|
-# +-+-+-+
-# |3|4|5|
-# +-+-+-+
-# |6|7|8|
-# +-+-+-+
-
 log_debug() {
   if [ "$DEBUG_UNKO" = "true" ]; then
     echo "[$$] $@" >&2
@@ -259,7 +250,7 @@ move_tile() {
         distance_y=0
         ;;
     esac
-    wid=${WIDS[target_index]}
+    wid=${WIDS[$target_index]}
     # log_debug "slide window: direction=${direction}; target index=${target_index}; wid=${wid}"
     slide_window $wid $distance_x $distance_y
     WIDS[$null_index]=$wid
@@ -272,7 +263,7 @@ move_tile() {
         'left')  target_index=$(($null_index - 1)) ;;
         'right') target_index=$(($null_index + 1)) ;;
       esac
-      wid=${WIDS[target_index]}
+      wid=${WIDS[$target_index]}
       shake_window $wid
     fi
   fi
