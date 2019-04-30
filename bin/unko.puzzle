@@ -1,9 +1,9 @@
-#!/usr/bin/env bash -eu
-HEADER_HEIGHT=23
-HEIGHT_OFFSET=-44
-FRAME=40
+#!/usr/bin/env bash
+set -eu
+FRAME=30
 TILES=${TILES:-3}
-RANDOM_SLIDE=$((20 + TILES * TILES))
+HEADER_HEIGHT=23  # Darwin
+RANDOM_SLIDE=$((10 + TILES * TILES * TILES / 2))
 PIXEL_ART_COLS=60 # BIGUNKO'
 PIXEL_ART_ROWS=30 # BIGUNKO
 DEBUG_UNKO=${DEBUG_UNKO:-false}
@@ -27,6 +27,34 @@ log_debug() {
 }
 
 initialize() {
+  platform=$(uname)
+  # process stratum: this process -> shell(bash) -> terminal emulator ?
+  pppid=$(ps -ef | awk "\$2==$PPID{print \$3}")
+  case $platform in
+    'Darwin' )
+      HEIGHT_OFFSET=-44
+      WIDTH_OFFSET=0
+      ;;
+    'Linux' )
+      HEIGHT_OFFSET=-68
+      WIDTH_OFFSET=-10
+      ;;
+    * )
+      echo "error: $platform: unsupported platform" >&2
+      exit 1
+      ;;
+  esac
+
+  if [ $(ps -ef | awk "\$2==$pppid{print}" | grep [x]term | wc -l) -eq 0 ]; then
+    echo 'error: require xterm' >&2
+    exit 1
+  fi
+
+  which xdotool >/dev/null 2>&1 || {
+    echo 'error: require xdotool' >&2
+    exit 1
+  }
+
   # expects current window is active
   root_cols=$(stty -a | grep columns | sed 's/.*columns \([^;]*\);.*/\1/')
   root_rows=$(stty -a | grep rows | sed 's/.*rows \([^;]*\);.*/\1/')
@@ -62,7 +90,7 @@ initialize() {
 
 calculate_tile_position() {
   local tile_pos_x=$1 tile_pos_y=$2
-  local wpos_x=$((${root_wpos%,*} + $tile_window_width * $tile_pos_x))
+  local wpos_x=$((${root_wpos%,*} + $tile_window_width * $tile_pos_x + $WIDTH_OFFSET))
   local wpos_y=$((${root_wpos#*,} + ($tile_window_height + $HEADER_HEIGHT) * $tile_pos_y + $HEIGHT_OFFSET))
   log_debug "calculate position: tile=${tile_pos_x},${tile_pos_y}; window=${wpos_x},${wpos_y}"
   echo "${wpos_x},${wpos_y}"
@@ -89,14 +117,14 @@ create_children() {
       -geometry "${tile_char_cols}x${tile_char_rows}+${wpos_x}+${wpos_y}" \
       -e "$0" &
   done
-  sleep $(echo "scale=1; 0.1 + $TILES * $TILES / 20" | bc)
+  sleep $(echo "scale=1; 0.3 + $TILES * $TILES / 10" | bc)
 }
 
 relocate() {
   local wids=($1)
   local i=1
   for wid in ${wids[@]}; do
-    local wpos_x=$((${root_wpos%,*} + $tile_window_width * ($i % $TILES) ))
+    local wpos_x=$((${root_wpos%,*} + $tile_window_width * ($i % $TILES) + $WIDTH_OFFSET))
     local wpos_y=$((${root_wpos#*,} + ($tile_window_height + $HEADER_HEIGHT) * ($i / $TILES) + $HEIGHT_OFFSET))
     log_debug "relocate window: wid=$wid; position=${wpos_x},${wpos_y}"
     xdotool windowmove $wid $wpos_x $wpos_y
@@ -154,6 +182,7 @@ terminate_children() {
   local child_wids="$1"
   local i=0
   for wid in $child_wids; do
+    # TODO: pid がない場合を考慮
     local pid=$(xdotool getwindowpid $wid)
     kill -INT $pid
     let ++i
@@ -168,10 +197,11 @@ slide_window() {
   local pos=$(xdotool getwindowgeometry $wid | grep Position | awk '{print $2}')
   local pos_x=${pos%,*}
   local pos_y=${pos#*,}
+  log_debug "slide window: wid=$wid; pos=$pos_x,$pos_y; dis=$distance_x,$distance_y"
   for i in $(seq $FRAME); do
-    xdotool windowmove $wid $(($pos_x + $distance_x / $FRAME * $i)) $(($pos_y + $distance_y / $FRAME * $i + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x + $distance_x / $FRAME * $i + $WIDTH_OFFSET)) $(($pos_y + $distance_y / $FRAME * $i + $HEIGHT_OFFSET))
   done
-  xdotool windowmove $wid $(($pos_x + $distance_x)) $(($pos_y + $distance_y + $HEIGHT_OFFSET))
+  xdotool windowmove $wid $(($pos_x + $distance_x + $WIDTH_OFFSET)) $(($pos_y + $distance_y + $HEIGHT_OFFSET))
 }
 
 shake_window() {
@@ -180,10 +210,10 @@ shake_window() {
   local pos_x=${pos%,*}
   local pos_y=${pos#*,}
   for i in $(seq 5); do
-    xdotool windowmove $wid $(($pos_x - 10)) $(($pos_y + $HEIGHT_OFFSET))
-    xdotool windowmove $wid $(($pos_x))      $(($pos_y + $HEIGHT_OFFSET))
-    xdotool windowmove $wid $(($pos_x + 10)) $(($pos_y + $HEIGHT_OFFSET))
-    xdotool windowmove $wid $(($pos_x))      $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x - 10 + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x      + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x + 10 + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x      + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
   done
 }
 
@@ -295,14 +325,15 @@ solve() {
 clean_up() {
   # reset root window
   xdotool set_window --name "$root_wname" $root_wid
-  xdotool windowsize $root_wid ${root_wgeo%x*} ${root_wgeo#*x}
+  xdotool windowsize $root_wid ${root_wgeo%x*} $((${root_wgeo#*x} + $WIDTH_OFFSET))
   xdotool windowmove $root_wid ${root_wpos%,*} $((${root_wpos#*,} + $HEIGHT_OFFSET))
   stty echo
   clear
   exit 0
 }
 
-processes=$(ps | grep $WINDOW_NAME | grep -v grep)
+
+processes=$(ps -ef | grep $WINDOW_NAME | grep -v grep)
 if [ $(echo "$processes" | wc -l) -le 2 ]; then
   # parent window
   initialize
@@ -313,10 +344,12 @@ if [ $(echo "$processes" | wc -l) -le 2 ]; then
   xdotool windowfocus $root_wid
   wids=$(xdotool search --name "$WINDOW_NAME")  # newline separated
   child_wids=$(echo "$wids" | grep -v $root_wid | tr '\n' ' ')
-  relocate "$root_wid $child_wids"  # root_wid, child_wid1, ...
+  relocate "$root_wid $child_wids"
   draw "$child_wids"
   WIDS=('null' $root_wid $child_wids)
   randomize
+  xdotool windowactivate $root_wid
+  xdotool windowfocus $root_wid
   solve "null $root_wid $child_wids"
   terminate_children "$child_wids"
   clean_up
