@@ -16,6 +16,7 @@ unko.yes -- Generate 💩 shit forever.
 unko.tower -- Buid your shit tower.
 bigunko.show -- Big shit.
 unko.printpnm -- Generate 💩 PNM image file.
+unko.puzzle -- Sliding block puzzle.
 unko.grep -- TBD
 unko.date -- TBD
 unko.awk -- TBD
@@ -67,6 +68,10 @@ Uninstall
 ```
 $ brew remove super_unko
 ```
+
+### Additional Installation
+
+- [unko.puzzle](./doc/unko.puzzle.md)
 
 Usage
 ========================
