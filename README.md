@@ -59,7 +59,7 @@ $ sudo apt remove superunko
 * With Homebrew
 
 ```
-$ brew tap unkontributors/tools
+$ brew tap unkontributors/unko
 $ brew install super_unko
 ```
 
