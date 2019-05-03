@@ -289,6 +289,6 @@ opt_red=255
 opt_green=255
 opt_blue=255
 opt_unko_level=3
-get_opts "$@"
+get_opts ${1+"$@"}
 
 main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
