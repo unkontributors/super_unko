@@ -52,12 +52,28 @@ $ brew install xdotool
 1. Launch xterm.
     ```sh
     $ PATH=$PATH:/opt/X11/bin xterm &
-    ```sh
+    ```
 1. Run `unko.puzzle` on xterm.
     ```sh
     $ unko.puzzle
     ```
 1. Enjoy!
+
+---
+
+```
+Warning: XTEST extension unavailable on '(null)'.
+Some functionality may be disabled; See 'man xdotool' for more info.
+```
+
+If you received such a message from xdotool, you may be able to resolve it by execute the following commands and restarting XQuartz:
+
+```sh
+$ defaults write org.x.X11 enable_test_extensions -boolean true
+$ defaults write org.macosforge.xquartz.X11 enable_test_extensions -boolean true
+```
+
+See: https://stackoverflow.com/questions/1264210/does-mac-x11-have-the-xtest-extension
 
 ## for development
 
