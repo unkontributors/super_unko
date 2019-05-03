@@ -13,7 +13,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 unko.tr  -- Convert various expressions equals to shit into 💩 (shit).
 unko.ls  -- Shows various shit expression.
 unko.yes -- Generate 💩 shit forever.
-unko.tower -- Buid your shit tower.
+unko.tower -- Build your shit tower.
 bigunko.show -- Big shit.
 unko.printpnm -- Generate 💩 PNM image file.
 unko.puzzle -- Sliding block puzzle.
