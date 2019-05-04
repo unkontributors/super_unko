@@ -99,7 +99,6 @@ type toilet &> /dev/null || not_found "toilet command"
 echo |toilet -f bigmono9 &>/dev/null || not_found "bigmono9 font"
 
 # unko.toilet 
-echo ${toilet_opt[@]}
 toilet ${toilet_opt[@]} -f bigmono9 "${text}" |
   # 薄いところは消す
   sed 's/░\|▒/ /g' | 
