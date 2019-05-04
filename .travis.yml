@@ -1,3 +1,9 @@
 language: generic
+addons:
+  apt:
+    packages:
+      - filglet
+      - toilet
 script:
   - bash ./unko.yes | head
+  - bash ./test/unko.toilet-test.sh
