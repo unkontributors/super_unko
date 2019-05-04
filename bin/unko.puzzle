@@ -1,0 +1,350 @@
+#!/usr/bin/env bash
+set -eu
+FRAME=30
+TILES=${TILES:-3}
+HEADER_HEIGHT=23  # Darwin
+RANDOM_SLIDE=$((10 + TILES * TILES * TILES / 2))
+PIXEL_ART_COLS=60 # BIGUNKO'
+PIXEL_ART_ROWS=30 # BIGUNKO
+DEBUG_UNKO=${DEBUG_UNKO:-false}
+WINDOW_NAME="$(basename $0)"
+BIGUNKO=""
+WIDS=()
+
+log_debug() {
+  if [ "$DEBUG_UNKO" = "true" ]; then
+    echo "[$$] $@" >&2
+  fi
+}
+
+initialize() {
+  platform=$(uname)
+  # process stratum: this process -> shell(bash) -> terminal emulator ?
+  pppid=$(ps -ef | awk "\$2==$PPID{print \$3}")
+  case $platform in
+    'Darwin' )
+      HEIGHT_OFFSET=-44
+      WIDTH_OFFSET=0
+      ;;
+    'Linux' )
+      HEIGHT_OFFSET=-68
+      WIDTH_OFFSET=-10
+      ;;
+    * )
+      echo "error: $platform: unsupported platform" >&2
+      exit 1
+      ;;
+  esac
+
+  if [ $(ps -ef | awk "\$2==$pppid{print}" | grep [x]term | wc -l) -eq 0 ]; then
+    echo 'error: require xterm' >&2
+    exit 1
+  fi
+
+  which xdotool >/dev/null 2>&1 || {
+    echo 'error: require xdotool' >&2
+    exit 1
+  }
+
+  # expects current window is active
+  root_cols=$(stty -a | grep columns | sed 's/.*columns \([^;]*\);.*/\1/')
+  root_rows=$(stty -a | grep rows | sed 's/.*rows \([^;]*\);.*/\1/')
+  root_wid=$(xdotool getactivewindow)
+  root_wname=$(xdotool getwindowname $root_wid)
+  root_wgeo=$(xdotool getwindowgeometry $root_wid | grep Geometry | awk '{print $2}')
+  root_wpos=$(xdotool getwindowgeometry $root_wid | grep Position | awk '{print $2}')
+  char_width=$((${root_wgeo%x*} / $root_cols))
+  char_height=$((${root_wgeo#*x} / $root_rows))
+  margin_width=$((${root_wgeo%x*} % $root_cols))
+  margin_height=$((${root_wgeo#*x} % $root_rows))
+  tile_window_width=$(($PIXEL_ART_COLS / $TILES * $char_width + $margin_width))
+  tile_window_height=$(($PIXEL_ART_ROWS / $TILES * $char_height + $margin_height))
+  tile_char_cols=$(($PIXEL_ART_COLS / $TILES))
+  tile_char_rows=$(($PIXEL_ART_ROWS / $TILES))
+  log_debug "window name: $WINDOW_NAME"
+  log_debug "number of tiles on a side: $TILES"
+  log_debug "root window columns: $root_cols"
+  log_debug "root window rows: $root_rows"
+  log_debug "root window id: $root_wid"
+  log_debug "root window name: $root_wname"
+  log_debug "root window geometry: $root_wgeo"
+  log_debug "root window position: $root_wpos"
+  log_debug "character width: $char_width"
+  log_debug "character height: $char_height"
+  log_debug "margin width: $margin_width"
+  log_debug "margin height: $margin_height"
+  log_debug "tile window width: $tile_window_width"
+  log_debug "tile window height: $tile_window_height"
+  log_debug "tile character columns: $tile_char_cols"
+  log_debug "tile character rows: $tile_char_rows"
+}
+
+calculate_tile_position() {
+  local tile_pos_x=$1 tile_pos_y=$2
+  local wpos_x=$((${root_wpos%,*} + $tile_window_width * $tile_pos_x + $WIDTH_OFFSET))
+  local wpos_y=$((${root_wpos#*,} + ($tile_window_height + $HEADER_HEIGHT) * $tile_pos_y + $HEIGHT_OFFSET))
+  log_debug "calculate position: tile=${tile_pos_x},${tile_pos_y}; window=${wpos_x},${wpos_y}"
+  echo "${wpos_x},${wpos_y}"
+}
+
+set_root_window() {
+  local wpos=$(calculate_tile_position 1 0)
+  local wpos_x=${wpos%,*} wpos_y=${wpos#*,}
+  log_debug "set root window: wid=$root_wid; geometry=${tile_window_width}x${tile_window_height}; position=${wpos_x},${wpos_y}"
+  xdotool set_window --name "$WINDOW_NAME" $root_wid
+  xdotool windowsize $root_wid $tile_window_width $tile_window_height
+  xdotool windowmove $root_wid $wpos_x $wpos_y
+  clear
+}
+
+create_children() {
+  local num_children=$(($TILES * $TILES - 2))
+  log_debug "number of child windows: $num_children"
+  for i in $(seq 2 $(($num_children + 1))); do
+    local wpos=$(calculate_tile_position $(($i % $TILES)) $(($i / $TILES)))
+    local wpos_x=${wpos%,*} wpos_y=${wpos#*,}
+    log_debug "create child window: $i; geometry=${tile_char_cols}x${tile_char_rows}(chars); position=${wpos_x},${wpos_y}"
+    xterm \
+      -geometry "${tile_char_cols}x${tile_char_rows}+${wpos_x}+${wpos_y}" \
+      -e "$0" &
+  done
+  sleep $(echo "scale=1; 0.3 + $TILES * $TILES / 10" | bc)
+}
+
+relocate() {
+  local wids=($1)
+  local i=1
+  for wid in ${wids[@]}; do
+    local wpos_x=$((${root_wpos%,*} + $tile_window_width * ($i % $TILES) + $WIDTH_OFFSET))
+    local wpos_y=$((${root_wpos#*,} + ($tile_window_height + $HEADER_HEIGHT) * ($i / $TILES) + $HEIGHT_OFFSET))
+    log_debug "relocate window: wid=$wid; position=${wpos_x},${wpos_y}"
+    xdotool windowmove $wid $wpos_x $wpos_y
+    let ++i
+  done
+}
+
+trim_bigunko() {
+  local tile_pos_x=$1 tile_pos_y=$2
+  if [ "$BIGUNKO" == "" ]; then
+    # cache bigunko to prevent broken pipe error
+    BIGUNKO=$($(cd $(dirname $0);pwd)/bigunko.show | sed $'s/\(\033\[48;5;[0-9]*m\)　/\\1 \\1 /g')
+  fi
+
+  echo "$BIGUNKO" \
+  | head -n $(($tile_char_rows * ($tile_pos_y + 1) )) \
+  | tail -n $tile_char_rows \
+  | sed $'s/\(\033\[48;5;[0-9]*m\)　/\\1 \\1 /g' \
+  | awk "
+    {
+      for (k = $tile_char_cols * $tile_pos_x + 1; k < $tile_char_cols * ($tile_pos_x + 1) + 1; k++) {
+        printf \$k\" \";
+      };
+      printf \"\033[0m\";
+      if (NR != $tile_char_rows) { print \"\" };
+    }"
+}
+
+get_child_tty_names() {
+  local child_wids="$1"
+  for wid in $child_wids; do
+    local pid=$(xdotool getwindowpid $wid)
+    # get tty name of child process
+    tty_name=$(ps -ef | grep "$WINDOW_NAME" | awk "\$3==$pid{print \$6}")
+    log_debug "child process: wid=${wid}; pid=${pid}; tty=/dev/${tty_name}"
+    echo $tty_name
+  done
+}
+
+draw() {
+  local child_wids="$1"
+  local tty_names=($(get_child_tty_names "$child_wids"))
+  local tile_pos_x=1 tile_pos_y=0
+  log_debug "draw window: root; tile position=$tile_pos_x,$tile_pos_y"
+  trim_bigunko $tile_pos_x $tile_pos_y
+  for i in $(seq 0 $((${#tty_names[@]}-1))); do
+    tile_pos_x=$((($i + 2) % $TILES))
+    tile_pos_y=$((($i + 2) / $TILES))
+    log_debug "draw window: child $((i+1)); tile position=$tile_pos_x,$tile_pos_y; tty=/dev/${tty_names[i]}"
+    trim_bigunko $tile_pos_x $tile_pos_y >> /dev/${tty_names[i]}
+  done
+}
+
+terminate_children() {
+  local child_wids="$1"
+  local i=0
+  for wid in $child_wids; do
+    # TODO: pid がない場合を考慮
+    local pid=$(xdotool getwindowpid $wid)
+    kill -INT $pid
+    let ++i
+  done
+  return
+}
+
+slide_window() {
+  local wid=$1
+  local distance_x=$2
+  local distance_y=$3
+  local pos=$(xdotool getwindowgeometry $wid | grep Position | awk '{print $2}')
+  local pos_x=${pos%,*}
+  local pos_y=${pos#*,}
+  log_debug "slide window: wid=$wid; pos=$pos_x,$pos_y; dis=$distance_x,$distance_y"
+  for i in $(seq $FRAME); do
+    xdotool windowmove $wid $(($pos_x + $distance_x / $FRAME * $i + $WIDTH_OFFSET)) $(($pos_y + $distance_y / $FRAME * $i + $HEIGHT_OFFSET))
+  done
+  xdotool windowmove $wid $(($pos_x + $distance_x + $WIDTH_OFFSET)) $(($pos_y + $distance_y + $HEIGHT_OFFSET))
+}
+
+shake_window() {
+  local wid=$1
+  local pos=$(xdotool getwindowgeometry $wid | grep Position | awk '{print $2}')
+  local pos_x=${pos%,*}
+  local pos_y=${pos#*,}
+  for i in $(seq 5); do
+    xdotool windowmove $wid $(($pos_x - 10 + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x      + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x + 10 + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x      + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+  done
+}
+
+can_slide() {
+  local null_index=$1
+  local direction=$2
+  case $direction in
+    'up')    if [ $null_index -lt $(($TILES * $TILES - $TILES)) ]; then return 0; fi ;;
+    'down')  if [ $null_index -ge $TILES ];                        then return 0; fi ;;
+    'left')  if [ $(($null_index % $TILES)) -ne $(($TILES - 1)) ]; then return 0; fi ;;
+    'right') if [ $(($null_index % $TILES)) -ne 0 ];               then return 0; fi ;;
+  esac
+  return 1
+}
+
+move_tile() {
+  local direction=$1
+  local anotation=$2
+  local null_index=$(echo "${WIDS[@]}" | tr ' ' '\n' | nl -v0 | grep null | awk '{print $1}')
+  local wid target_index distance_x distance_y
+  # log_debug "current window ids: ${WIDS[@]}"
+
+  if can_slide $null_index $direction; then
+    case $direction in
+      'up')
+        target_index=$(($null_index + $TILES))
+        distance_x=0
+        distance_y=$((-$tile_window_height - $HEADER_HEIGHT))
+        ;;
+      'down')
+        target_index=$(($null_index - $TILES))
+        distance_x=0
+        distance_y=$(($tile_window_height + $HEADER_HEIGHT))
+        ;;
+      'left')
+        target_index=$(($null_index + 1))
+        distance_x=-$tile_window_width
+        distance_y=0
+        ;;
+      'right')
+        target_index=$(($null_index - 1))
+        distance_x=$tile_window_width
+        distance_y=0
+        ;;
+    esac
+    wid=${WIDS[$target_index]}
+    # log_debug "slide window: direction=${direction}; target index=${target_index}; wid=${wid}"
+    slide_window $wid $distance_x $distance_y
+    WIDS[$null_index]=$wid
+    WIDS[$target_index]='null'
+  else
+    if [ "$anotation" = 'true' ]; then
+      case $direction in
+        'up')    target_index=$(($null_index - $TILES)) ;;
+        'down')  target_index=$(($null_index + $TILES)) ;;
+        'left')  target_index=$(($null_index - 1)) ;;
+        'right') target_index=$(($null_index + 1)) ;;
+      esac
+      wid=${WIDS[$target_index]}
+      shake_window $wid
+    fi
+  fi
+}
+
+randomize() {
+  local direction
+  local prev=-1
+  local count=0
+  while [ $count -le $RANDOM_SLIDE ]; do
+    local rand=$((RANDOM % 4))
+    case $rand in
+      0) direction='up';    if [ $prev -eq 1 ]; then continue; fi ;;
+      1) direction='down';  if [ $prev -eq 0 ]; then continue; fi ;;
+      2) direction='left';  if [ $prev -eq 3 ]; then continue; fi ;;
+      3) direction='right'; if [ $prev -eq 2 ]; then continue; fi ;;
+    esac
+    local null_index=$(echo "${WIDS[@]}" | tr ' ' '\n' | nl -v0 | grep null | awk '{print $1}')
+    if can_slide $null_index $direction; then
+      move_tile $direction 'false'
+      prev=$rand
+      # log_debug "randomize: count=$count; direction=$direction"
+      let ++count
+    fi
+  done
+}
+
+solve() {
+  local collect_hash=$(echo -n $1 | md5sum | cut -d' ' -f1)
+  while IFS= read -r -n1 -s key; do
+    if [ "$key" == $'\x1b' ]; then
+      read -r -n2 -s rest
+      key+="$rest"
+    fi
+    case "$key" in
+      k|$'\x1b\x5b\x41')
+        move_tile 'up' 'true' ;;
+      j|$'\x1b\x5b\x42')
+        move_tile 'down' 'true' ;;
+      l|$'\x1b\x5b\x43')
+        move_tile 'right' 'true' ;;
+      h|$'\x1b\x5b\x44')
+        move_tile 'left' 'true' ;;
+    esac
+    local wids_hash=$(echo -n "${WIDS[@]}" | md5sum | cut -d' ' -f1)
+    if [ "$wids_hash" = "$collect_hash" ]; then break; fi
+  done
+}
+
+clean_up() {
+  # reset root window
+  xdotool set_window --name "$root_wname" $root_wid
+  xdotool windowsize $root_wid ${root_wgeo%x*} $((${root_wgeo#*x} + $WIDTH_OFFSET))
+  xdotool windowmove $root_wid ${root_wpos%,*} $((${root_wpos#*,} + $HEIGHT_OFFSET))
+  stty echo
+  clear
+  exit 0
+}
+
+
+processes=$(ps -ef | grep $WINDOW_NAME | grep -v grep)
+if [ $(echo "$processes" | wc -l) -le 2 ]; then
+  # parent window
+  initialize
+  set_root_window
+  trap clean_up 2  # 2:SIGINT
+  create_children
+  xdotool windowactivate $root_wid
+  xdotool windowfocus $root_wid
+  wids=$(xdotool search --name "$WINDOW_NAME")  # newline separated
+  child_wids=$(echo "$wids" | grep -v $root_wid | tr '\n' ' ')
+  relocate "$root_wid $child_wids"
+  draw "$child_wids"
+  WIDS=('null' $root_wid $child_wids)
+  randomize
+  xdotool windowactivate $root_wid
+  xdotool windowfocus $root_wid
+  solve "null $root_wid $child_wids"
+  terminate_children "$child_wids"
+  clean_up
+else
+  # child window
+  cat
+fi
