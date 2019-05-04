@@ -2,7 +2,7 @@ language: generic
 addons:
   apt:
     packages:
-      - filglet
+      - figlet
       - toilet
 script:
   - bash ./unko.yes | head
