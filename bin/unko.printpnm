@@ -22,7 +22,7 @@ P3
 $col $row
 $rgb
 EOS
-  cat << EOS | align_center 0 | sed -r "s/ /0/g;s/0/0 0 0 /g;s/[^ 0]/$color_r $color_g $color_b /g"
+  cat << EOS | align_center 0 | sed -E "s/ /0/g;s/0/0 0 0 /g;s/[^ 0]/$color_r $color_g $color_b /g"
 1
 1
 111
