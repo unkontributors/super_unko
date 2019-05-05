@@ -17,6 +17,7 @@ unko.tower -- Build your shit tower.
 bigunko.show -- Big shit.
 unko.printpnm -- Generate 💩 PNM image file.
 unko.puzzle -- Sliding block puzzle.
+unko.toilet -- Display large 💩 characters.
 unko.grep -- TBD
 unko.date -- TBD
 unko.awk -- TBD
