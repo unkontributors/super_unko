@@ -2,7 +2,7 @@
 
 function usage() {
   (
-    echo "Usage: unko.toilet [ -hv ] [ -w outputwidth ]" 
+    echo "Usage: unko.toilet [ -hv ] [ -w outputwidth ]"
     echo "                   [ --crop ] [ --flip ] [ --flop ]"
     echo "                   [ --180 ] [ --left ] [ --right ]"
     echo "                   [ --border ] [ message ]"
@@ -37,8 +37,8 @@ function version() {
 
 function unexpected() {
   echo "[ERR] Unexpected $1" 1>&2
-  echo "" 1>&2 
-  usage 
+  echo "" 1>&2
+  usage
 }
 
 # unko.toilet 用のオプションをパースする
@@ -53,7 +53,7 @@ while (( $# > 0 )); do
       # --version か -v なら version情報を出力して終了
       [[ "$1" =~ ^(-v|--version)$ ]] && version
 
-      : "-w|--width <width>" && 
+      : "-w|--width <width>" &&
         [[ "$1" =~ ^-(w|-width)$ ]] && {
           # widthの引数はint
           [[ "$2" =~ [0-9]+ ]] && {
@@ -69,7 +69,7 @@ while (( $# > 0 )); do
           continue
       }
 
-      : "Filter" && 
+      : "Filter" &&
         [[ "$1" =~ ^--(left|right|flip|flop|180|border|crop)$ ]] && {
           append_opt "--filter ${1//--/}"
           shift
@@ -98,11 +98,11 @@ type toilet &> /dev/null || not_found "toilet command"
 # フォントにbigmono9を使うので無かったらダメ
 echo |toilet -f bigmono9 &>/dev/null || not_found "bigmono9 font"
 
-# unko.toilet 
+# unko.toilet
 toilet ${toilet_opt[@]} -f bigmono9 "${text}" |
   # 薄いところは消す
-  sed 's/░\|▒/ /g' | 
+  sed 's/░\|▒/ /g' |
   # スペース以外を💩へ
-  sed 's/[^ ]/💩/g' | 
+  sed 's/[^ ]/💩/g' |
   # 幅調整
   sed 's/ /  /g'
