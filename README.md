@@ -55,6 +55,22 @@ Uninstall (not `super_unko`)
 $ sudo apt remove superunko
 ```
 
+#### With AUR (ArchLinux base distros)
+
+You can install `super_unko` from https://aur.archlinux.org/packages/super_unko-git/ with your favorite aur helper.
+
+e.g. with yay:
+
+```
+$ yay -S super_unko-git
+```
+
+Uninstall (not `super_unko`)
+
+```
+$ sudo pacman -R super_unko-git
+```
+
 ### macOS
 
 * With Homebrew
