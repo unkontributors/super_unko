@@ -9,8 +9,8 @@ Let's create shit commands!
 super_unko プロジェクトは世界で最もクリーンで洗練されたOSSプロジェクトの一つです。
 うんこなコマンドを作りましょう。
 
-| Command | Description |
-|---------|-------------|
+| Command       | Description |
+|---------------|-------------|
 | unko.tr       | Convert various expressions equals to shit into 💩 (shit). |
 | unko.ls       | Shows various shit expression. |
 | unko.yes      | Generate 💩 shit forever. |
@@ -19,7 +19,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 | unko.printpnm | Generate 💩 PNM image file. |
 | unko.puzzle   | Sliding block puzzle. |
 | unko.toilet   | Display large 💩 characters. |
-| unko.grep     | TBD |
+| unko.grep     | Print lines matching a 💩 pattern. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
