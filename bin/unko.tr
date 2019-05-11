@@ -2,4 +2,4 @@
 # Get current directory
 __THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
 
-sed -f <(cat "$__THIS_DIR/unko.ls" | sed '1,2d;$d' | awk '{print $2}' | sed 's|^|s/|;s|$|/💩/g|;')
+sed -f <(cat "$__THIS_DIR/unko.csv" | awk -F , '1<NR{print $1}' | sed 's|^|s/|;s|$|/💩/g|;')
