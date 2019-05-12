@@ -1,0 +1,7 @@
+#!/bin/bash
+
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
+
+UNKO_REGEXP="$(awk -F , '1<NR{print $1}' "$THIS_DIR/unko.csv" | tr '\n' '|' | sed -E 's/.$//')"
+
+grep -E "$UNKO_REGEXP"

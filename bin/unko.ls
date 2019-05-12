@@ -1,29 +1,6 @@
 #!/bin/bash
 # Jot down any expression that means 💩.
-echo うんこ         # Japanese
-echo うんち         # Japanese
-echo 下痢           # Japanese
-echo うんこっこ     # Japanese
-echo うんこもりもり # Japanese
-echo poo            # English
-echo feces          # English
-echo shit           # English
-echo crap           # English
-echo caca           # French
-echo merde          # French
-echo Caga           # Spanish
-echo mierda         # Spanish
-echo Kacke          # German
-echo Scheiße        # German
-echo Feci           # Italian
-echo Merda          # Italian
-echo Merda          # Portuguese
-echo Cocô           # Portuguese
-echo Fezes          # Portuguese
-echo σκατά          # Greek
-echo Какашка        # Russian
-echo 㞎㞎           # Chinese
-echo 狗屁           # Chinese
-echo 똥             # Korian
-echo ขี้              # Thai
-echo 💩             # Emoji
+
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
+
+awk -F , '1<NR{print $1}' "$THIS_DIR/unko.csv"
