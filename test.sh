@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cd test
-./test_unko.printpnm.sh
-./test_unko.yes.sh
-./test_unko.tr.sh
-./test_unko.tower.sh
-./test_unko.grep.sh
 ./unko.toilet-test.sh
+./unko.printpnm-test.sh
+./unko.yes-test.sh
+./unko.tr-test.sh
+./unko.tower-test.sh
+./unko.grep-test.sh

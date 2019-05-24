@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source test_util.sh
+source util.sh
 
 readonly CMD=../bin/unko.tr
 

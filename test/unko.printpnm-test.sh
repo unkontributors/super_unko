@@ -3,7 +3,7 @@
 readonly RUN_TEST=true
 
 source ../bin/unko.printpnm
-source test_util.sh
+source util.sh
 
 start_test unko.printpnm
 

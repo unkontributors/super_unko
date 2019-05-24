@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## test_util.sh はテスト用のユーティリティ関数ライブラリ。
+## util.sh はテスト用のユーティリティ関数ライブラリ。
 
 readonly PAD="  "
 
