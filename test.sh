@@ -21,12 +21,9 @@ run_test() {
 }
 
 cd test
-run_test ./unko.toilet-test.sh
-run_test ./unko.printpnm-test.sh
-run_test ./unko.yes-test.sh
-run_test ./unko.tr-test.sh
-run_test ./unko.tower-test.sh
-run_test ./unko.grep-test.sh
+for test_script in *-test.sh; do
+  run_test ./"$test_script"
+done
 
 if [ "$__FAILED_COUNT" -eq 0 ]; then
   echo -e "$(green [SUCCESS]) test.sh completed."
