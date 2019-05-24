@@ -22,6 +22,10 @@ red() {
   echo -e "\x1b[31m${msg}\x1b[0m"
 }
 
+## blue は引数の文字列を端末上で青色として出力する。
+##
+## @param msg
+## @return 青色のエスケープシーケンスで囲われたmsg
 blue() {
   local msg="$1"
   echo -e "\x1b[34m${msg}\x1b[0m"
@@ -55,6 +59,13 @@ assert_eq() {
   fi
 }
 
+## start_test はassert_eqを呼び出すための準備をする。
+##
+## @param app_name テスト対象のスクリプト名称
+## @return テスト開始を表す文字列
+##
+## @env TEST_COUNT   テスト件数を初期化
+## @env FAILED_COUNT テスト失敗件数を初期化
 start_test() {
   local app_name=$1
 
@@ -63,6 +74,13 @@ start_test() {
   echo -e "$(blue [$app_name])" >&2
 }
 
+## end_test はテストの成功・失敗の文字列を出力する。
+## また、テストの終了処理（後始末）を行う。
+##
+## @return テストの成功・失敗の文字列
+##
+## @env TEST_COUNT   テスト件数を初期化
+## @env FAILED_COUNT テスト失敗件数を初期化
 end_test() {
   local exit_code=0
 
@@ -71,7 +89,7 @@ end_test() {
     echo -e "${PAD}$(green [SUCCESS]) [$TEST_COUNT] all tests are passed." >&2
   else
     echo -e "${PAD}$(red [FAILURE]) [$FAILED_COUNT/$TEST_COUNT] tests are failed." >&2
-    exit_cote=1
+    exit_code=1
   fi
   echo
 
