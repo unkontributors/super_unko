@@ -137,10 +137,12 @@ main () {
   local _height="${1:-10}" ;shift
   local _width="${1:-10}" ;shift
   if [[ $_height == '--help' ]] || [[ $_height == '-h' ]];then
+    trap '' EXIT
     usage
     return 0
   fi
   if ! [[ $_height =~ ^[0-9]*$ ]] || ! [[ $_width =~ ^[0-9]*$ ]] || (( _height <= 0 )) || (( _width <= 0 )) ;then
+    trap '' EXIT
     usage
     return 1
   fi
