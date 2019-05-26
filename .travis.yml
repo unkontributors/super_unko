@@ -5,5 +5,4 @@ addons:
       - figlet
       - toilet
 script:
-  - bash ./unko.yes | head
-  - bash ./test/unko.toilet-test.sh
+  - ./test.sh

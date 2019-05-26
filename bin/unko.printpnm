@@ -231,64 +231,14 @@ get_opts() {
   fi
 }
 
-################################################################################
-#
-#   ここからテストコード
-#   テストを実行する場合は以下のヒアドキュメントの先頭に'#'をつける。
-#
-#   '#'を外すとコメントアウトされるためテストは実行されない。
-#   リリース時はコメントアウトを外しておくこと。
-#
-################################################################################
+# テストフラグが付与されている時はmain関数を呼び出さない。
+if [ ! "$RUN_TEST" = true ]; then
+  # コマンドライン引数を取得
+  opt_red=255
+  opt_green=255
+  opt_blue=255
+  opt_unko_level=3
+  get_opts ${1+"$@"}
 
-: << '#TEST_CODE'
-
-green() {
-  echo -e "\x1b[32m$1\x1b[0m"
-}
-
-red() {
-  echo -e "\x1b[31m$1\x1b[0m"
-}
-
-assert_eq() {
-  local desc="$1"
-  local expect="$2"
-  local got="$3"
-  if [ "$expect" = "$got" ]; then
-    echo "$(green [OK]) $desc" >&2
-    return 0
-  else
-    echo "$(red [NG]) $desc (expect = $expect, got = $got)" >&2
-    return 1
-  fi
-}
-
-assert_eq "max_stage_col 正常系" 13 $(max_stage_col 1)
-assert_eq "max_stage_row 正常系" 8 $(max_stage_row 1)
-assert_eq "max_value 正常系" 3 $(max_value 1 2 3)
-assert_eq "max_value 正常系(逆)" 3 $(max_value 3 2 1)
-assert_eq "max_value 2桁の整数" 10 $(max_value 10 2 3)
-assert_eq "repeat 正常系" 111 $(repeat 3)
-assert_eq "repeat 正常系 出力文字指定" 000 $(repeat 3 0)
-assert_eq "align_center 正常系" "$(echo -e '010\n111')" "$(echo -e "1\n111" | align_center 0)"
-assert_eq "align_center 正常系 幅が偶数" "$(echo -e '0100\n1111')" "$(echo -e "1\n1111" | align_center 0)"
-
-exit 0
-
-#TEST_CODE
-
-################################################################################
-#
-#   ここまでテストコード
-#
-################################################################################
-
-# コマンドライン引数を取得
-opt_red=255
-opt_green=255
-opt_blue=255
-opt_unko_level=3
-get_opts ${1+"$@"}
-
-main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
+  main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
+fi

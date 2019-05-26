@@ -20,6 +20,9 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 | unko.puzzle   | Sliding block puzzle. |
 | unko.toilet   | Display large 💩 characters. |
 | unko.grep     | Print lines matching a 💩 pattern. |
+| unko.say      | King 💩 says a message. |
+| unko.shout    | King 💩 shouts a message. |
+| unko.think    | King 💩 thinks something. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
