@@ -23,6 +23,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 | unko.say      | King 💩 says a message. |
 | unko.shout    | King 💩 shouts a message. |
 | unko.think    | King 💩 thinks something. |
+| unko.life     | Play 💩's game of life. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
