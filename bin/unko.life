@@ -30,7 +30,7 @@ Environment Variables:
   * UNKO_LG_DEAD   ... Dead cell
 
 Example:
-  Play with above command in environment that does not support any Emojis.
+  Play with below the command if your environment does not support any Emojis.
     $ UNKO_LG_ALIVE=_ UNKO_LG_DEAD="@" UNKO_LG_PLAYER="+" unko.life
 USAGE
 }
