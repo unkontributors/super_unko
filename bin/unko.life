@@ -1,0 +1,193 @@
+#!/usr/bin/env bash
+
+set -u
+CELL=()
+NEXT_CELL=()
+CURSOR_Y=0
+CURSOR_X=0
+
+## Use ANSI-C quoting because my text editor's layout is broken..
+readonly DEFAULT_UNKO_LG_PLAYER=$'\xf0\x9f\x99\x87' # Person bowing
+readonly DEFAULT_UNKO_LG_ALIVE=$'\xe2\xac\x9c' # White tile. Toilet = $'\xf0\x9f\x9a\xbd'
+readonly DEFAULT_UNKO_LG_DEAD=$'\xf0\x9f\x92\xa9' # Unko
+UNKO_LG_PLAYER=${UNKO_LG_PLAYER:-$DEFAULT_UNKO_LG_PLAYER}
+UNKO_LG_ALIVE=${UNKO_LG_ALIVE:-$DEFAULT_UNKO_LG_ALIVE}
+UNKO_LG_DEAD=${UNKO_LG_DEAD:-$DEFAULT_UNKO_LG_DEAD}
+
+trap 'clear; cursor_visible' EXIT
+
+usage () {
+cat <<-USAGE
+Usage:
+  unko.life [OPTIONS] [HEIGHT] [WIDTH]
+
+OPTIONS:
+  -h,--help    Display this help and exit
+
+Environment Variables:
+  * UNKO_LG_PLAYER ... Player icon
+  * UNKO_LG_ALIVE  ... Alive cell
+  * UNKO_LG_DEAD   ... Dead cell
+
+Example:
+  Play with above command in environment that does not support any Emojis.
+    $ UNKO_LG_ALIVE=_ UNKO_LG_DEAD="@" UNKO_LG_PLAYER="+" unko.life
+USAGE
+}
+
+
+cursor_visible () {
+  tput cnorm >&2
+}
+
+cursor_invisible () {
+  tput civis >&2
+}
+
+cursor_topleft () {
+  tput cup 0 0
+}
+
+initialize () {
+  local _height="$1" ;shift
+  local _width="$1" ;shift
+  IFS=$'\n' read -r -a CELL -d '' <<<"$(yes 0 | head -n "$(( _height * _width ))" )"
+}
+
+display () {
+  local _height="$1" ;shift
+  local _width="$1" ;shift
+  local _msg="$1" ;shift
+  local i=0;
+  cursor_topleft
+  printf "\033[41m\033[4m\033[30m %s \033[0m: %s \\n" "Unko Generation" "$_msg"
+  for s in "${CELL[@]}"; do
+    (( i % _width == 0 )) && echo
+    if (( i == ( CURSOR_Y * _width + CURSOR_X ) )) ;then
+      printf "%s" "$UNKO_LG_PLAYER"
+    else
+      [[ "$s" == "0" ]] && printf "%s" "$UNKO_LG_ALIVE"
+      [[ "$s" == "1" ]] && printf "%s" "$UNKO_LG_DEAD"
+    fi
+    (( i = i + 1 ))
+  done
+  echo
+  printf "\033[30m\033[47m %s \033[0m: %s \\n" "H" "Move Player Left"
+  printf "\033[30m\033[47m %s \033[0m: %s \\n" "J" "Move Player Down"
+  printf "\033[30m\033[47m %s \033[0m: %s \\n" "K" "Move Player Up"
+  printf "\033[30m\033[47m %s \033[0m: %s \\n" "L" "Move Player Right"
+  printf "\033[30m\033[47m %s \033[0m: %s \\n" "Space" "Generate Or Remove Unko"
+  printf "\033[30m\033[47m %s \033[0m: %s \\n" "S" "Start Unko Life Game!"
+  printf "\033[30m\033[47m %s \033[0m: %s \\n" "Ctrl + C" "Quit Game"
+}
+
+get_cell_state () {
+  local _height="$1" ;shift
+  local _width="$1" ;shift
+  local _y="$1" ;shift
+  local _x="$1" ;shift
+  (( _y < 0 || _y >= _height || _x < 0 || _x >= _width )) && {
+    printf "%s\\n" 0
+    return
+  }
+  printf "%s\\n" "$(( CELL[_y * _width + _x] ))"
+}
+
+get_next_cell_state () {
+  local _index="$1" ;shift
+  local _height="$1" ;shift
+  local _width="$1" ;shift
+  local _y=$(( _index / _width ))
+  local _x=$(( _index % _width ))
+  local alive_count=
+  alive_count=$({
+    get_cell_state "$_height" "$_width" "$(( _y - 1 ))" "$(( _x - 1 ))"
+    get_cell_state "$_height" "$_width" "$(( _y - 1 ))" "$(( _x ))"
+    get_cell_state "$_height" "$_width" "$(( _y - 1 ))" "$(( _x + 1))"
+    get_cell_state "$_height" "$_width" "$(( _y ))" "$(( _x - 1))"
+    get_cell_state "$_height" "$_width" "$(( _y ))" "$(( _x + 1))"
+    get_cell_state "$_height" "$_width" "$(( _y + 1 ))" "$(( _x - 1 ))"
+    get_cell_state "$_height" "$_width" "$(( _y + 1 ))" "$(( _x ))"
+    get_cell_state "$_height" "$_width" "$(( _y + 1 ))" "$(( _x + 1))"
+  } | paste -sd+ - | bc)
+  if (( CELL[_index] == 0 )) ;then
+    (( alive_count == 3 )) && {
+      printf "%s\\n" 1
+      return
+    }
+  elif (( CELL[_index] == 1 )) ; then
+    (( alive_count == 2 || alive_count == 3 )) && {
+      printf "%s\\n" 1
+      return
+    }
+    (( alive_count <= 1 )) && {
+      printf "%s\\n" 0
+      return
+    }
+    (( alive_count >= 4 )) && {
+      printf "%s\\n" 0
+      return
+    }
+  fi
+  printf "%s\\n" "$(( CELL[_index] ))"
+  return
+}
+
+main () {
+  local _height="${1:-10}" ;shift
+  local _width="${1:-10}" ;shift
+  if [[ $_height == '--help' ]] || [[ $_height == '-h' ]];then
+    usage
+    return 0
+  fi
+  if ! [[ $_height =~ ^[0-9]*$ ]] || ! [[ $_width =~ ^[0-9]*$ ]] || (( _height <= 0 )) || (( _width <= 0 )) ;then
+    usage
+    return 1
+  fi
+  initialize "$_height" "$_width"
+  clear
+  cursor_invisible
+  while true; do
+    display "$_height" "$_width" "Initialize"
+    read -rsn1 key
+    case $key in
+      h)
+        (( CURSOR_X > 0 )) && (( CURSOR_X-- ))
+        ;;
+      l)
+        (( CURSOR_X < ( _width - 1 ) )) && (( CURSOR_X++ ))
+        ;;
+      k)
+        (( CURSOR_Y > 0 )) &&  (( CURSOR_Y-- ))
+        ;;
+      j)
+        (( CURSOR_Y < ( _height - 1 ) )) && (( CURSOR_Y++ ))
+        ;;
+      s)
+        # START GAME
+        break
+        ;;
+      *)
+        # Reverse cell state
+        (( CELL[CURSOR_Y * _width + CURSOR_X] = 1 - CELL[CURSOR_Y * _width + CURSOR_X] ))
+        ;;
+    esac
+  done
+
+  CURSOR_Y=-1
+  CURSOR_X=-1
+  local generation=0
+  while true; do
+    i=0
+    display "$_height" "$_width" "     $generation     "
+    for s in "${CELL[@]}"; do
+      NEXT_CELL[i]="$(get_next_cell_state "$i" "$_height" "$_width" )"
+      (( i++ ))
+    done
+    CELL=("${NEXT_CELL[@]}")
+    (( generation++ ))
+  done
+}
+
+main ${1+"$@"}
+exit $?
