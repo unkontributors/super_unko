@@ -6,7 +6,7 @@ case ${OSTYPE} in
   darwin*)
     __COW_FILE=unko_mb.cow
     ;;
-  linux*)
+  *)
     __COW_FILE=unko.cow
     ;;
 esac
