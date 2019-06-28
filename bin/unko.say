@@ -2,4 +2,13 @@
 # Get current directory
 __THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
 
-cowsay -f $__THIS_DIR/unko.cow $@
+case ${OSTYPE} in
+  darwin*)
+    __COW_FILE=unko_mb.cow
+    ;;
+  *)
+    __COW_FILE=unko.cow
+    ;;
+esac
+
+cowsay -f $__THIS_DIR/$__COW_FILE $@
