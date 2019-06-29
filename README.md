@@ -104,6 +104,10 @@ $ docker run -it superunko unko.shout こんにちは
 ### Additional Installation
 
 - [unko.puzzle](./doc/unko.puzzle.md)
+- unko.shout - Need a [echo-sd](https://github.com/fumiyas/home-commands) command
+- unko.say - Need a `cowsay` command (`$ apt install cowsay`)
+- unko.think - Need a `cowthink` command (`$ apt install cowsay`)
+- unko.toilet - Need a `toilet` command (`$ apt install toilet`)
 
 Usage
 ========================
