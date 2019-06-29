@@ -90,6 +90,17 @@ Uninstall
 $ brew remove super_unko
 ```
 
+### Docker
+
+* With docker
+
+```bash
+$ git clone https://github.com/unkontributors/super_unko.git
+$ cd super_unko
+$ docker build -t superunko .
+$ docker run -it superunko unko.shout こんにちは
+```
+
 ### Additional Installation
 
 - [unko.puzzle](./doc/unko.puzzle.md)
