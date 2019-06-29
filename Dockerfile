@@ -1,4 +1,4 @@
-FROM ubuntu:19.04
+FROM alpine:3.9 AS build-stage
 
 RUN echo -e $'\n\
 ＿人人人人人人人人人人人人人人人人人人人人人人＿\n\
@@ -14,15 +14,27 @@ RUN echo -e $'\n\
 ENV DIR_PREFIX /usr/local
 ENV SRC_DIR $DIR_PREFIX/src
 ENV BIN_DIR $DIR_PREFIX/bin
-ENV PATH $PATH:/usr/games
 
-RUN apt update -y \
-    && apt install -y git toilet cowsay figlet \
+RUN apk --no-cache add git bash perl make automake autoconf pkgconfig gcc musl-dev libcaca-dev figlet \
     && git clone https://github.com/unkontributors/super_unko.git $SRC_DIR/super_unko \
     && $SRC_DIR/super_unko/install.sh \
     && git clone https://github.com/fumiyas/home-commands.git $SRC_DIR/home-commands \
-    && install -m 0755 $SRC_DIR/home-commands/echo-sd $BIN_DIR/
-WORKDIR $SRC_DIR/super_unko
+    && install -m 0755 $SRC_DIR/home-commands/echo-sd $BIN_DIR/ \
+    && git clone https://github.com/schacon/cowsay.git $SRC_DIR/cowsay \
+    && (cd $SRC_DIR/cowsay && ./install.sh) \
+    && git clone https://github.com/cacalabs/toilet $SRC_DIR/toilet \
+    && cd $SRC_DIR/toilet \
+    && ./bootstrap \
+    && ./configure \
+    && make \
+    && install -m 0755 ./src/toilet $BIN_DIR \
+    && mkdir /usr/local/share/figlet/ \
+    && install -m 0644 ./fonts/*.tlf /usr/local/share/figlet/
+
+FROM alpine:3.9 AS exec-stage
+RUN apk add bash perl libcaca-dev
+COPY --from=build-stage /usr/local/bin/* /usr/local/bin/
+COPY --from=build-stage /usr/local/src/toilet/fonts/* /usr/local/share/figlet/
 
 RUN echo -e $'\n\
 ＿人人人人人人人人人人人人人人人人人人人人人人人人＿\n\
