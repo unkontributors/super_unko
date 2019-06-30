@@ -32,7 +32,7 @@ RUN apk --no-cache add git bash perl make automake autoconf pkgconfig gcc musl-d
     && install -m 0644 ./fonts/*.tlf /usr/local/share/figlet/
 
 FROM alpine:3.9 AS exec-stage
-RUN apk add bash perl libcaca-dev
+RUN apk add --no-cache bash perl libcaca-dev
 COPY --from=build-stage /usr/local/bin/* /usr/local/bin/
 COPY --from=build-stage /usr/local/src/toilet/fonts/* /usr/local/share/figlet/
 
