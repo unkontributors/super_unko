@@ -2,8 +2,9 @@ name : superunko
 cmdname : superunko
 summary : Super Unko
 description : super_unko project is the one of the awesome, clean and sophisticated OSS project in the world. Let us create shit commands.
-version : 1.0.4
+version : 1.0.5
 changelog : unko.tower power up
-url : https://github.com/greymd/super_unko
+url : https://github.com/unkontributors/super_unko
 author : Awesome Unkontributors
 email : super@unko.com
+libdir : /usr/lib
