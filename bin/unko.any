@@ -1,0 +1,11 @@
+#!/bin/bash
+usage(){
+cat << EOF
+$0 [arg1] [arg2]
+arg1: alternative character of 💩.
+arg2: phrase for shout.
+EOF
+exit 0
+}
+if [ $# -ne 2 ] ; then usage; fi
+unko.shout $2 | sed -e s/💩/$1/g
