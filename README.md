@@ -24,6 +24,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 | unko.shout    | King 💩 shouts a message. |
 | unko.think    | King 💩 thinks something. |
 | unko.life     | Play 💩's game of life. |
+| unko.any      | Simple wrapper to 💩 substitution for unko.shout. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
