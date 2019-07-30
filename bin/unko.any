@@ -9,4 +9,5 @@ exit 0
 }
 if [ $# -lt 1 ] ; then usage; fi
 unko="$1"; shift
-unko.shout ${1+"$@"} | sed "s/💩/$unko/g"
+unko_shout="${0%/*}/unko.shout"
+exec "$unko_shout" ${1+"$@"} | sed "s/💩/$unko/g"
