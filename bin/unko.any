@@ -1,9 +1,9 @@
 #!/bin/sh
 usage(){
 cat << EOF
-$0 [arg1] [arg2]
-arg1: alternative character of 💩.
-arg2: phrase for shout.
+Usage: $0 <UNKO> [PHRASE ...]
+UNKO:   Alternative character of 💩.
+PHRASE: Phrase for shout.
 EOF
 exit 0
 }
