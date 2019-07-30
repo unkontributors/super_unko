@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo-sd ${1+"$@"}
-c="${C:-👑}"	# Crown
+t="${T:-👑}"	# Top
 u="${U:-💩}"	# Unko
 e="${E:-👁}"	# Eyes
 n="${N:-👃}"	# Nose
@@ -10,7 +10,7 @@ l="${L:-（}"	# Left side
 r="${R:-）}"	# Right side
 s="${S:-　}"	# Space
 cat <<EOF
-$s$s$s$s$s$s$c
+$s$s$s$s$s$s$t
 $s$s$s$s$l$u$u$u$r
 $s$s$s$l$u$e$u$e$u$r
 $s$s$l$u$u$u$n$u$u$u$r
