@@ -7,5 +7,6 @@ arg2: phrase for shout.
 EOF
 exit 0
 }
-if [ $# -ne 2 ] ; then usage; fi
-unko.shout $2 | sed -e s/💩/$1/g
+if [ $# -lt 1 ] ; then usage; fi
+unko="$1"; shift
+unko.shout ${1+"$@"} | sed "s/💩/$unko/g"
