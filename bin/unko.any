@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 usage(){
 cat << EOF
 $0 [arg1] [arg2]
