@@ -1,8 +1,19 @@
 language: generic
+
 addons:
   apt:
     packages:
       - figlet
       - toilet
+      - gcc
+      - make
+      - golang
+      - shellcheck
+
+install:
+  - GO111MODULE=off go get mvdan.cc/sh/cmd/shfmt
+
 script:
+  - shfmt -i 2 -ci -sr -d bin/
+  - shellcheck bin/*
   - ./test.sh
