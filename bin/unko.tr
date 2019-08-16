@@ -1,6 +1,12 @@
 #!/bin/bash
-# Get current directory
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
-LIB_DIR="${THIS_DIR}/../lib/super_unko"
 
-sed -f <(cat "${LIB_DIR}/unko.csv" | awk -F , '1<NR{print $1}' | sed 's|^|s/|;s|$|/💩/g|;')
+# Get current directory
+THIS_DIR=$(
+  cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd
+)
+readonly THIS_DIR
+
+LIB_DIR="${THIS_DIR}/../lib/super_unko"
+readonly LIB_DIR
+
+sed -f <(awk -F , '1<NR{print $1}' "${LIB_DIR}/unko.csv" | sed 's|^|s/|;s|$|/💩/g|;')
