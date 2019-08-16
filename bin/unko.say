@@ -1,7 +1,13 @@
 #!/bin/bash
+
 # Get current directory
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
+THIS_DIR=$(
+  cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd
+)
+readonly THIS_DIR
+
 LIB_DIR="${THIS_DIR}/../lib/super_unko"
+readonly LIB_DIR
 
 case ${OSTYPE} in
   darwin*)
@@ -12,4 +18,4 @@ case ${OSTYPE} in
     ;;
 esac
 
-cowsay -f ${COW_FILE} $@
+cowsay -f "${COW_FILE}" "$@"

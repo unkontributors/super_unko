@@ -1,6 +1,11 @@
 #!/bin/bash
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
-LIB_DIR="${THIS_DIR}/../lib/super_unko"
+THIS_DIR=$(
+  cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd
+)
+readonly THIS_DIR
 
-echo -ne $(cat ${LIB_DIR}/bigunko.txt|base64 --decode|tr -d \\n)
+LIB_DIR="${THIS_DIR}/../lib/super_unko"
+readonly LIB_DIR
+
+echo -ne "$(base64 --decode < "${LIB_DIR}/bigunko.txt" | tr -d \\n)"
