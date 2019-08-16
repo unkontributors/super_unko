@@ -1,6 +1,7 @@
 #!/bin/bash
 
-readonly SCRIPT_NAME=$(basename $0)
+SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
+readonly SCRIPT_NAME
 readonly VERSION=v1.0.0
 
 ## main はメイン関数である。スクリプトの末尾で呼び出す。
@@ -14,9 +15,14 @@ main() {
   local color_r=$2
   local color_g=$3
   local color_b=$4
-  local col=$(max_stage_col $level)
-  local row=$(max_stage_row $level)
-  local rgb=$(max_value $color_r $color_g $color_b)
+
+  local col
+  local row
+  local rgb
+  col=$(max_stage_col "$level")
+  row=$(max_stage_row "$level")
+  rgb=$(max_value "$color_r" "$color_g" "$color_b")
+
   cat << EOS
 P3
 $col $row
@@ -27,7 +33,7 @@ EOS
 1
 111
 11111
-$(stages $level)
+$(stages "$level")
 EOS
 }
 
@@ -68,7 +74,7 @@ max_value() {
 repeat() {
   local n=$1
   local c=${2:-1}
-  seq $n | xargs -I@ echo -n $c
+  seq "$n" | xargs -I@ echo -n "$c"
 }
 
 ## stage はうんこの段を返す。
@@ -80,12 +86,12 @@ repeat() {
 ## @param i番目のうんこ段
 stage() {
   local i=$1
-  local j=$((i+2))
+  local j=$((i + 2))
   cat << EOS
-$(repeat $i)
-$(repeat $j)
-$(repeat $j)
-$(repeat $i)
+$(repeat "$i")
+$(repeat "$j")
+$(repeat "$j")
+$(repeat "$i")
 EOS
 }
 
@@ -98,7 +104,9 @@ EOS
 ## @param n回くりかえしたうんこの段
 stages() {
   local n=$1
-  seq $n | while read i; do stage $((11 + 8 * (i - 1))) ; done
+  seq "$n" | while read -r i; do
+    stage $((11 + 8 * (i - 1)))
+  done
 }
 
 ## align_center は標準入力を指定の文字列で埋めて中央寄せする。
@@ -108,21 +116,28 @@ stages() {
 ## @return 中央寄せされた文字列
 align_center() {
   local pad="$1"
+
   # 最も大きい横幅を取得
   local max_width=0
   local lines=()
   while read -r line; do
-    local w=$(echo "$line" | wc -c)
+    local w
+    w=$(wc -c <<< "$line")
+
     if [ "$max_width" -lt "$w" ]; then
       max_width=$w
     fi
     lines+=("$line")
   done
+
+  # うんこを1行ずつ出力
   for line in "${lines[@]}"; do
-    local w=$(echo "$line" | wc -c)
+    local w
+    w=$(wc -c <<< "$line")
+
     local left_width=$(((max_width - w) / 2))
     local right_width=$((max_width - left_width - w))
-    echo "$(repeat $left_width $pad)$line$(repeat $right_width $pad)"
+    echo "$(repeat "$left_width" "$pad")$line$(repeat "$right_width" "$pad")"
   done
 }
 
@@ -167,12 +182,12 @@ EOS
 ## これらの変数はトップレベルの変数として初期値を設定しておくこと。
 get_opts() {
   local opt_use_unko_color=false
-  while (( 0 < $# )); do
+  while ((0 < $#)); do
     local opt=$1
     shift
 
     case "$opt" in
-      '-h'|'--help')
+      '-h' | '--help')
         usage
         exit
         ;;
@@ -182,7 +197,7 @@ get_opts() {
         exit
         ;;
 
-      '-r'|'--red')
+      '-r' | '--red')
         if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
           echo "$SCRIPT_NAME: requires an argument -- $1" >&2
           exit 1
@@ -191,7 +206,7 @@ get_opts() {
         shift 1
         ;;
 
-      '-g'|'--green')
+      '-g' | '--green')
         if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
           echo "$SCRIPT_NAME: requires an argument -- $1" >&2
           exit 1
@@ -200,7 +215,7 @@ get_opts() {
         shift 1
         ;;
 
-      '-b'|'--blue')
+      '-b' | '--blue')
         if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
           echo "$SCRIPT_NAME: requires an argument -- $1" >&2
           exit 1
@@ -209,7 +224,7 @@ get_opts() {
         shift 1
         ;;
 
-      '-u'|'--unko-color')
+      '-u' | '--unko-color')
         opt_use_unko_color=true
         ;;
 
