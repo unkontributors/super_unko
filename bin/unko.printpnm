@@ -2,7 +2,7 @@
 
 SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
 readonly SCRIPT_NAME
-readonly VERSION=v1.0.0
+readonly VERSION=v1.0.1
 
 ## main はメイン関数である。スクリプトの末尾で呼び出す。
 ##
@@ -173,14 +173,36 @@ Flags:
 EOS
 }
 
-## get_opts はコマンドライン引数を解析して変数にセットする。
+log() {
+  echo -e "$SCRIPT_NAME: $@" >&2
+}
+
+is_empty() {
+  [[ -z "$1" ]]
+}
+
+is_opt() {
+  [[ "$1" =~ ^-+ ]]
+}
+
+## validate_color_opt は引数がコマンドオプションの値であるかを判定する。
+## 不正な値の場合はシェルを異常終了する。
+validate_opt_value() {
+  local value=$1
+  if is_empty "$value" || is_opt "$value"; then
+    log "requires an argument -- $value"
+    exit 1
+  fi
+}
+
+## set_opts はコマンドライン引数を解析して変数にセットする。
 ## セットする変数は下記の通り。
 ## - opt_red
 ## - opt_green
 ## - opt_blue
 ## - opt_unko_level
 ## これらの変数はトップレベルの変数として初期値を設定しておくこと。
-get_opts() {
+set_opts() {
   local opt_use_unko_color=false
   while ((0 < $#)); do
     local opt=$1
@@ -198,30 +220,26 @@ get_opts() {
         ;;
 
       '-r' | '--red')
-        if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
-          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
-          exit 1
-        fi
-        opt_red=$1
-        shift 1
+        local color=$1
+        shift
+        validate_opt_value "$color"
+        opt_red="$color"
         ;;
 
       '-g' | '--green')
-        if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
-          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
-          exit 1
-        fi
-        opt_green=$1
-        shift 1
+        local color=$1
+        shift
+        validate_opt_value "$color"
+        opt_green="$color"
+        shift
         ;;
 
       '-b' | '--blue')
-        if [[ -z "$1" ]] || [[ "$1" =~ ^-+ ]]; then
-          echo "$SCRIPT_NAME: requires an argument -- $1" >&2
-          exit 1
-        fi
-        opt_blue=$1
-        shift 1
+        local color=$1
+        shift
+        validate_opt_value "$color"
+        opt_blue="$color"
+        shift
         ;;
 
       '-u' | '--unko-color')
@@ -229,7 +247,7 @@ get_opts() {
         ;;
 
       -*)
-        echo "$SCRIPT_NAME: illegal option -- $1" >&2
+        log "illegal option -- $1"
         exit 1
         ;;
 
@@ -253,7 +271,7 @@ if [ ! "$RUN_TEST" = true ]; then
   opt_green=255
   opt_blue=255
   opt_unko_level=3
-  get_opts ${1+"$@"}
+  set_opts ${1+"$@"}
 
   main "$opt_unko_level" "$opt_red" "$opt_green" "$opt_blue"
 fi
