@@ -14,6 +14,6 @@ install:
   - GO111MODULE=off go get mvdan.cc/sh/cmd/shfmt
 
 script:
-  - shfmt -i 2 -ci -sr -d bin/
-  - shellcheck bin/*
+  - ls -1 bin/* | grep -v unko.puzzle | xargs shfmt -i 2 -ci -sr -d
+  - ls -1 bin/* | grep -v unko.puzzle | xargs shellcheck
   - ./test.sh
