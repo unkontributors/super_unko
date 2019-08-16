@@ -67,7 +67,7 @@ while (($# > 0)); do
       shift
 
       if is_integer "$num"; then
-        append_opt "$num"
+        append_opt "--width" "$num"
       elif [ "$num" = auto ]; then
         append_opt "--termwidth"
       else
