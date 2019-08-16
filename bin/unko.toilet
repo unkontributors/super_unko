@@ -26,7 +26,7 @@ not_found() {
 }
 
 append_opt() {
-  toilet_opt=("${toilet_opt[@]}" "$@")
+  toilet_opt+=("$@")
 }
 
 version() {
@@ -40,47 +40,50 @@ unexpected() {
   usage
 }
 
+is_integer() {
+  local num
+  num=$1
+  [[ "$num" =~ ^[0-9]+$ ]]
+}
+
 # unko.toilet 用のオプションをパースする
 declare -a args
 declare -a toilet_opt
 while (($# > 0)); do
-  case "$1" in
-    -*)
+  opt=$1
+  shift
+
+  case "$opt" in
+    -h | --help)
       # --help か -h が指定されていたらUsage出して終了
-      [[ "$1" =~ ^(--help|-h)$ ]] && usage
-
+      usage
+      ;;
+    -v | --version)
       # --version か -v なら version情報を出力して終了
-      [[ "$1" =~ ^(-v|--version)$ ]] && version
+      version
+      ;;
+    -w | --width)
+      num=$1
+      shift
 
-      : "-w|--width <width>" &&
-        [[ "$1" =~ ^-(w|-width)$ ]] && {
-        # widthの引数はint
-        [[ "$2" =~ [0-9]+ ]] && {
-          append_opt "--width $2"
-        } || {
-          # でも auto なら --termwidth を指定する
-          [[ "$2" == "auto" ]] && append_opt "--termwidth"
-        } || {
-          # ダメ
-          unexpected "argument $1 $2 <="
-        }
-        shift 2
-        continue
-      }
-
-      : "Filter" &&
-        [[ "$1" =~ ^--(left|right|flip|flop|180|border|crop)$ ]] && {
-        append_opt "--filter ${1//--/}"
-        shift
-        continue
-      }
-
-      : "マッチしなかった" && unexpected "option $1"
+      if is_integer "$num"; then
+        append_opt "$num"
+      elif [ "$num" = auto ]; then
+        append_opt "--termwidth"
+      else
+        unexpected "argument $opt $num <="
+      fi
+      ;;
+    --left | --right | --flip | --flop | --180 | --border | --crop)
+      append_opt "--filter" "${opt//--/}"
+      ;;
+    -*)
+      # いずれのオプションともマッチしなかった
+      unexpected "option $opt"
       ;;
     *)
       # 引数
-      args=("${args[@]}" "$1")
-      shift
+      args+=("$opt")
       ;;
   esac
 done
