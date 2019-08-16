@@ -1,13 +1,24 @@
 #!/bin/sh
-usage(){
-cat << EOF
+
+usage() {
+  cat << EOF
 Usage: $0 <UNKO> [PHRASE ...]
 UNKO:   Alternative character of 💩.
 PHRASE: Phrase for shout.
 EOF
-exit 0
+  exit 0
 }
-if [ $# -lt 1 ] ; then usage; fi
-unko="$1"; shift
-unko_shout="${0%/*}/unko.shout"
-exec "$unko_shout" ${1+"$@"} | sed "s/💩/$unko/g"
+
+if [ $# -lt 1 ]; then
+  usage
+fi
+
+UNKO="$1"
+readonly UNKO
+
+shift
+
+UNKO_SHOUT="${0%/*}/unko.shout"
+readonly UNKO_SHOUT
+
+exec "$UNKO_SHOUT" ${1+"$@"} | sed "s/💩/$UNKO/g"
