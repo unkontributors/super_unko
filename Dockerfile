@@ -1,3 +1,4 @@
+# vim: tw=0:
 FROM alpine:3.9 AS build-stage
 
 RUN echo -e $'\n\
@@ -15,7 +16,18 @@ ENV DIR_PREFIX /usr/local
 ENV SRC_DIR $DIR_PREFIX/src
 ENV BIN_DIR $DIR_PREFIX/bin
 
-RUN apk --no-cache add git bash perl make automake autoconf pkgconfig gcc musl-dev libcaca-dev figlet \
+RUN apk --no-cache add \
+      git \
+      bash \
+      perl \
+      make \
+      automake \
+      autoconf \
+      pkgconfig \
+      gcc \
+      musl-dev \
+      libcaca-dev \
+      figlet \
     && git clone https://github.com/unkontributors/super_unko.git $SRC_DIR/super_unko \
     && $SRC_DIR/super_unko/install.sh \
     && git clone https://github.com/fumiyas/home-commands.git $SRC_DIR/home-commands \
@@ -32,7 +44,12 @@ RUN apk --no-cache add git bash perl make automake autoconf pkgconfig gcc musl-d
     && install -m 0644 ./fonts/*.tlf /usr/local/share/figlet/
 
 FROM alpine:3.9 AS exec-stage
-RUN apk add --no-cache bash perl libcaca-dev
+RUN apk add --no-cache \
+      bash \
+      perl \
+      libcaca-dev \
+      bc \
+      ncurses
 COPY --from=build-stage /usr/local/bin/* /usr/local/bin/
 COPY --from=build-stage /usr/local/src/toilet/fonts/* /usr/local/share/figlet/
 
