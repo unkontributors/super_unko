@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function usage() {
+usage() {
   (
     echo "Usage: unko.toilet [ -hv ] [ -w outputwidth ]"
     echo "                   [ --crop ] [ --flip ] [ --flop ]"
@@ -21,21 +21,21 @@ function usage() {
   exit 1
 }
 
-function not_found() {
-  echo "[ERR] $@ not found  [unko.toilet]" 1>&2
+not_found() {
+  echo "[ERR] $* not found  [unko.toilet]" 1>&2
   exit 1
 }
 
-function append_opt() {
-  toilet_opt=(${toilet_opt[@]} $@)
+append_opt() {
+  toilet_opt=("${toilet_opt[@]}" "$@")
 }
 
-function version() {
+version() {
   echo "unko.toilet version 💩.💩.💩 (20💩💩/💩💩/💩💩)"
   exit 0
 }
 
-function unexpected() {
+unexpected() {
   echo "[ERR] Unexpected $1" 1>&2
   echo "" 1>&2
   usage
@@ -44,7 +44,7 @@ function unexpected() {
 # unko.toilet 用のオプションをパースする
 declare -a args
 declare -a toilet_opt
-while (( $# > 0 )); do
+while (($# > 0)); do
   case "$1" in
     -*)
       # --help か -h が指定されていたらUsage出して終了
@@ -55,51 +55,51 @@ while (( $# > 0 )); do
 
       : "-w|--width <width>" &&
         [[ "$1" =~ ^-(w|-width)$ ]] && {
-          # widthの引数はint
-          [[ "$2" =~ [0-9]+ ]] && {
-            append_opt "--width $2"
-          } || {
-            # でも auto なら --termwidth を指定する
-            [[ "$2" == "auto" ]] && append_opt "--termwidth"
-          } || {
-            # ダメ
-            unexpected "argument $1 $2 <="
-          }
-          shift 2
-          continue
+        # widthの引数はint
+        [[ "$2" =~ [0-9]+ ]] && {
+          append_opt "--width $2"
+        } || {
+          # でも auto なら --termwidth を指定する
+          [[ "$2" == "auto" ]] && append_opt "--termwidth"
+        } || {
+          # ダメ
+          unexpected "argument $1 $2 <="
+        }
+        shift 2
+        continue
       }
 
       : "Filter" &&
         [[ "$1" =~ ^--(left|right|flip|flop|180|border|crop)$ ]] && {
-          append_opt "--filter ${1//--/}"
-          shift
-          continue
-        }
+        append_opt "--filter ${1//--/}"
+        shift
+        continue
+      }
 
       : "マッチしなかった" && unexpected "option $1"
       ;;
     *)
       # 引数
-      args=(${args[@]} $1)
+      args=("${args[@]}" "$1")
       shift
       ;;
   esac
 done
 
 # 第一引数に与えた文字を変換、デフォルト文字はうんこ
-text="${args[@]:-うんこ}"
+text=("${args[@]:-うんこ}")
 
 # stdinから入力されてるならそっちを使う
-[ -p /dev/stdin ] && text="$(cat -)"
+[ -p /dev/stdin ] && text=("$(cat -)")
 
 # toilet がなかったらダメ
 type toilet &> /dev/null || not_found "toilet command"
 
 # フォントにbigmono9を使うので無かったらダメ
-echo |toilet -f bigmono9 &>/dev/null || not_found "bigmono9 font"
+echo | toilet -f bigmono9 &> /dev/null || not_found "bigmono9 font"
 
 # unko.toilet
-toilet ${toilet_opt[@]} -f bigmono9 "${text}" |
+toilet "${toilet_opt[@]}" -f bigmono9 "${text[@]}" |
   # 薄いところは消す
   sed 's/░\|▒/ /g' |
   # スペース以外を💩へ
