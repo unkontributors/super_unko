@@ -1,23 +1,22 @@
 #!/bin/bash
 
 usage() {
-  (
-    echo "Usage: unko.toilet [ -hv ] [ -w outputwidth ]"
-    echo "                   [ --crop ] [ --flip ] [ --flop ]"
-    echo "                   [ --180 ] [ --left ] [ --right ]"
-    echo "                   [ --border ] [ message ]"
-    echo ""
-    echo "  -h, --help                  このヘルプを出力して終了します"
-    echo "  -w, --width <width, auto>   出力の幅です。autoを指定すると端末の幅になります"
-    echo "      --crop                  上下左右の無駄なスペースを削除します"
-    echo "      --flip                  水平方向に反転します"
-    echo "      --flop                  垂直方向に反転します"
-    echo "      --180                   180度回転します"
-    echo "      --left                  左へ90度回転します"
-    echo "      --right                 右へ90度回転します"
-    echo "      --border                枠線をつけます"
-    echo ""
-  ) 1>&2
+  cat << EOS >&2
+Usage: unko.toilet [ -hv ] [ -w outputwidth ]
+                   [ --crop ] [ --flip ] [ --flop ]
+                   [ --180 ] [ --left ] [ --right ]
+                   [ --border ] [ message ]
+
+  -h, --help                  このヘルプを出力して終了します
+  -w, --width <width, auto>   出力の幅です。autoを指定すると端末の幅になります
+      --crop                  上下左右の無駄なスペースを削除します
+      --flip                  水平方向に反転します
+      --flop                  垂直方向に反転します
+      --180                   180度回転します
+      --left                  左へ90度回転します
+      --right                 右へ90度回転します
+      --border                枠線をつけます
+EOS
   exit 1
 }
 
