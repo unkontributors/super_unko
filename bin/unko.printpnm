@@ -174,7 +174,7 @@ EOS
 }
 
 log() {
-  echo -e "$SCRIPT_NAME: $@" >&2
+  echo -e "$SCRIPT_NAME: $*" >&2
 }
 
 is_empty() {
