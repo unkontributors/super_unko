@@ -173,23 +173,26 @@ Flags:
 EOS
 }
 
+## log はスクリプト名と合わせて、メッセージをエラー出力する。
 log() {
   echo -e "$SCRIPT_NAME: $*" >&2
 }
 
+## is_empty は引数が空文字列であるかを判定する。
 is_empty() {
   [[ -z "$1" ]]
 }
 
-is_opt() {
+## is_opt_key は引数がコマンドライン引数のオプションキーであるかを判定する。
+is_opt_key() {
   [[ "$1" =~ ^-+ ]]
 }
 
-## validate_color_opt は引数がコマンドオプションの値であるかを判定する。
+## validate_opt_value は引数がコマンドオプションの値であるかを判定する。
 ## 不正な値の場合はシェルを異常終了する。
 validate_opt_value() {
   local value=$1
-  if is_empty "$value" || is_opt "$value"; then
+  if is_empty "$value" || is_opt_key "$value"; then
     log "requires an argument -- $value"
     exit 1
   fi
@@ -213,44 +216,35 @@ set_opts() {
         usage
         exit
         ;;
-
       '--version')
         echo $VERSION
         exit
         ;;
-
       '-r' | '--red')
         local color=$1
         shift
         validate_opt_value "$color"
         opt_red="$color"
         ;;
-
       '-g' | '--green')
         local color=$1
         shift
         validate_opt_value "$color"
         opt_green="$color"
-        shift
         ;;
-
       '-b' | '--blue')
         local color=$1
         shift
         validate_opt_value "$color"
         opt_blue="$color"
-        shift
         ;;
-
       '-u' | '--unko-color')
         opt_use_unko_color=true
         ;;
-
       -*)
         log "illegal option -- $1"
         exit 1
         ;;
-
       *)
         opt_unko_level=$opt
         ;;
