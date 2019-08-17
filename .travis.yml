@@ -3,6 +3,8 @@ language: bash
 matrix:
   include:
     - os: linux
+      env: SH_VERSION=default
+    - os: linux
       env: SH_VERSION=3.2
     - os: linux
       env: SH_VERSION=4.0
@@ -30,6 +32,10 @@ addons:
 before_install:
   - sudo add-apt-repository ppa:duggan/bats --yes
   - sudo apt-get update -qq
+  ## Install bash
+  - export TMPDIR=$TRAVIS_BUILD_DIR/tmp
+  - mkdir -p $TMPDIR
+  - if [[ "$SH_VERSION" != "default" ]];then ( cd "$TMPDIR" && curl "http://ftp.gnu.org/gnu/bash/bash-${SH_VERSION}.tar.gz" | tar xvz && cd bash* && ./configure; make && sudo make install && sudo mv /bin/bash /bin/bash.old && sudo cp ./bash /bin/bash ) ;fi
 
 install:
   - sudo apt-get install -qq bats
