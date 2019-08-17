@@ -10,7 +10,12 @@ addons:
       - golang
       - shellcheck
 
+before_install:
+  - sudo add-apt-repository ppa:duggan/bats --yes
+  - sudo apt-get update -qq
+
 install:
+  - sudo apt-get install -qq bats
   - GO111MODULE=off go get mvdan.cc/sh/cmd/shfmt
 
 script:
