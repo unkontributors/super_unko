@@ -1,4 +1,21 @@
-language: generic
+language: bash
+
+matrix:
+  include:
+    - os: linux
+      env: SH_VERSION=3.2
+    - os: linux
+      env: SH_VERSION=4.0
+    - os: linux
+      env: SH_VERSION=4.1
+    - os: linux
+      env: SH_VERSION=4.2
+    - os: linux
+      env: SH_VERSION=4.3
+    - os: linux
+      env: SH_VERSION=4.4
+    - os: linux
+      env: SH_VERSION=5.0
 
 addons:
   apt:
