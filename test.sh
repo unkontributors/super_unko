@@ -3,6 +3,7 @@
 SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
 readonly SCRIPT_NAME
 
+readonly RED=$'\x1b[31m'
 readonly BLUE=$'\x1b[34m'
 readonly RESET=$'\x1b[m'
 
@@ -65,6 +66,13 @@ EOS
     sed 's/-test.bats//g' <<< "    $test_script"
   done
 }
+
+type bats >& /dev/null
+ret=$?
+if [[ "$ret" -ne 0 ]]; then
+  echo -e "[ ${RED}ERR${RESET} ] bats was not found. See a section of Testing on README."
+  exit 1
+fi
 
 main ${1+"$@"}
 exit $?
