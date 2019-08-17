@@ -27,7 +27,6 @@ addons:
       - gcc
       - make
       - golang
-      - shellcheck
 
 before_install:
   - sudo add-apt-repository ppa:duggan/bats --yes
@@ -36,6 +35,7 @@ before_install:
   - export TMPDIR=$TRAVIS_BUILD_DIR/tmp
   - mkdir -p $TMPDIR
   - if [[ "$SH_VERSION" != "default" ]];then ( cd "$TMPDIR" && curl "http://ftp.gnu.org/gnu/bash/bash-${SH_VERSION}.tar.gz" | tar xvz && cd bash* && ./configure; make && sudo make install && sudo mv /bin/bash /bin/bash.old && sudo cp ./bash /bin/bash ) ;fi
+  - docker pull koalaman/shellcheck:stable ## Official docker container (v0.6.0 or later)
 
 install:
   - sudo apt-get install -qq bats
@@ -43,6 +43,7 @@ install:
   - GO111MODULE=off go get mvdan.cc/sh/cmd/shfmt
 
 script:
+  - alias shellcheck='docker run -v "$PWD:/mnt" koalaman/shellcheck'
   - ls -1 bin/* | grep -v unko.puzzle | xargs shfmt -i 2 -ci -sr -d
   - ls -1 bin/* | grep -v unko.puzzle | xargs shellcheck
   - shfmt -i 2 -ci -sr -d test.sh
