@@ -27,7 +27,10 @@ RHSUNKO='）'
 INDENT='　'
 
 if [ $FLAG_DEMO -eq 1 ] ; then
-  unko.shout デモだよ！！ | sed -e "y/${EYE}${LIP}${NOSE}${CROWN}${UNKO}${LHSUNKO}${RHSUNKO}${INDENT}/ー💋Δ🌴⭐／＼三/"
+	unko.shout デモだよ！！ | tail -n +4 | sed -e "s/${LIP}/💋/" | \
+		sed -e "s/${NOSE}/Δ/" | sed -e "s/${CROWN}/🌴/" | sed -e "s/${UNKO}/⭐/g" | \
+		sed -e "s/$LHSUNKO/／/g" | sed -e "s/$RHSUNKO/＼/g" | sed -e "s/$INDENT/三/g" |\
+		sed -e "s/$EYE/ー/g"
 fi
 
 ## vim: set ft=sh:
