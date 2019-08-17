@@ -131,6 +131,18 @@ $ ./unko.yes
 ...
 ```
 
+Testing
+========================
+
+We use the [bats](https://github.com/sstephenson/bats) testing framework.
+Please you install that.
+
+Run below.
+
+```bash
+./test.sh
+```
+
 Contribution
 ========================
 Welcome! Welcome!
