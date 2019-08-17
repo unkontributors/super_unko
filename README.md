@@ -1,7 +1,7 @@
 super_unko
 ===========================================
 [![License](https://img.shields.io/badge/license-%F0%9F%92%A9-orange.svg)](./LICENSE)
-[![Build Status](https://travis-ci.org/unkontributors/super_unko.svg?branch=master)](https://travis-ci.org/greymd/super_unko)
+[![Build Status](https://travis-ci.org/unkontributors/super_unko.svg?branch=master)](https://travis-ci.org/unkontributors/super_unko)
 
 super_unko project is the one of the awesome, clean and sophisticated OSS project in the world.
 Let's create shit commands!
