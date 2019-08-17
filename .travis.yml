@@ -1,4 +1,21 @@
-language: generic
+language: bash
+
+matrix:
+  include:
+    - os: linux
+      env: SH_VERSION=3.2
+    - os: linux
+      env: SH_VERSION=4.0
+    - os: linux
+      env: SH_VERSION=4.1
+    - os: linux
+      env: SH_VERSION=4.2
+    - os: linux
+      env: SH_VERSION=4.3
+    - os: linux
+      env: SH_VERSION=4.4
+    - os: linux
+      env: SH_VERSION=5.0
 
 addons:
   apt:
@@ -10,10 +27,18 @@ addons:
       - golang
       - shellcheck
 
+before_install:
+  - sudo add-apt-repository ppa:duggan/bats --yes
+  - sudo apt-get update -qq
+
 install:
+  - sudo apt-get install -qq bats
+  - bats --version
   - GO111MODULE=off go get mvdan.cc/sh/cmd/shfmt
 
 script:
   - ls -1 bin/* | grep -v unko.puzzle | xargs shfmt -i 2 -ci -sr -d
   - ls -1 bin/* | grep -v unko.puzzle | xargs shellcheck
+  - shfmt -i 2 -ci -sr -d test.sh
+  - shellcheck test.sh
   - ./test.sh
