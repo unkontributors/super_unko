@@ -1,0 +1,130 @@
+#!/bin/bash
+
+set -eu
+
+THIS_DIR=$(
+  cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd
+)
+readonly THIS_DIR
+
+SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
+readonly SCRIPT_NAME
+
+main() {
+  if [[ $# -lt 1 ]]; then
+    log "Must need sub command."
+    usage >&2
+    return 1
+  fi
+
+  local cmd="$1"
+  shift
+
+  case "$cmd" in
+    help)
+      if [[ $# -eq 0 ]]; then
+        usage
+        return
+      fi
+
+      print_command_help "$1"
+      return
+      ;;
+    *)
+      local cmd_path
+      local ret
+
+      set +eu
+      cmd_path="$(to_command_path "$cmd")"
+      ret=$?
+      if [[ "$ret" -eq 0 ]]; then
+        "$cmd_path" "$@"
+        return
+      fi
+      set -eu
+
+      log "Illegal sub command. (cmd = $cmd)"
+      usage >&2
+      return 1
+      ;;
+  esac
+}
+
+usage() {
+  cat << EOS
+$SCRIPT_NAME is a master of unko.
+$SCRIPT_NAME controles sub unkommands by own charisma.
+
+Available commands:
+EOS
+  local pad="    "
+  echo "${pad}help <command>"
+  for cmd_fullpath in "$THIS_DIR/"*unko.*; do
+    local cmd=${cmd_fullpath##*/*unko.}
+    echo "${pad}$cmd"
+  done
+}
+
+log() {
+  echo -e "$SCRIPT_NAME: $*" 2>&1
+}
+
+print_command_help() {
+  local cmd="$1"
+  local cmd_path
+  local ret
+
+  set +eu
+  cmd_path="$(to_command_path "$cmd")"
+  ret=$?
+  if [[ "$ret" -ne 0 ]]; then
+    log "$cmd is not found. (cmd = $cmd)"
+    usage >&2
+    return 1
+  fi
+
+  "$cmd_path" -h
+  ret=$?
+  if [[ "$ret" -ne 0 ]]; then
+    log "$cmd is not implemented help options."
+    return 1
+  fi
+  set -eu
+}
+
+## to_command_path はサブコマンド名からunkoコマンドのパスを得る
+to_command_path() {
+  local cmd="$1"
+
+  for prefix in unko bigunko; do
+    for cmd_fullpath in "$THIS_DIR/$prefix".*; do
+      local c=${cmd_fullpath##*/unko.}
+      if [[ "$c" = "$cmd" ]]; then
+        echo "$cmd_fullpath"
+        return
+      fi
+    done
+  done
+
+  return 1
+}
+
+## to_command_name はコマンドのパスからコマンド名を得る
+to_command_name() {
+  local cmd="$1"
+
+  for prefix in unko bigunko; do
+    for cmd_fullpath in "$THIS_DIR/$prefix".*; do
+      local c=${cmd_fullpath##*/unko.}
+      if [[ "$c" = "$cmd" ]]; then
+        echo "$cmd_fullpath"
+        return
+      fi
+    done
+  done
+
+  return 1
+}
+
+main ${1+"$@"}
+exit $?
