@@ -49,15 +49,15 @@ setup() {
   [ "$output" = 000 ]
 }
 
-@test "unko.printpnmのalign_center関数は文字列を指定の文字で中央揃えして返す" {
-  run align_center 0 <<< $(echo -e "1\n111")
+@test "unko.printpnmのalign_center関数は文字列を指定の文字で中央揃えして返す (奇数)" {
+  run align_center 0 <<< "$(echo -e '1\n111')"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "010" ]
   [ "${lines[1]}" = "111" ]
 }
 
-@test "unko.printpnmのalign_center関数は文字列を指定の文字で中央揃えして返す" {
-  run align_center 0 <<< $(echo -e "1\n1111")
+@test "unko.printpnmのalign_center関数は文字列を指定の文字で中央揃えして返す (偶数)" {
+  run align_center 0 <<< "$(echo -e '1\n1111')"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "0100" ]
   [ "${lines[1]}" = "1111" ]

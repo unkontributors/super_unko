@@ -174,7 +174,7 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=" ]
 }
 
 @test "left" {
-  run bash -c "$TARGET_COMMAND --right | base64"
+  run bash -c "$TARGET_COMMAND --left | base64"
   [ "$status" -eq 0 ]
   [ "$output" = "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg

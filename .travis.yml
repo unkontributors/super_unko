@@ -33,9 +33,12 @@ before_install:
 
 install:
   - sudo apt-get install -qq bats
+  - bats --version
   - GO111MODULE=off go get mvdan.cc/sh/cmd/shfmt
 
 script:
   - ls -1 bin/* | grep -v unko.puzzle | xargs shfmt -i 2 -ci -sr -d
   - ls -1 bin/* | grep -v unko.puzzle | xargs shellcheck
+  - shfmt -i 2 -ci -sr -d test.sh
+  - shellcheck test.sh
   - ./test.sh
