@@ -41,9 +41,11 @@ install:
   - sudo apt-get install -qq bats
   - bats --version
   - GO111MODULE=off go get mvdan.cc/sh/cmd/shfmt
+  - alias shellcheck='docker run -v "$PWD:/mnt" koalaman/shellcheck'
+  - bash --version
+  - shellcheck --version
 
 script:
-  - alias shellcheck='docker run -v "$PWD:/mnt" koalaman/shellcheck'
   - ls -1 bin/* | grep -v unko.puzzle | xargs shfmt -i 2 -ci -sr -d
   - ls -1 bin/* | grep -v unko.puzzle | xargs shellcheck
   - shfmt -i 2 -ci -sr -d test.sh
