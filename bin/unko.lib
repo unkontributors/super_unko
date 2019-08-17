@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+FLAG_DEMO=0
+if [ "$1" == "demo" ] ; then
+  FLAG_DEMO=1
+else
+  if [ "$0" != "bash" ] ; then ### to use this library, use by `source` or `.`
+cat <<EOU
+usage: $0: king-unko substitution library.
+
+How to use:
+
+$ . path/to/unko.lib
+$ unko.shout | sed -e "s/\$SOME_SYMBOL/ANOTHER_SYMBOL/"
+
+EOU
+  fi
+fi
+
+EYE=$(echo -e '\U1F441')
+LIP=👄
+NOSE=👃
+CROWN=👑
+UNKO=💩
+LHSUNKO='（'
+RHSUNKO='）'
+INDENT='　'
+
+if [ $FLAG_DEMO -eq 1 ] ; then
+  unko.shout デモだよ！！ | sed -e "y/${EYE}${LIP}${NOSE}${CROWN}${UNKO}${LHSUNKO}${RHSUNKO}${INDENT}/ー💋Δ🌴⭐／＼三/"
+fi
+
+## vim: set ft=sh:
