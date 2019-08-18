@@ -48,7 +48,11 @@ main() {
 usage() {
   cat << EOS
 $SCRIPT_NAME is a master of unko.
-$SCRIPT_NAME controles sub unkommands by own charisma.
+
+About subcommands:
+    $SCRIPT_NAME controles sub unkommands by own charisma.
+    $SCRIPT_NAME can control them as unkommands if there are executables that
+    called 'unko.*' or 'bigunko.*' in the same directory as $SCRIPT_NAME.
 
 Available commands:
 EOS
