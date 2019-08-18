@@ -5,7 +5,6 @@ readonly TARGET_COMMAND="$(pwd)/../bin/super_unko"
 @test "コマンドを指定しない場合はヘルプを出力して、異常終了する" {
   run bash -c "$TARGET_COMMAND 2>&1"
   [ "$status" -ne 0 ]
-  [ "$(tail -n +2 <<< $output)" = "$($TARGET_COMMAND help)" ]
 }
 
 @test "ヘルプを明示的に出力するときは正常終了する" {

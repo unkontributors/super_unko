@@ -46,6 +46,7 @@ install:
   - shellcheck --version
 
 script:
+  - sudo ./install.sh
   - ls -1 bin/* | grep -v unko.puzzle | xargs shfmt -i 2 -ci -sr -d
   - ls -1 bin/* | grep -v unko.puzzle | xargs shellcheck
   - shfmt -i 2 -ci -sr -d test.sh
