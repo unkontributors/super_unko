@@ -11,6 +11,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 
 | Command       | Description |
 |---------------|-------------|
+| super_unko    | Controles sub unkommands |
 | unko.tr       | Convert various expressions equals to shit into 💩 (shit). |
 | unko.ls       | Shows various shit expression. |
 | unko.yes      | Generate 💩 shit forever. |
