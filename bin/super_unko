@@ -59,7 +59,16 @@ Available commands:
 EOS
   local pad="    "
   echo "${pad}help <command>"
-  for cmd_fullpath in "$THIS_DIR/"*unko.*; do
+
+  # bigunko.show系のを先に
+  for cmd_fullpath in "$THIS_DIR/"bigunko*; do
+    local cmd=${cmd_fullpath##*/}
+    cmd=${cmd//unko./}
+    echo "${pad}$cmd"
+  done
+
+  # unko.*系の
+  for cmd_fullpath in "$THIS_DIR/"unko.*; do
     local cmd=${cmd_fullpath##*/*unko.}
     echo "${pad}$cmd"
   done
@@ -96,14 +105,21 @@ print_command_help() {
 to_command_path() {
   local cmd="$1"
 
-  for prefix in unko bigunko; do
-    for cmd_fullpath in "$THIS_DIR/$prefix".*; do
-      local c=${cmd_fullpath##*/unko.}
-      if [[ "$c" = "$cmd" ]]; then
-        echo "$cmd_fullpath"
-        return
-      fi
-    done
+  for cmd_fullpath in "$THIS_DIR/bigunko".*; do
+    local big_cmd=${cmd//big/bigunko.}
+    local c=${cmd_fullpath##*/}
+    if [[ "$c" = "$big_cmd" ]]; then
+      echo "$cmd_fullpath"
+      return
+    fi
+  done
+
+  for cmd_fullpath in "$THIS_DIR/unko".*; do
+    local c=${cmd_fullpath##*/unko.}
+    if [[ "$c" = "$cmd" ]]; then
+      echo "$cmd_fullpath"
+      return
+    fi
   done
 
   return 1
