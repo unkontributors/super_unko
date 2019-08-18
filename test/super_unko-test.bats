@@ -1,22 +1,24 @@
 #!/usr/bin/env bats
 
+readonly TARGET_COMMAND="$(pwd)/../bin/super_unko"
+
 @test "no command" {
-  run ./bin/super_unko
+  run "$TARGET_COMMAND"
   [ "$status" -eq 1 ]
 }
 
 @test "help" {
-  run ./bin/super_unko help
+  run "$TARGET_COMMAND" help
   [ "$status" -eq 0 ]
 }
 
 @test "help printpnm" {
-  run ./bin/super_unko help printpnm
+  run "$TARGET_COMMAND" help printpnm
   [ "$status" -eq 0 ]
 }
 
 @test "ls" {
-  run ./bin/super_unko ls
+  run "$TARGET_COMMAND" ls
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = うんこ ]
 }
