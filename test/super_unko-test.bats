@@ -13,11 +13,6 @@ readonly TARGET_COMMAND="$(pwd)/../bin/super_unko"
   [ "$status" -eq 0 ]
 }
 
-@test "サブコマンドのヘルプを出力する" {
-  run "$TARGET_COMMAND" help printpnm
-  [ "$status" -eq 0 ]
-}
-
 @test "unko.lsを呼び出す" {
   run "$TARGET_COMMAND" ls
   [ "$status" -eq 0 ]
@@ -56,6 +51,14 @@ readonly TARGET_COMMAND="$(pwd)/../bin/super_unko"
   [ "${lines[1]}" = "　　　（　　　）" ]
   [ "${lines[2]}" = "　　（　　　　　）" ]
   [ "${lines[3]}" = "　（　　　　　　　）" ]
+}
+
+@test "unko.tower 2を呼び出す" {
+  run bash -c "$TARGET_COMMAND tower 2"
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = "　　　　人" ]
+  [ "${lines[1]}" = "　　（　　　）" ]
+  [ "${lines[2]}" = "　（　　　　　）" ]
 }
 
 @test "bigunko.showを呼び出す" {
