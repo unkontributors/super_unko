@@ -1,54 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bats
 
-__THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
+readonly TARGET_COMMAND="../bin/unko.toilet"
 
-TARGET_COMMAND="${__THIS_DIR}/../bin/unko.toilet"
-
-# message [name] [status]
-# statusが0ならOKを出力してreturn、 それ以外ならNGを出力してexit 1
-function message() {
-  name="$1"
-  status="$2"
-  expect="$3"
-  
-  [[ "$status" == "$3" ]] && echo "[OK] $name" && return 0
-
-  echo "[NG] $name" 
-  exit 1
+@test "普通に実行" {
+  run "$TARGET_COMMAND"
+  [ "$status" -eq 0 ]
 }
 
-function EQ() {
-  name="$1"
-  expect="$2"
-  actual="$3"
-
-  [[ "$expect" == "$actual" ]] 
-
-  message $name $? 0
+@test "おかしなオプション--お菓子" {
+  run "$TARGET_COMMAND" --お菓子
+  [ "$status" -ne 0 ]
 }
 
-function OK() {
-  name="$1"
-  shift
-  cmd="$@"
-
-  $cmd &> /dev/null
-  message $name $? 0
-}
-
-function NG() {
-  name="$1"
-  shift
-  cmd="$@"
-
-  $cmd &> /dev/null
-  message $name $? 1
-}
-
-OK "普通に実行" "$TARGET_COMMAND"
-NG "おかしなオプション--お菓子" "$TARGET_COMMAND --お菓子"
-
-HANAGE_BASE64="ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+readonly HANAGE_BASE64="ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAg8J+SqSAgICAgICAgICAg
 ICAgICAgIPCfkqkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIPCfkqkgICAg8J+SqSAg
 8J+SqSAgICAKICDwn5KpICAgICAgICAgICAg8J+SqSAgICAgICAgICAgICAgICAgIPCfkqkgIPCf
@@ -75,10 +39,23 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK"
 
-EQ "stdinから" "$(echo はなげ|$TARGET_COMMAND|base64)" "$HANAGE_BASE64"
-EQ "引数に" "$($TARGET_COMMAND はなげ|base64)" "$HANAGE_BASE64"
+@test "stdinから" {
+  run bash -c "echo はなげ| $TARGET_COMMAND | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "$HANAGE_BASE64" ]
+}
 
-EQ "flip" "$($TARGET_COMMAND --flip|base64)" "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+@test "引数に" {
+  run bash -c "echo はなげ| $TARGET_COMMAND | base64"
+  run "$TARGET_COMMAND" はなげ | base64
+  [ "$status" -eq 0 ]
+  [ "$output" = "$HANAGE_BASE64" ]
+}
+
+@test "flip" {
+  run bash -c "$TARGET_COMMAND --flip | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICDwn5KpICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIPCfkqnwn5KpICAgICAg
 ICAgIAogICAgICAgICAgICAgICAgICAgIPCfkqkgICAgICAgICAgICAgICAgICAgICAgICDwn5Kp
@@ -102,9 +79,13 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIAo="
+ICAgICAgICAgIAo=" ]
+}
 
-EQ "flop" "$($TARGET_COMMAND --flop|base64)" "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+@test "flop" {
+  run bash -c "$TARGET_COMMAND --flop | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAog
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
@@ -128,9 +109,13 @@ ICAgICAgICAgIPCfkqkgICAgICAgICAgICAgICAgICAgICAgICDwn5KpICAgICAgICAgICAgICAg
 ICAgICAKICAgICAgICAgIPCfkqnwn5KpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgIPCfkqkgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIAo="
+ICAgICAgICAgIAo=" ]
+}
 
-EQ "180" "$($TARGET_COMMAND --180|base64)" "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+@test "180" {
+  run bash -c "$TARGET_COMMAND --180 | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAog
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
@@ -154,9 +139,13 @@ ICAgICAgICAgICAgICAgICAgICAgIPCfkqkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgIPCfkqnwn5KpICAgICAgICAgIAogICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIPCf
-kqkgICAgICAgIAo="
+kqkgICAgICAgIAo=" ]
+}
 
-EQ "right" "$($TARGET_COMMAND --right|base64)" "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+@test "right" {
+  run bash -c "$TARGET_COMMAND --right | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDwn5Kp8J+SqSAgICAg
 ICAgICAgICAgICAKICAgICAgICAgICAg8J+SqfCfkqkgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAg8J+SqfCfkqkgICAg8J+SqfCfkqnwn5Kp8J+SqQogICAgICAgICAgICAgICAg8J+SqfCfkqnw
@@ -181,10 +170,13 @@ ICAgICAgICDwn5Kp8J+SqSAgICAgICAgICAgICAgICAgICAg8J+SqfCfkqnwn5Kp8J+SqSAgICAg
 ICAgICAgIAogICAgICAgICAgICAgICAg8J+SqfCfkqnwn5Kp8J+SqSAgICAgICAgICAgICAgICAg
 ICAg8J+SqfCfkqkgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo="
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=" ]
+}
 
-
-EQ "left" "$($TARGET_COMMAND --left|base64)" "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+@test "left" {
+  run bash -c "$TARGET_COMMAND --left | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgIAogICAgICAgICAgICDwn5Kp8J+SqSAgICAgICAgICAgICAgICAgICAg8J+SqfCfkqnw
 n5Kp8J+SqSAgICAgICAgICAgICAgICAKICAgICAgICAgICAg8J+SqfCfkqnwn5Kp8J+SqSAgICAg
@@ -209,9 +201,13 @@ ICAgICAgICAgICAgICAgIPCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqSAgICAgICAgICAgICAgICAK
 8J+SqfCfkqnwn5Kp8J+SqSAgICDwn5Kp8J+SqSAgICAgICAgICAgICAgICAgICAgICAgICAgICDw
 n5Kp8J+SqSAgICAgICAgICAgIAogICAgICAgICAgICAgICAg8J+SqfCfkqkgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo="
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=" ]
+}
 
-EQ "border" "$($TARGET_COMMAND --border|base64)" "8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnw
+@test "border" {
+  run bash -c "$TARGET_COMMAND --border | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnw
 n5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCf
 kqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+S
 qfCfkqkK8J+SqSAgICAgICAg8J+SqSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
@@ -243,9 +239,10 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAg8J+SqQrwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCf
 kqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+S
 qfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp
-8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqQo="
+8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqQo=" ]
+}
 
-WIDTH_20="ICAgICAgICDwn5KpICAgICAgICAgICAgICAgICAgCiAgICAgICAgICDwn5Kp8J+SqSAgICAgICAg
+readonly WIDTH_20="ICAgICAgICDwn5KpICAgICAgICAgICAgICAgICAgCiAgICAgICAgICDwn5Kp8J+SqSAgICAgICAg
 ICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICDwn5Kp8J+SqfCfkqnw
 n5KpICAgICAgICAgICAgCiAgICDwn5Kp8J+SqSAgICAgICAg8J+SqSAgICAgICAgICAKICAgICAg
 ICAgICAgICAgIPCfkqkgICAgICAgICAgCiAgICAgICAgICAgICAgICDwn5KpICAgICAgICAgIAog
@@ -271,13 +268,38 @@ ICAgICAgICDwn5Kp8J+SqfCfkqnwn5Kp8J+SqSAgICAgICAgICAKICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo="
 
-EQ "-w20" "$($TARGET_COMMAND -w 20|base64)" "$WIDTH_20"
-EQ "--width20" "$($TARGET_COMMAND --width 20|base64)" "$WIDTH_20"
+@test "-w 20" {
+  run bash -c "$TARGET_COMMAND -w 20 | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "$WIDTH_20" ]
+}
 
-NG "--help" "$TARGET_COMMAND --help"
-NG "-h" "$TARGET_COMMAND -h"
-EQ "--help==-h" "$($TARGET_COMMAND --help 2>&1)" "$($TARGET_COMMAND -h 2>&1)"
-EQ "ヘルプメッセージは正しいかな？" "$($TARGET_COMMAND --help 2>&1 | base64)" "VXNhZ2U6IHVua28udG9pbGV0IFsgLWh2IF0gWyAtdyBvdXRwdXR3aWR0aCBdCiAgICAgICAgICAg
+@test "--width 20" {
+  run bash -c "$TARGET_COMMAND --width 20 | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "$WIDTH_20" ]
+}
+
+@test "--help" {
+  run bash -c "$TARGET_COMMAND --help"
+  [ "$status" -ne 0 ]
+}
+
+@test "-h" {
+  run bash -c "$TARGET_COMMAND -h"
+  [ "$status" -ne 0 ]
+}
+
+@test "-h == --help" {
+  run bash -c "$TARGET_COMMAND -h 2>&1"
+  [ "$status" -ne 0 ]
+  [ "$output" = "$($TARGET_COMMAND --help 2>&1)" ]
+}
+
+@test "ヘルプメッセージは正しいかな？" {
+  run bash -c "$TARGET_COMMAND --help 2>&1 | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "VXNhZ2U6IHVua28udG9pbGV0IFsgLWh2IF0gWyAtdyBvdXRwdXR3aWR0aCBdCiAgICAgICAgICAg
 ICAgICAgICBbIC0tY3JvcCBdIFsgLS1mbGlwIF0gWyAtLWZsb3AgXQogICAgICAgICAgICAgICAg
 ICAgWyAtLTE4MCBdIFsgLS1sZWZ0IF0gWyAtLXJpZ2h0IF0KICAgICAgICAgICAgICAgICAgIFsg
 LS1ib3JkZXIgXSBbIG1lc3NhZ2UgXQoKICAtaCwgLS1oZWxwICAgICAgICAgICAgICAgICAg44GT
@@ -290,12 +312,32 @@ vuOBmQogICAgICAtLWZsb3AgICAgICAgICAgICAgICAgICDlnoLnm7TmlrnlkJHjgavlj43ou6Lj
 gZfjgb7jgZkKICAgICAgLS0xODAgICAgICAgICAgICAgICAgICAgMTgw5bqm5Zue6Lui44GX44G+
 44GZCiAgICAgIC0tbGVmdCAgICAgICAgICAgICAgICAgIOW3puOBuDkw5bqm5Zue6Lui44GX44G+
 44GZCiAgICAgIC0tcmlnaHQgICAgICAgICAgICAgICAgIOWPs+OBuDkw5bqm5Zue6Lui44GX44G+
-44GZCiAgICAgIC0tYm9yZGVyICAgICAgICAgICAgICAgIOaeoOe3muOCkuOBpOOBkeOBvuOBmQoK"
+44GZCiAgICAgIC0tYm9yZGVyICAgICAgICAgICAgICAgIOaeoOe3muOCkuOBpOOBkeOBvuOBmQo=" ]
+}
 
-OK "--version" "$TARGET_COMMAND --version"
-OK "-v" "$TARGET_COMMAND -v"
-EQ "--version==-v" "$($TARGET_COMMAND --version)" "$($TARGET_COMMAND -v)"
-EQ "バージョン情報は正しいかな？" "$($TARGET_COMMAND --version|base64)" "dW5rby50b2lsZXQgdmVyc2lvbiDwn5KpLvCfkqku8J+SqSAoMjDwn5Kp8J+SqS/wn5Kp8J+SqS/w
-n5Kp8J+SqSkK"
+@test "--version" {
+  run "$TARGET_COMMAND" --version
+  [ "$status" -eq 0 ]
+}
 
-OK "全テスト終わり💩" ":"
+@test "-v" {
+  run "$TARGET_COMMAND" -v
+  [ "$status" -eq 0 ]
+}
+
+@test "--version == -v" {
+  run "$TARGET_COMMAND" -v
+  [ "$status" -eq 0 ]
+  [ "$output" = "$($TARGET_COMMAND --version)" ]
+}
+
+@test "バージョン情報は正しいかな？" {
+  run bash -c "$TARGET_COMMAND --version | base64"
+  [ "$status" -eq 0 ]
+  [ "$output" = "dW5rby50b2lsZXQgdmVyc2lvbiDwn5KpLvCfkqku8J+SqSAoMjDwn5Kp8J+SqS/wn5Kp8J+SqS/w
+n5Kp8J+SqSkK" ]
+}
+
+@test "全テスト終わり💩" {
+  [ "💩" = "💩" ]
+}

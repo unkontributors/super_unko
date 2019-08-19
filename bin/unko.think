@@ -1,5 +1,21 @@
 #!/bin/bash
-# Get current directory
-__THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")"; pwd)"
 
-cowthink -f $__THIS_DIR/unko.cow $@
+# Get current directory
+THIS_DIR=$(
+  cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd
+)
+readonly THIS_DIR
+
+LIB_DIR="${THIS_DIR}/../lib/super_unko"
+readonly LIB_DIR
+
+case ${OSTYPE} in
+  darwin*)
+    COW_FILE="${LIB_DIR}/unko_mb.cow"
+    ;;
+  *)
+    COW_FILE="${LIB_DIR}/unko.cow"
+    ;;
+esac
+
+cowthink -f "${COW_FILE}" "$@"

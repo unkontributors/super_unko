@@ -1,7 +1,7 @@
 super_unko
 ===========================================
 [![License](https://img.shields.io/badge/license-%F0%9F%92%A9-orange.svg)](./LICENSE)
-[![Build Status](https://travis-ci.org/unkontributors/super_unko.svg?branch=master)](https://travis-ci.org/greymd/super_unko)
+[![Build Status](https://travis-ci.org/unkontributors/super_unko.svg?branch=master)](https://travis-ci.org/unkontributors/super_unko)
 
 super_unko project is the one of the awesome, clean and sophisticated OSS project in the world.
 Let's create shit commands!
@@ -24,6 +24,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 | unko.shout    | King 💩 shouts a message. |
 | unko.think    | King 💩 thinks something. |
 | unko.life     | Play 💩's game of life. |
+| unko.any      | Simple wrapper to 💩 substitution for unko.shout. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
@@ -90,9 +91,24 @@ Uninstall
 $ brew remove super_unko
 ```
 
+### Docker
+
+* With docker
+
+```bash
+$ git clone https://github.com/unkontributors/super_unko.git
+$ cd super_unko
+$ docker build -t superunko .
+$ docker run -it superunko unko.shout こんにちは
+```
+
 ### Additional Installation
 
 - [unko.puzzle](./doc/unko.puzzle.md)
+- unko.shout - Need a [echo-sd](https://github.com/fumiyas/home-commands) command
+- unko.say - Need a `cowsay` command (`$ apt install cowsay`)
+- unko.think - Need a `cowthink` command (`$ apt install cowsay`)
+- unko.toilet - Need a `toilet` command (`$ apt install toilet`)
 
 Usage
 ========================
@@ -113,6 +129,18 @@ $ ./unko.yes
 💩
 💩
 ...
+```
+
+Testing
+========================
+
+We use the [bats](https://github.com/sstephenson/bats) testing framework.
+Please you install that.
+
+Run below.
+
+```bash
+./test.sh
 ```
 
 Contribution
