@@ -77,29 +77,6 @@ log() {
   echo -e "$SCRIPT_NAME: $*" 2>&1
 }
 
-print_command_help() {
-  local cmd="$1"
-  local cmd_path
-  local ret
-
-  set +eu
-  cmd_path="$(to_command_path "$cmd")"
-  ret=$?
-  if [[ "$ret" -ne 0 ]]; then
-    log "$cmd is not found. (cmd = $cmd)"
-    usage >&2
-    return 1
-  fi
-
-  "$cmd_path" -h
-  ret=$?
-  if [[ "$ret" -ne 0 ]]; then
-    log "$cmd is not implemented help options."
-    return 1
-  fi
-  set -eu
-}
-
 ## to_command_path はサブコマンド名からunkoコマンドのパスを得る
 to_command_path() {
   local cmd="$1"
@@ -119,23 +96,6 @@ to_command_path() {
       echo "$cmd_fullpath"
       return
     fi
-  done
-
-  return 1
-}
-
-## to_command_name はコマンドのパスからコマンド名を得る
-to_command_name() {
-  local cmd="$1"
-
-  for prefix in unko bigunko; do
-    for cmd_fullpath in "$THIS_DIR/$prefix".*; do
-      local c=${cmd_fullpath##*/unko.}
-      if [[ "$c" = "$cmd" ]]; then
-        echo "$cmd_fullpath"
-        return
-      fi
-    done
   done
 
   return 1
