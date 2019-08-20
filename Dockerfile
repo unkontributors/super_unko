@@ -52,6 +52,7 @@ RUN apk add --no-cache \
       ncurses
 COPY --from=build-stage /usr/local/bin/* /usr/local/bin/
 COPY --from=build-stage /usr/local/src/toilet/fonts/* /usr/local/share/figlet/
+COPY --from=build-stage /usr/local/lib/super_unko /usr/local/lib/super_unko
 
 RUN echo -e $'\n\
 ＿人人人人人人人人人人人人人人人人人人人人人人人人＿\n\
