@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  formatter:
+    image: peterdavehello/shfmt
+    container_name: formatter
+    entrypoint:
+      - "shfmt"
+      - "--version"
+
+  linter:
+    image: koalaman/shellcheck
+    container_name: linter
+    entrypoint:
+      - "shellcheck"
+      - "--version"

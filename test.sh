@@ -63,7 +63,7 @@ Available commands:
 Available test scripts:
 EOS
   for test_script in *-test.bats; do
-    sed 's/-test.bats//g' <<< "    $test_script"
+    echo "${test_script//-test.bats/}"
   done
 }
 
