@@ -1,0 +1,60 @@
+#!/bin/bash
+# コマンドがない場合に出力されるテキスト
+function __command_not_found_unko() {
+    local CMD=$1
+    local USER=$(whoami)
+
+    local TEXT=(
+        "「${CMD}」なんてコマンドはないぜ… このキングうんこが言うんだ 間違いない"
+        "違うな、間違っているぞ${USER}！ 「${CMD}」なんてコマンドはない！ このキングうんこにはわかる！"
+        "「${CMD}」なんて存在しないコマンドを 打たれるたびに5セントもらってたら、今頃大金持ちだぜ！"
+        "残念ながら「${CMD}」なんてコマンドはないようだな この私を呼び出す「unko.shout」はあるようなんだがな！"
+    )
+
+    local T=$(shuf -n1 -e ${TEXT})
+
+    eval unko.shout $T | sed "s/${CMD}/\x1b[32m&\x1b[0m/g;"
+}
+
+
+# コマンドが無い場合に実行される処理の定義
+function __command_not_found() {
+    case ${OSTYPE} in
+        darwin*)
+            __command_not_found_unko "$1"
+            return 127
+            ;;
+        linux*)
+            if [ -x /usr/lib/command-not-found -o -x /usr/share/command-not-found/command-not-found ]; then
+                if [ -x /usr/lib/command-not-found ]; then
+                    /usr/lib/command-not-found -- "$1"
+                    __command_not_found_unko "$1"
+                    return 127
+                elif [ -x /usr/share/command-not-found/command-not-found ];then
+                    /usr/share/command-not-found/command-not-found -- "$1"
+                    __command_not_found_unko "$1"
+                    return 127
+                fi
+            else
+                __command_not_found_unko "$1"
+                return 127
+            fi
+            ;;
+    esac
+}
+
+
+# command_not_found_handle(zshの場合はcommand_not_found_handler)の定義
+case $(basename ${SHELL}) in
+    zsh*)
+        function command_not_found_handler() {
+            trap '' 1 2 3 15
+            __command_not_found "$1"
+        }
+        ;;
+    bash*)
+        function command_not_found_handle() {
+            __command_not_found "$1"
+        }
+        ;;
+esac
