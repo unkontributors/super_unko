@@ -84,7 +84,7 @@ to_command_path() {
   for cmd_fullpath in "$THIS_DIR/bigunko".*; do
     local big_cmd=${cmd//big/bigunko.}
     local c=${cmd_fullpath##*/}
-    if [[ "$c" = "$big_cmd" ]]; then
+    if [[ "$c" == "$big_cmd" ]]; then
       echo "$cmd_fullpath"
       return
     fi
@@ -92,7 +92,7 @@ to_command_path() {
 
   for cmd_fullpath in "$THIS_DIR/unko".*; do
     local c=${cmd_fullpath##*/unko.}
-    if [[ "$c" = "$cmd" ]]; then
+    if [[ "$c" == "$cmd" ]]; then
       echo "$cmd_fullpath"
       return
     fi

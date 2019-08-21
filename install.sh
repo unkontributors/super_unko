@@ -1,7 +1,10 @@
 #!/bin/bash
 set -ue
 
-readonly THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%N}}")" && pwd)"
+THIS_DIR=$(
+  cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd
+)
+readonly THIS_DIR
 readonly BINMODE=755
 readonly LIBMODE=644
 readonly PREFIX="${1:-/usr/local}"
