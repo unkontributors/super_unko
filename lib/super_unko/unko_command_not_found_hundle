@@ -41,7 +41,7 @@ function __command_not_found() {
 }
 
 # command_not_found_handle(zshの場合はcommand_not_found_handler)の定義
-if [[ $ZSH_EVAL_CONTEXT == 'toplevel' ]]; then
+if [[ $ZSH_EVAL_CONTEXT =~ toplevel ]]; then
   function command_not_found_handler() {
     trap '' 1 2 3 15
     __command_not_found "$1"
