@@ -2,7 +2,7 @@
 set -eu
 FRAME=30
 TILES=${TILES:-3}
-HEADER_HEIGHT=23  # Darwin
+HEADER_HEIGHT=23 # Darwin
 RANDOM_SLIDE=$((10 + TILES * TILES * TILES / 2))
 PIXEL_ART_COLS=60 # BIGUNKO'
 PIXEL_ART_ROWS=30 # BIGUNKO
@@ -22,15 +22,15 @@ initialize() {
   # process stratum: this process -> shell(bash) -> terminal emulator ?
   pppid=$(ps -ef | awk "\$2==$PPID{print \$3}")
   case $platform in
-    'Darwin' )
+    'Darwin')
       HEIGHT_OFFSET=-44
       WIDTH_OFFSET=0
       ;;
-    'Linux' )
+    'Linux')
       HEIGHT_OFFSET=-68
       WIDTH_OFFSET=-10
       ;;
-    * )
+    *)
       echo "error: $platform: unsupported platform" >&2
       exit 1
       ;;
@@ -41,7 +41,7 @@ initialize() {
     exit 1
   fi
 
-  which xdotool >/dev/null 2>&1 || {
+  which xdotool > /dev/null 2>&1 || {
     echo 'error: require xdotool' >&2
     exit 1
   }
@@ -127,14 +127,17 @@ trim_bigunko() {
   local tile_pos_x=$1 tile_pos_y=$2
   if [ "$BIGUNKO" == "" ]; then
     # cache bigunko to prevent broken pipe error
-    BIGUNKO=$($(cd $(dirname $0);pwd)/bigunko.show | sed $'s/\(\033\[48;5;[0-9]*m\)　/\\1 \\1 /g')
+    BIGUNKO=$($(
+      cd $(dirname $0)
+      pwd
+    )/bigunko.show | sed $'s/\(\033\[48;5;[0-9]*m\)　/\\1 \\1 /g')
   fi
 
-  echo "$BIGUNKO" \
-  | head -n $(($tile_char_rows * ($tile_pos_y + 1) )) \
-  | tail -n $tile_char_rows \
-  | sed $'s/\(\033\[48;5;[0-9]*m\)　/\\1 \\1 /g' \
-  | awk "
+  echo "$BIGUNKO" |
+    head -n $(($tile_char_rows * ($tile_pos_y + 1))) |
+    tail -n $tile_char_rows |
+    sed $'s/\(\033\[48;5;[0-9]*m\)　/\\1 \\1 /g' |
+    awk "
     {
       for (k = $tile_char_cols * $tile_pos_x + 1; k < $tile_char_cols * ($tile_pos_x + 1) + 1; k++) {
         printf \$k\" \";
@@ -161,10 +164,10 @@ draw() {
   local tile_pos_x=1 tile_pos_y=0
   log_debug "draw window: root; tile position=$tile_pos_x,$tile_pos_y"
   trim_bigunko $tile_pos_x $tile_pos_y
-  for i in $(seq 0 $((${#tty_names[@]}-1))); do
+  for i in $(seq 0 $((${#tty_names[@]} - 1))); do
     tile_pos_x=$((($i + 2) % $TILES))
     tile_pos_y=$((($i + 2) / $TILES))
-    log_debug "draw window: child $((i+1)); tile position=$tile_pos_x,$tile_pos_y; tty=/dev/${tty_names[i]}"
+    log_debug "draw window: child $((i + 1)); tile position=$tile_pos_x,$tile_pos_y; tty=/dev/${tty_names[i]}"
     trim_bigunko $tile_pos_x $tile_pos_y >> /dev/${tty_names[i]}
   done
 }
@@ -202,9 +205,9 @@ shake_window() {
   local pos_y=${pos#*,}
   for i in $(seq 5); do
     xdotool windowmove $wid $(($pos_x - 10 + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
-    xdotool windowmove $wid $(($pos_x      + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
     xdotool windowmove $wid $(($pos_x + 10 + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
-    xdotool windowmove $wid $(($pos_x      + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
+    xdotool windowmove $wid $(($pos_x + $WIDTH_OFFSET)) $(($pos_y + $HEIGHT_OFFSET))
   done
 }
 
@@ -212,10 +215,10 @@ can_slide() {
   local null_index=$1
   local direction=$2
   case $direction in
-    'up')    if [ $null_index -lt $(($TILES * $TILES - $TILES)) ]; then return 0; fi ;;
-    'down')  if [ $null_index -ge $TILES ];                        then return 0; fi ;;
-    'left')  if [ $(($null_index % $TILES)) -ne $(($TILES - 1)) ]; then return 0; fi ;;
-    'right') if [ $(($null_index % $TILES)) -ne 0 ];               then return 0; fi ;;
+    'up') if [ $null_index -lt $(($TILES * $TILES - $TILES)) ]; then return 0; fi ;;
+    'down') if [ $null_index -ge $TILES ]; then return 0; fi ;;
+    'left') if [ $(($null_index % $TILES)) -ne $(($TILES - 1)) ]; then return 0; fi ;;
+    'right') if [ $(($null_index % $TILES)) -ne 0 ]; then return 0; fi ;;
   esac
   return 1
 }
@@ -258,9 +261,9 @@ move_tile() {
   else
     if [ "$anotation" = 'true' ]; then
       case $direction in
-        'up')    target_index=$(($null_index - $TILES)) ;;
-        'down')  target_index=$(($null_index + $TILES)) ;;
-        'left')  target_index=$(($null_index - 1)) ;;
+        'up') target_index=$(($null_index - $TILES)) ;;
+        'down') target_index=$(($null_index + $TILES)) ;;
+        'left') target_index=$(($null_index - 1)) ;;
         'right') target_index=$(($null_index + 1)) ;;
       esac
       wid=${WIDS[$target_index]}
@@ -276,10 +279,22 @@ randomize() {
   while [ $count -le $RANDOM_SLIDE ]; do
     local rand=$((RANDOM % 4))
     case $rand in
-      0) direction='up';    if [ $prev -eq 1 ]; then continue; fi ;;
-      1) direction='down';  if [ $prev -eq 0 ]; then continue; fi ;;
-      2) direction='left';  if [ $prev -eq 3 ]; then continue; fi ;;
-      3) direction='right'; if [ $prev -eq 2 ]; then continue; fi ;;
+      0)
+        direction='up'
+        if [ $prev -eq 1 ]; then continue; fi
+        ;;
+      1)
+        direction='down'
+        if [ $prev -eq 0 ]; then continue; fi
+        ;;
+      2)
+        direction='left'
+        if [ $prev -eq 3 ]; then continue; fi
+        ;;
+      3)
+        direction='right'
+        if [ $prev -eq 2 ]; then continue; fi
+        ;;
     esac
     local null_index=$(echo "${WIDS[@]}" | tr ' ' '\n' | nl -v0 | grep null | awk '{print $1}')
     if can_slide $null_index $direction; then
@@ -299,14 +314,18 @@ solve() {
       key+="$rest"
     fi
     case "$key" in
-      k|$'\x1b\x5b\x41')
-        move_tile 'up' 'true' ;;
-      j|$'\x1b\x5b\x42')
-        move_tile 'down' 'true' ;;
-      l|$'\x1b\x5b\x43')
-        move_tile 'right' 'true' ;;
-      h|$'\x1b\x5b\x44')
-        move_tile 'left' 'true' ;;
+      k | $'\x1b\x5b\x41')
+        move_tile 'up' 'true'
+        ;;
+      j | $'\x1b\x5b\x42')
+        move_tile 'down' 'true'
+        ;;
+      l | $'\x1b\x5b\x43')
+        move_tile 'right' 'true'
+        ;;
+      h | $'\x1b\x5b\x44')
+        move_tile 'left' 'true'
+        ;;
     esac
     local wids_hash=$(echo -n "${WIDS[@]}" | md5sum | cut -d' ' -f1)
     if [ "$wids_hash" = "$collect_hash" ]; then break; fi
@@ -323,17 +342,16 @@ clean_up() {
   exit 0
 }
 
-
 processes=$(ps -ef | grep $WINDOW_NAME | grep -v grep)
 if [ $(echo "$processes" | wc -l) -le 2 ]; then
   # parent window
   initialize
   set_root_window
-  trap clean_up 2  # 2:SIGINT
+  trap clean_up 2 # 2:SIGINT
   create_children
   xdotool windowactivate $root_wid
   xdotool windowfocus $root_wid
-  wids=$(xdotool search --name "$WINDOW_NAME")  # newline separated
+  wids=$(xdotool search --name "$WINDOW_NAME") # newline separated
   child_wids=$(echo "$wids" | grep -v $root_wid | tr '\n' ' ')
   relocate "$root_wid $child_wids"
   draw "$child_wids"

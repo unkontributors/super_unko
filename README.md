@@ -145,8 +145,57 @@ $ ./unko.yes
 ...
 ```
 
-Testing
+Development
 ========================
+
+### Codestyle and lint
+
+We are checking code with [shfmt](https://github.com/mvdan/sh) and [shellcheck](https://github.com/koalaman/shellcheck).
+Please you check your code by `linter.sh` if you will want to add your origin unko commands.
+We must provides clean unkos.
+So, please you run below and pass all checkings.
+
+```bash
+./linter.sh all
+```
+
+`linter.sh` check your code or all code of this project.
+**linter.sh depends on docker and docker-compose commands.**
+And you **don't** need to install shfmt and shellcheck.
+
+Usage examples of `linter.sh` are below.
+
+#### Help
+
+```bash
+./linter.sh help
+```
+
+#### Code format
+
+```bash
+./linter.sh format
+```
+
+#### Code format and save
+
+```bash
+./linter.sh format-save
+```
+
+#### Code lint
+
+```bash
+./linter.sh lint
+```
+
+#### Code format and lint
+
+```bash
+./linter.sh all
+```
+
+### Testing
 
 We use the [bats](https://github.com/sstephenson/bats) testing framework.
 Please you install that.
@@ -175,5 +224,9 @@ History
 For Unkontributors (開発者向け)
 ========================
 bin 以下になんか思いついたコマンドを放り投げてください。
-決まったルールとか運用は特に無いです。
 docker が入った環境で `bash package.sh` すると pkg 以下に各種インストーラーが作成されることだけ知っておいてください。
+
+CIでコードフォーマットと静的解析にかけてコード品質を維持するようになりました。
+PRするときは`./linter.sh all`で静的解析をパスすることを確認してください。
+
+可能なら`./test.sh`にもテストコードを追加していただけると助かります。

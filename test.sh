@@ -29,14 +29,14 @@ main() {
   local cmd="$1"
 
   # ヘルプの出力
-  if [[ "$cmd" = help ]]; then
+  if [[ "$cmd" == help ]]; then
     usage
     return
   fi
 
   # マッチするコマンドのみ実行
   for test_script in *-test.bats; do
-    if [[ "$cmd"-test.bats = "$test_script" ]]; then
+    if [[ "$cmd"-test.bats == "$test_script" ]]; then
       echo -e "${BLUE}${test_script}${RESET}"
       ./"$test_script"
       ret=$?
@@ -63,7 +63,7 @@ Available commands:
 Available test scripts:
 EOS
   for test_script in *-test.bats; do
-    sed 's/-test.bats//g' <<< "    $test_script"
+    echo "${test_script//-test.bats/}"
   done
 }
 
