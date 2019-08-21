@@ -92,6 +92,7 @@ Uninstall
 $ brew remove super_unko
 ```
 
+
 ### Docker
 
 * With docker
@@ -101,6 +102,18 @@ $ git clone https://github.com/unkontributors/super_unko.git
 $ cd super_unko
 $ docker build -t superunko .
 $ docker run -it superunko unko.shout こんにちは
+```
+
+### Zsh plugin manager
+
+Zsh plugin managers like [antigen](https://github.com/zsh-users/antigen), [zplug](https://github.com/zplug/zplug) can be adoptive.
+Not only commands can be used but also `command_not_found_handler` is updated.
+It is extremely helpful for developers.
+
+* Example of antigen
+
+```
+antigen bundle "unkontributors/super_unko"
 ```
 
 ### Additional Installation
