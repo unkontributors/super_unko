@@ -1,0 +1,25 @@
+#!/bin/bash
+TEXT=$*
+
+eval unko.shout "${TEXT}"
+
+while :; do
+  read -rp "ok? (y/N/u): " ynu
+  case "$ynu" in
+    [yY]*)
+      # y|Yの場合は正常終了
+      exit 0
+      ;;
+
+    [uU]*)
+      # u|Uの場合は再度聞く
+      eval unko.shout "ブリブリブリ…" "もう一度聞いてやろう" "${TEXT}"
+      continue
+      ;;
+
+    *)
+      # デフォルト(N)で127で終了
+      exit 127
+      ;;
+  esac
+done
