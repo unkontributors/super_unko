@@ -1,18 +1,19 @@
 #!/bin/bash
 
 echo-sd ${1+"$@"}
-t="${T:-👑}" # Top
-u="${U:-💩}" # Unko
-e="${E:-👁}" # Eyes
-n="${N:-👃}" # Nose
-m="${M:-👄}" # Mouth
-l="${L:-（}"  # Left side
-r="${R:-）}"  # Right side
-s="${S:-　}"  # Space
+t="${T:-👑}"		# Top
+u="${U:-💩}"		# Unko
+le="${LE:-${E:-👁}}"	# Left Eye
+re="${RE:-${E:-👁}}"	# Right Eye
+n="${N:-👃}"		# Nose
+m="${M:-👄}"		# Mouth
+l="${L:-（}"		# Left side
+r="${R:-）}"		# Right side
+s="${S:-　}"		# Space
 cat << EOF
 $s$s$s$s$s$s$t
 $s$s$s$s$l$u$u$u$r
-$s$s$s$l$u$e$u$e$u$r
+$s$s$s$l$u$le$u$re$u$r
 $s$s$l$u$u$u$n$u$u$u$r
 $s$l$u$u$u$u$m$u$u$u$u$r
 EOF
