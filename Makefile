@@ -21,3 +21,7 @@ lint:
 .PHONY: test package
 test package:
 	./$@.sh
+
+.PHONY: clean
+clean:
+	$(RM) super_unko.tar.gz pkg/*.tmp
