@@ -1,0 +1,67 @@
+#!/bin/bash
+
+UNKO_OCT=(う ん こ ウ ン コ 💩 👑)
+
+help(){
+  echo "Usage: $0 [OPTION] [FILE]"
+  echo "Unko encode or decode FILE, or standard input to standard output."
+  echo "With no FILE, or when FILE is -, read standard input."
+  echo "  -d : decode data"
+  echo "  -h : display this help and exit"
+}
+
+
+encode(){
+  cat "$1" |
+  od -b |
+  awk '1,$1=""'|
+  tr -d '\n' |
+  tr -d ' ' |
+  sed "
+    s/0/${UNKO_OCT[0x0]}/g;
+    s/1/${UNKO_OCT[0x1]}/g;
+    s/2/${UNKO_OCT[0x2]}/g;
+    s/3/${UNKO_OCT[0x3]}/g;
+    s/4/${UNKO_OCT[0x4]}/g;
+    s/5/${UNKO_OCT[0x5]}/g;
+    s/6/${UNKO_OCT[0x6]}/g;
+    s/7/${UNKO_OCT[0x7]}/g"
+  echo
+}
+
+decode(){
+  cat "$1" |
+  sed -z "s/[^うんこウンコ💩👑]//g" |
+  sed "
+    s/${UNKO_OCT[0x0]}/0/g;
+    s/${UNKO_OCT[0x1]}/1/g;
+    s/${UNKO_OCT[0x2]}/2/g;
+    s/${UNKO_OCT[0x3]}/3/g;
+    s/${UNKO_OCT[0x4]}/4/g;
+    s/${UNKO_OCT[0x5]}/5/g;
+    s/${UNKO_OCT[0x6]}/6/g;
+    s/${UNKO_OCT[0x7]}/7/g" |
+  sed 's/.../0& /g' |
+  xargs printf %02x |
+  xxd -p -r
+}
+
+MODE="ENCODE"
+FILE="-"
+
+for arg in $@;do
+  case "$arg" in
+    "-h"|"--help") help;exit 0;;
+    "-d"|"--decode") MODE="DECODE";;
+    *) FILE="$arg";;
+  esac
+done
+
+
+if [ "$MODE" = "DECODE" ] ; then
+  decode "$FILE"
+else
+  encode "$FILE"
+fi
+
+exit 0
