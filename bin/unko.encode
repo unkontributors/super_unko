@@ -2,7 +2,7 @@
 
 UNKO_OCT=(う ん こ ウ ン コ 💩 👑)
 
-help() {
+usage() {
   echo "Usage: $0 [OPTION] [FILE]"
   echo "Unko encode or decode FILE, or standard input to standard output."
   echo "With no FILE, or when FILE is -, read standard input."
@@ -49,7 +49,7 @@ FILE="-"
 for arg in "$@"; do
   case "$arg" in
     "-h" | "--help")
-      help
+      usage
       exit 0
       ;;
     "-d" | "--decode") MODE="DECODE" ;;
