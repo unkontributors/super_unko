@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  ci_sh_default:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: default
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
+
+  ci_sh_3.2:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: 3.2
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
