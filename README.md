@@ -100,8 +100,9 @@ $ brew remove super_unko
 ```bash
 $ git clone https://github.com/unkontributors/super_unko.git
 $ cd super_unko
-$ docker build -t superunko .
-$ docker run -it superunko unko.shout こんにちは
+$ docker-compose build
+$ docker-compose run super_unko unko.shout こんにちは
+$ docker run --rm -it unkontributors/super_unko unko.shout こんにちは
 ```
 
 ### Zsh plugin manager
