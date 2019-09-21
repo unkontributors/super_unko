@@ -1,6 +1,12 @@
 version: '3'
 
 services:
+  super_unko:
+    build:
+      context: ./
+      dockerfile: ./dockerfiles/super_unko/Dockerfile
+    image: unkontributors/super_unko
+
   formatter:
     image: peterdavehello/shfmt
     container_name: formatter

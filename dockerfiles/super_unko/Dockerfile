@@ -28,8 +28,6 @@ RUN apk --no-cache add \
       musl-dev \
       libcaca-dev \
       figlet \
-    && git clone https://github.com/unkontributors/super_unko.git $SRC_DIR/super_unko \
-    && $SRC_DIR/super_unko/install.sh \
     && git clone https://github.com/fumiyas/home-commands.git $SRC_DIR/home-commands \
     && install -m 0755 $SRC_DIR/home-commands/echo-sd $BIN_DIR/ \
     && git clone https://github.com/schacon/cowsay.git $SRC_DIR/cowsay \
@@ -42,6 +40,8 @@ RUN apk --no-cache add \
     && install -m 0755 ./src/toilet $BIN_DIR \
     && mkdir /usr/local/share/figlet/ \
     && install -m 0644 ./fonts/*.tlf /usr/local/share/figlet/
+COPY . ${SRC_DIR}/super_unko
+RUN ${SRC_DIR}/super_unko/install.sh
 
 FROM alpine:3.9 AS exec-stage
 RUN apk add --no-cache \
