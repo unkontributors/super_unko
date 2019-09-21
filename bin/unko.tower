@@ -11,7 +11,12 @@ repeat_str() {
   shift
   local _str="$1"
   shift
-  printf "%${_num}s\\n" "" | sed "s/ /${_str}/g"
+  awk \
+    -v NUM="$_num" \
+    -v STR="$_str" \
+    'END{ for (i=0; i<NUM; i++) { printf "%s", STR } }' \
+    <<< ""
+  echo
 }
 
 print_unko() {
