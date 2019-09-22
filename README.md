@@ -157,7 +157,11 @@ We must provides clean unkos.
 So, please you run below and pass all checkings.
 
 ```bash
-./linter.sh all
+make setup
+
+make lint
+# or
+./linter.sh
 ```
 
 `linter.sh` check your code or all code of this project.
@@ -199,12 +203,22 @@ Usage examples of `linter.sh` are below.
 ### Testing
 
 We use the [bats](https://github.com/sstephenson/bats) testing framework.
-Please you install that.
+`test.sh` calls the `bats`. But you **don't** need to install `bats`.
+Test tasks uses `docker` and the docker uses bats internally and run tests.
 
-Run below.
+Run below for testing.
 
 ```bash
-./test.sh
+make setup ## Need long times to build docker images.
+make test
+```
+
+Run below for testing on multiple Bash versions.
+Please you do that and fix it if tests failed on Travis CI.
+
+```bash
+make check
+make test-bash-version
 ```
 
 Contribution
