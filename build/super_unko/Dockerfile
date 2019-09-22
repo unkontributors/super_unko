@@ -12,6 +12,7 @@ RUN echo -e $'\n\
 　　（💩💩💩👃💩💩💩）\n\
 　（💩💩💩💩👄💩💩💩💩）'
 
+ENV LANG ja_JP.UTF-8
 RUN apt update -yqq \
     && apt install -y --no-install-recommends \
        toilet \
@@ -22,7 +23,6 @@ RUN apt update -yqq \
        ca-certificates \
        locales \
     && locale-gen ja_JP.UTF-8 \
-    && echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc \
     && rm -rf /var/lib/apt/lists/*
 COPY . /usr/local/src/super_unko
 WORKDIR /usr/local/src/super_unko
