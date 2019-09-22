@@ -6,12 +6,12 @@ usage:
 	@ echo 'Usage: $(MAKE) TARGET ...'
 	@ echo
 	@ echo 'Targets:'
-	@ echo '  check               Run tests and linter'
-	@ echo '  test                Run tests'
-	@ echo '  lint                Run linter'
-	@ echo '  package             Build packages'
-	@ echo '  build-containers    Build docker images'
-	@ echo '  test-all            Run tests on some Bash version'
+	@ echo '  check                Run tests and linter'
+	@ echo '  test                 Run tests'
+	@ echo '  lint                 Run linter'
+	@ echo '  package              Build packages'
+	@ echo '  build-containers     Build docker images'
+	@ echo '  test-bash-version    Run tests on some Bash version'
 
 .PHONY: check
 check: test lint
@@ -33,6 +33,6 @@ build-containers:
 	docker-compose build --parallel
 	docker-compose -f docker-compose-ci.yml build --parallel
 
-.PHONY: test-all
-test-all:
+.PHONY: test-bash-version
+test-bash-version:
 	docker-compose -f docker-compose-ci.yml up
