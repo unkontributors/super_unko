@@ -25,3 +25,12 @@ test package:
 .PHONY: clean
 clean:
 	$(RM) super_unko.tar.gz pkg/*.tmp
+
+.PHONY: build-containers
+build-containers:
+	docker-compose build --parallel
+	docker-compose -f docker-compose-ci.yml build --parallel
+
+.PHONY: test
+test:
+	docker-compose -f docker-compose-ci.yml up

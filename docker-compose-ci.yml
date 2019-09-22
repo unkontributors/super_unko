@@ -9,6 +9,8 @@ services:
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
 
   ci_sh_3.2:
     build:
@@ -18,3 +20,71 @@ services:
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
+
+  ci_sh_4.0:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: 4.0
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
+
+  ci_sh_4.1:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: 4.1
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
+
+  ci_sh_4.2:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: 4.2
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
+
+  ci_sh_4.3:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: 4.3
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
+
+  ci_sh_4.4:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: 4.4
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
+
+  ci_sh_5.0:
+    build:
+      context: ./build/ci
+      args:
+        SH_VERSION: 5.0
+    volumes:
+      - "$PWD:/usr/local/src/super_unko"
+    working_dir: /usr/local/src/super_unko
+    entrypoint:
+      - ./test.sh
