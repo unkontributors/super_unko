@@ -9,6 +9,8 @@ env:
     - CACHE_DIR=$HOME/docker-image
     - BASE_IMAGE=unkontributors/$NAME
     - BASE_IMAGE_CACHE_FILE=$CACHE_DIR/$NAME-base.tgz
+    - SHFMT_CACHE_FILE=$CACHE_DIR/shfmt.tgz
+    - SHELLCHECK_CACHE_FILE=$CACHE_DIR/shellcheck.tgz
 
 matrix:
   include:
@@ -35,10 +37,15 @@ cache:
     - ${CACHE_DIR}
 
 install:
-    ## Setup docker image for lint
-  - ./linter.sh setup
-  - mkdir -p $CACHE_DIR
     ## Load cache of docker images
+  - |
+    if [[ -f "$SHFMT_CACHE_FILE" ]]; then
+      docker load -i "$SHFMT_CACHE_FILE"
+    fi
+  - |
+    if [[ -f "$SHELLCHECK_CACHE_FILE" ]]; then
+      docker load -i "$SHELLCHECK_CACHE_FILE"
+    fi
   - |
     if [[ -f "$BASE_IMAGE_CACHE_FILE" ]]; then
       docker load -i "$BASE_IMAGE_CACHE_FILE"
@@ -47,6 +54,11 @@ install:
     if [[ -f "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz" ]]; then
       docker load -i "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz"
     fi
+    ## Setup docker image for lint
+  - ./linter.sh setup
+  - docker save "peterdavehello/shfmt" | gzip -c > $SHFMT_CACHE_FILE
+  - docker save "koalaman/shellcheck" | gzip -c > $SHELLCHECK_CACHE_FILE
+  - mkdir -p $CACHE_DIR
     ## Build base image
   - docker-compose build
   - docker save $BASE_IMAGE | gzip -c > $BASE_IMAGE_CACHE_FILE
