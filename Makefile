@@ -22,14 +22,14 @@ lint:
 
 .PHONY: test
 test:
-	./$@.sh
+	docker-compose -f docker-compose-ci.yml run --rm ci_sh_5.0
 
 .PHONY: clean
 clean:
 	$(RM) super_unko.tar.gz pkg/*.tmp
 
-.PHONY: build-containers
-build-containers:
+.PHONY: setup
+setup:
 	docker-compose build --parallel
 	docker-compose -f docker-compose-ci.yml build --parallel
 
