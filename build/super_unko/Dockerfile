@@ -1,5 +1,5 @@
 # vim: tw=0:
-FROM alpine:3.9 AS build-stage
+FROM ubuntu:19.04
 
 RUN echo -e $'\n\
 ＿人人人人人人人人人人人人人人人人人人人人人人＿\n\
@@ -12,47 +12,23 @@ RUN echo -e $'\n\
 　　（💩💩💩👃💩💩💩）\n\
 　（💩💩💩💩👄💩💩💩💩）'
 
-ENV DIR_PREFIX /usr/local
-ENV SRC_DIR $DIR_PREFIX/src
-ENV BIN_DIR $DIR_PREFIX/bin
-
-RUN apk --no-cache add \
-      git \
-      bash \
-      perl \
-      make \
-      automake \
-      autoconf \
-      pkgconfig \
-      gcc \
-      musl-dev \
-      libcaca-dev \
-      figlet \
-    && git clone https://github.com/fumiyas/home-commands.git $SRC_DIR/home-commands \
-    && install -m 0755 $SRC_DIR/home-commands/echo-sd $BIN_DIR/ \
-    && git clone https://github.com/schacon/cowsay.git $SRC_DIR/cowsay \
-    && (cd $SRC_DIR/cowsay && ./install.sh) \
-    && git clone https://github.com/cacalabs/toilet $SRC_DIR/toilet \
-    && cd $SRC_DIR/toilet \
-    && ./bootstrap \
-    && ./configure \
-    && make \
-    && install -m 0755 ./src/toilet $BIN_DIR \
-    && mkdir /usr/local/share/figlet/ \
-    && install -m 0644 ./fonts/*.tlf /usr/local/share/figlet/
-COPY . ${SRC_DIR}/super_unko
-RUN ${SRC_DIR}/super_unko/install.sh
-
-FROM alpine:3.9 AS exec-stage
-RUN apk add --no-cache \
-      bash \
-      perl \
-      libcaca-dev \
-      bc \
-      ncurses
-COPY --from=build-stage /usr/local/bin/* /usr/local/bin/
-COPY --from=build-stage /usr/local/src/toilet/fonts/* /usr/local/share/figlet/
-COPY --from=build-stage /usr/local/lib/super_unko /usr/local/lib/super_unko
+RUN apt update -yqq \
+    && apt install -y --no-install-recommends \
+       toilet \
+       figlet \
+       bc \
+       cowsay \
+       curl \
+       ca-certificates \
+       locales \
+    && locale-gen ja_JP.UTF-8 \
+    && echo "export LANG=ja_JP.UTF-8" >> ~/.bashrc \
+    && rm -rf /var/lib/apt/lists/*
+COPY . /usr/local/src/super_unko
+WORKDIR /usr/local/src/super_unko
+RUN ./install.sh
+RUN curl --retry 3 https://raw.githubusercontent.com/fumiyas/home-commands/master/echo-sd > /usr/local/bin/echo-sd
+RUN chmod +x /usr/local/bin/echo-sd
 
 RUN echo -e $'\n\
 ＿人人人人人人人人人人人人人人人人人人人人人人人人＿\n\
