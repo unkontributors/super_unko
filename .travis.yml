@@ -54,13 +54,11 @@ install:
     if [[ -f "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz" ]]; then
       docker load -i "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz"
     fi
-    ## Setup docker image for lint
-  - ./linter.sh setup
+    ## Build base image and linter image and formatter image
+  - mkdir -p $CACHE_DIR
+  - docker-compose build --parallel
   - docker save "peterdavehello/shfmt" | gzip -c > $SHFMT_CACHE_FILE
   - docker save "koalaman/shellcheck" | gzip -c > $SHELLCHECK_CACHE_FILE
-  - mkdir -p $CACHE_DIR
-    ## Build base image
-  - docker-compose build
   - docker save $BASE_IMAGE | gzip -c > $BASE_IMAGE_CACHE_FILE
     ## Build CI image
   - docker-compose -f docker-compose-ci.yml build ci_sh_${SH_VERSION}
