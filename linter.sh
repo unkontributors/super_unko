@@ -4,8 +4,6 @@ SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
 readonly SCRIPT_NAME
 
 # Dockerコンテナ系の定数
-readonly FORMATTER_IMAGE=peterdavehello/shfmt
-readonly LINTER_IMAGE=koalaman/shellcheck
 readonly CONTAINER_DIR_PREFIX=/work
 
 # 着色系ANSIエスケープシーケンス
@@ -37,11 +35,7 @@ main() {
         ;;
       setup)
         # フォーマットとlintに使うDockerイメージを取得
-        docker-compose up
-        ;;
-      rebuild)
-        # フォーマットとlintに使うDockerイメージを強制的に取得
-        docker-compose up --force-recreate
+        docker-compose pull --parallel formatter linter
         ;;
       format)
         # コードフォーマットにかける
@@ -88,8 +82,6 @@ Usage:
 Available commands:
     help                      このヘルプを出力する。
     setup                     リントツールをセットアップする。
-    rebuild                   リントツールを再セットアップする。
-                              Dockerfileが更新されたときに実行する。
     format      [files...]    コードフォーマットにかける。
     format-save [files...]    コードフォーマットして上書き保存する。
     lint        [files...]    リントにかける。
@@ -115,20 +107,14 @@ cmd_format() {
     fullpath_files+=("$CONTAINER_DIR_PREFIX/$f")
   done
 
-  run_shfmt "$f" "$FORMATTER_IMAGE" "${fullpath_files[@]}"
+  run_shfmt "${fullpath_files[@]}"
 }
 
 ## フォーマットにかける。
 run_shfmt() {
-  local f=$1
-  local img=$2
-  shift 2
   local files=("$@")
   local ret
-  docker run \
-    -v "$PWD:$CONTAINER_DIR_PREFIX" \
-    -it "$img" \
-    shfmt $overwrite -i 2 -ci -sr -d "${files[@]}"
+  docker-compose run formatter $overwrite "${files[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))
@@ -157,20 +143,14 @@ cmd_lint() {
     fullpath_files+=("$CONTAINER_DIR_PREFIX/$f")
   done
 
-  run_shellcheck "$f" "$LINTER_IMAGE" "${fullpath_files[@]}"
+  run_shellcheck "${fullpath_files[@]}"
 }
 
 ## 静的解析にかける。
 run_shellcheck() {
-  local f=$1
-  local img=$2
-  shift 2
   local files=("$@")
   local ret
-  docker run \
-    -v "$PWD:$CONTAINER_DIR_PREFIX" \
-    -it "$img" \
-    "${files[@]}"
+  docker-compose run linter "${files[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))

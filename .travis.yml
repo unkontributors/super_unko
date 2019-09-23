@@ -1,4 +1,16 @@
+services:
+  - docker
+
 language: bash
+
+env:
+  global:
+    - NAME=super_unko
+    - CACHE_DIR=$HOME/docker-image
+    - BASE_IMAGE=unkontributors/$NAME
+    - BASE_IMAGE_CACHE_FILE=$CACHE_DIR/$NAME-base.tgz
+    - SHFMT_CACHE_FILE=$CACHE_DIR/shfmt.tgz
+    - SHELLCHECK_CACHE_FILE=$CACHE_DIR/shellcheck.tgz
 
 matrix:
   include:
@@ -19,27 +31,40 @@ matrix:
     - os: linux
       env: SH_VERSION=5.0
 
-addons:
-  apt:
-    packages:
-      - figlet
-      - toilet
-
-before_install:
-  - sudo add-apt-repository ppa:duggan/bats --yes
-  - sudo apt-get update -qq
-  ## Install bash
-  - export TMPDIR=$TRAVIS_BUILD_DIR/tmp
-  - mkdir -p $TMPDIR
-  - if [[ "$SH_VERSION" != "default" ]];then ( cd "$TMPDIR" && curl "http://ftp.gnu.org/gnu/bash/bash-${SH_VERSION}.tar.gz" | tar xvz && cd bash* && ./configure; make && sudo make install && sudo mv /bin/bash /bin/bash.old && sudo cp ./bash /bin/bash ) ;fi
-  - bash --version
+cache:
+  bundler: true
+  directories:
+    - ${CACHE_DIR}
 
 install:
-  - sudo apt-get install -qq bats
-  - bats --version
-  - ./linter.sh setup
+    ## Load cache of docker images
+  - |
+    if [[ -f "$SHFMT_CACHE_FILE" ]]; then
+      docker load -i "$SHFMT_CACHE_FILE"
+    fi
+  - |
+    if [[ -f "$SHELLCHECK_CACHE_FILE" ]]; then
+      docker load -i "$SHELLCHECK_CACHE_FILE"
+    fi
+  - |
+    if [[ -f "$BASE_IMAGE_CACHE_FILE" ]]; then
+      docker load -i "$BASE_IMAGE_CACHE_FILE"
+    fi
+  - |
+    if [[ -f "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz" ]]; then
+      docker load -i "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz"
+    fi
+    ## Build base image and linter image and formatter image
+  - mkdir -p $CACHE_DIR
+  - docker-compose build --parallel
+  - docker save "peterdavehello/shfmt" | gzip -c > $SHFMT_CACHE_FILE
+  - docker save "koalaman/shellcheck" | gzip -c > $SHELLCHECK_CACHE_FILE
+  - docker save $BASE_IMAGE | gzip -c > $BASE_IMAGE_CACHE_FILE
+    ## Build CI image
+  - docker-compose -f docker-compose-ci.yml build ci_sh_${SH_VERSION}
+  - docker save ${NAME}_ci_sh_${SH_VERSION} | gzip -c > $CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz
 
 script:
-  - sudo ./install.sh
-  - ./linter.sh all
-  - ./test.sh
+  - ls -la $CACHE_DIR
+  - make lint
+  - docker-compose -f docker-compose-ci.yml run ci_sh_${SH_VERSION}

@@ -67,6 +67,12 @@ EOS
   done
 }
 
+print_bash_version() {
+  echo "------------------------------------------------------------------------------"
+  bash --version
+  echo "------------------------------------------------------------------------------"
+}
+
 type bats >&/dev/null
 ret=$?
 if [[ "$ret" -ne 0 ]]; then
@@ -74,5 +80,9 @@ if [[ "$ret" -ne 0 ]]; then
   exit 1
 fi
 
+print_bash_version
 main ${1+"$@"}
-exit $?
+ret=$?
+print_bash_version
+
+exit $ret

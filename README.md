@@ -100,8 +100,9 @@ $ brew remove super_unko
 ```bash
 $ git clone https://github.com/unkontributors/super_unko.git
 $ cd super_unko
-$ docker build -t superunko .
-$ docker run -it superunko unko.shout こんにちは
+$ docker-compose build
+$ docker-compose run super_unko unko.shout こんにちは
+$ docker run --rm -it unkontributors/super_unko unko.shout こんにちは
 ```
 
 ### Zsh plugin manager
@@ -151,17 +152,21 @@ Development
 ### Codestyle and lint
 
 We are checking code with [shfmt](https://github.com/mvdan/sh) and [shellcheck](https://github.com/koalaman/shellcheck).
-Please you check your code by `linter.sh` if you will want to add your origin unko commands.
-We must provides clean unkos.
-So, please you run below and pass all checkings.
+Please check your code by `linter.sh` if you want to add your origin unko commands.
+We must provide clean unkos.
+So, please run below and pass all checkings.
 
 ```bash
-./linter.sh all
+make setup
+
+make lint
+# or
+./linter.sh
 ```
 
-`linter.sh` check your code or all code of this project.
-**linter.sh depends on docker and docker-compose commands.**
-And you **don't** need to install shfmt and shellcheck.
+`linter.sh` checks your code or all code of this project.
+**`linter.sh` depends on `docker` and `docker-compose` commands.**
+And you **don't** need to install `shfmt` and `shellcheck`.
 
 Usage examples of `linter.sh` are below.
 
@@ -198,12 +203,22 @@ Usage examples of `linter.sh` are below.
 ### Testing
 
 We use the [bats](https://github.com/sstephenson/bats) testing framework.
-Please you install that.
+`test.sh` calls the `bats`. But you **don't** need to install `bats`.
+Test tasks use `docker` and the `docker` uses `bats` internally and runs tests.
 
-Run below.
+Run below for testing.
 
 ```bash
-./test.sh
+make setup ## Need long times to build docker images.
+make test
+```
+
+Run below for testing on multiple Bash versions.
+Please do that and fix it if tests failed on Travis CI.
+
+```bash
+make check
+make test-bash-version
 ```
 
 Contribution
@@ -223,8 +238,16 @@ History
 
 For Unkontributors (開発者向け)
 ========================
+
+Please put your commands under `bin` directory.
+Run `bash package.sh` on a host which `docker` installed to generate multiple installer packages under `pkg` directory.
+
+Codebase is supposed to be scanned with code formatter and static analysis tools to ensure the quality of the code.
+Please make sure prepared static checks are passed by running `./liner.sh all` before submitting your PR.
+It would be appreciated if you could add tests to `./test.sh`.
+
 bin 以下になんか思いついたコマンドを放り投げてください。
-docker が入った環境で `bash package.sh` すると pkg 以下に各種インストーラーが作成されることだけ知っておいてください。
+docker が入った環境で `bash package.sh` すると pkg 以下に各種インストーラーが作成されます。
 
 CIでコードフォーマットと静的解析にかけてコード品質を維持するようになりました。
 PRするときは`./linter.sh all`で静的解析をパスすることを確認してください。
