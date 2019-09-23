@@ -165,8 +165,8 @@ make lint
 ```
 
 `linter.sh` checks your code or all code of this project.
-**linter.sh depends on docker and docker-compose commands.**
-And you **don't** need to install shfmt and shellcheck.
+**`linter.sh` depends on `docker` and `docker-compose` commands.**
+And you **don't** need to install `shfmt` and `shellcheck`.
 
 Usage examples of `linter.sh` are below.
 
@@ -204,7 +204,7 @@ Usage examples of `linter.sh` are below.
 
 We use the [bats](https://github.com/sstephenson/bats) testing framework.
 `test.sh` calls the `bats`. But you **don't** need to install `bats`.
-Test tasks use `docker` and the docker uses bats internally and runs tests.
+Test tasks use `docker` and the `docker` uses `bats` internally and runs tests.
 
 Run below for testing.
 
