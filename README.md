@@ -152,9 +152,9 @@ Development
 ### Codestyle and lint
 
 We are checking code with [shfmt](https://github.com/mvdan/sh) and [shellcheck](https://github.com/koalaman/shellcheck).
-Please you check your code by `linter.sh` if you will want to add your origin unko commands.
-We must provides clean unkos.
-So, please you run below and pass all checkings.
+Please check your code by `linter.sh` if you want to add your origin unko commands.
+We must provide clean unkos.
+So, please run below and pass all checkings.
 
 ```bash
 make setup
@@ -164,7 +164,7 @@ make lint
 ./linter.sh
 ```
 
-`linter.sh` check your code or all code of this project.
+`linter.sh` checks your code or all code of this project.
 **linter.sh depends on docker and docker-compose commands.**
 And you **don't** need to install shfmt and shellcheck.
 
@@ -204,7 +204,7 @@ Usage examples of `linter.sh` are below.
 
 We use the [bats](https://github.com/sstephenson/bats) testing framework.
 `test.sh` calls the `bats`. But you **don't** need to install `bats`.
-Test tasks uses `docker` and the docker uses bats internally and run tests.
+Test tasks use `docker` and the docker uses bats internally and runs tests.
 
 Run below for testing.
 
@@ -214,7 +214,7 @@ make test
 ```
 
 Run below for testing on multiple Bash versions.
-Please you do that and fix it if tests failed on Travis CI.
+Please do that and fix it if tests failed on Travis CI.
 
 ```bash
 make check
