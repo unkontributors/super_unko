@@ -8,9 +8,10 @@ env:
     - NAME=super_unko
     - CACHE_DIR=$HOME/docker-image
     - BASE_IMAGE=unkontributors/$NAME
-    - BASE_IMAGE_CACHE_FILE=$CACHE_DIR/$NAME-base.tgz
-    - SHFMT_CACHE_FILE=$CACHE_DIR/shfmt.tgz
-    - SHELLCHECK_CACHE_FILE=$CACHE_DIR/shellcheck.tgz
+    - BASE_IMAGE_CACHE_FILE=$CACHE_DIR/$NAME-base.tar.gz
+    - UBUNTU_CACHE_FILE=$CACHE_DIR/ubuntu.tar.gz
+    - SHFMT_CACHE_FILE=$CACHE_DIR/shfmt.tar.gz
+    - SHELLCHECK_CACHE_FILE=$CACHE_DIR/shellcheck.tar.gz
 
 matrix:
   include:
@@ -36,8 +37,13 @@ cache:
   directories:
     - ${CACHE_DIR}
 
-install:
+before_install:
+  - ls -la $CACHE_DIR
     ## Load cache of docker images
+  - |
+    if [[ -f "$UBUNTU_CACHE_FILE" ]]; then
+      docker load -i "$UBUNTU_CACHE_FILE"
+    fi
   - |
     if [[ -f "$SHFMT_CACHE_FILE" ]]; then
       docker load -i "$SHFMT_CACHE_FILE"
@@ -51,20 +57,24 @@ install:
       docker load -i "$BASE_IMAGE_CACHE_FILE"
     fi
   - |
-    if [[ -f "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz" ]]; then
-      docker load -i "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz"
+    if [[ -f "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tar.gz" ]]; then
+      docker load -i "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tar.gz"
     fi
+
+install:
     ## Build base image and linter image and formatter image
   - mkdir -p $CACHE_DIR
   - docker-compose build --parallel
+    ## Build CI image
+  - docker-compose -f docker-compose-ci.yml build ci_sh_${SH_VERSION}
+
+script:
+  - make lint
+  - docker-compose -f docker-compose-ci.yml run ci_sh_${SH_VERSION}
+
+before_cache:
+  - docker save "ubuntu" | gzip -c > $UBUNTU_CACHE_FILE
   - docker save "peterdavehello/shfmt" | gzip -c > $SHFMT_CACHE_FILE
   - docker save "koalaman/shellcheck" | gzip -c > $SHELLCHECK_CACHE_FILE
   - docker save $BASE_IMAGE | gzip -c > $BASE_IMAGE_CACHE_FILE
-    ## Build CI image
-  - docker-compose -f docker-compose-ci.yml build ci_sh_${SH_VERSION}
-  - docker save ${NAME}_ci_sh_${SH_VERSION} | gzip -c > $CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tgz
-
-script:
-  - ls -la $CACHE_DIR
-  - make lint
-  - docker-compose -f docker-compose-ci.yml run ci_sh_${SH_VERSION}
+  - docker save ${NAME}_ci_sh_${SH_VERSION} | gzip -c > $CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tar.gz
