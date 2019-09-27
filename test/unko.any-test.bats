@@ -1,13 +1,25 @@
 #!/usr/bin/env bats
 
 readonly TARGET_COMMAND="../bin/unko.any"
+readonly BASH_REQUIRE_VERSION=4.0
 
-@test "引数がない場合はヘルプを出力する" {
+#==============================================================================
+# NOTE:
+#   echo-sdはBash4.0以下では動かないため、Bash4.0以下のみテストする
+#==============================================================================
+
+bash_version=$(bash --version | grep -Eo "[0-9]+\.[0-9]+" | head -n 1)
+if [ $(echo "$BASH_REQUIRE_VERSION < $bash_version" | bc) -eq 0 ]; then
+  echo "  Bash${BASH_REQUIRE_VERSION}以下はスキップ"
+  exit 0
+fi
+
+@test '引数がない場合はヘルプを出力する' {
   run "$TARGET_COMMAND"
   [ "$status" -eq 0 ]
 }
 
-@test "引数が1つのときは💩の置換のみ" {
+@test '引数が1つのときは💩の置換のみ' {
   run "$TARGET_COMMAND" あ
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "＿人人人人人人＿" ]
@@ -20,7 +32,7 @@ readonly TARGET_COMMAND="../bin/unko.any"
   [ "${lines[7]}" = "　（ああああ👄ああああ）" ]
 }
 
-@test "引数が2つのときは💩の置換と文言変更" {
+@test '引数が2つのときは💩の置換と文言変更' {
   run "$TARGET_COMMAND" あ い
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "＿人人人＿" ]
@@ -33,7 +45,7 @@ readonly TARGET_COMMAND="../bin/unko.any"
   [ "${lines[7]}" = "　（ああああ👄ああああ）" ]
 }
 
-@test "引数に /" {
+@test '引数に /' {
   run "$TARGET_COMMAND" /
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "＿人人人人人人＿" ]
@@ -46,7 +58,7 @@ readonly TARGET_COMMAND="../bin/unko.any"
   [ "${lines[7]}" = "　（////👄////）" ]
 }
 
-@test "引数に \\" {
+@test '引数にエスケープ文字' {
   run "$TARGET_COMMAND" '\\'
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = '＿人人人人人人＿' ]
@@ -59,7 +71,7 @@ readonly TARGET_COMMAND="../bin/unko.any"
   [ "${lines[7]}" = '　（\\\\👄\\\\）' ]
 }
 
-@test "ASCIIコード表33~127まででの置換 (\\は除外)" {
+@test 'ASCIIコード表33~127まででの置換 (エスケープ文字は除外)' {
   grep -o . <<< '!"#$%&'"'"'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~' | while read -r ch; do
     run "$TARGET_COMMAND" "$ch"
     [ "$status" -eq 0 ]
