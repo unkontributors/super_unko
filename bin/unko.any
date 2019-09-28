@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+set -eu
 
 usage() {
   cat << EOF
@@ -21,4 +23,6 @@ shift
 UNKO_SHOUT="${0%/*}/unko.shout"
 readonly UNKO_SHOUT
 
-exec "$UNKO_SHOUT" ${1+"$@"} | sed "s/💩/$UNKO/g"
+BASE_UNKO="$(exec "$UNKO_SHOUT" ${1+"$@"})"
+readonly BASE_UNKO
+echo -e "${BASE_UNKO//💩/$UNKO}"
