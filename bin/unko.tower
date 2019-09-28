@@ -14,8 +14,7 @@ repeat_str() {
   awk \
     -v NUM="$_num" \
     -v STR="$_str" \
-    'END{ for (i=0; i<NUM; i++) { printf "%s", STR } }' \
-    <<< ""
+    'BEGIN{ for (i=0; i<NUM; i++) { printf "%s", STR } }'
   echo
 }
 
