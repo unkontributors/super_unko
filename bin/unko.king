@@ -22,22 +22,22 @@ main() {
     shift
     case "$opt" in
       -h | --help)
-      usage
-      return
-      ;;
-    -v | --version)
-      echo "$VERSION"
-      return
-      ;;
-    *)
-      height="$opt"
-      if ((height < 5)); then
-        err "Height must be not less than 5"
-        err "See help ($THIS_CMD -h)"
-        return 1
-      fi
-      break
-      ;;
+        usage
+        return
+        ;;
+      -v | --version)
+        echo "$VERSION"
+        return
+        ;;
+      *)
+        height="$opt"
+        if ((height < 5)); then
+          err "Height must be not less than 5"
+          err "See help ($THIS_CMD -h)"
+          return 1
+        fi
+        break
+        ;;
     esac
   done
 
@@ -78,7 +78,7 @@ print_king_unko() {
 print_unko() {
   local height="$1"
 
-  for ((i=1; i<=height; i++)); do
+  for ((i = 1; i <= height; i++)); do
     if ((i == 1)); then
       # i=1の時は王冠を出力
       local p=$((height + 1))
