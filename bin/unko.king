@@ -82,14 +82,17 @@ print_unko() {
     if ((i == 1)); then
       # i=1の時は王冠を出力
       local p=$((height + 1))
-      local pad="$(repeat_str "$p" "$SPACE")"
+      local pad
+      pad="$(repeat_str "$p" "$SPACE")"
       echo "${pad}${TOP}"
     else
       # うんこを出力
       local u=$((2 * i - 1))
       local p=$((height - (i - 1)))
-      local unko="$(repeat_str "$u" "$UNKO")"
-      local pad="$(repeat_str "$p" "$SPACE")"
+      local unko
+      local pad
+      unko="$(repeat_str "$u" "$UNKO")"
+      pad="$(repeat_str "$p" "$SPACE")"
       echo "${pad}${LEFT_BRACKET}${unko}${RIGHT_BRACKET}"
     fi
   done
