@@ -1,0 +1,145 @@
+#!/bin/bash
+
+set -eu
+
+readonly THIS_CMD="${0##*/}"
+readonly VERSION="v1.0.0"
+
+# Unko parts
+readonly TOP="${T:-👑}"
+readonly UNKO="${U:-💩}"
+readonly EYE="${E:-👁}"
+readonly NOSE="${N:-👃}"
+readonly MOUSE="${M:-👄}"
+readonly LEFT_BRACKET="${L:-（}"
+readonly RIGHT_BRACKET="${R:-）}"
+readonly SPACE="${S:-　}"
+
+main() {
+  local height=5
+  while ((0 < $#)); do
+    local opt="$1"
+    shift
+    case "$opt" in
+      -h | --help)
+      usage
+      return
+      ;;
+    -v | --version)
+      echo "$VERSION"
+      return
+      ;;
+    *)
+      height="$opt"
+      if ((height < 5)); then
+        err "Height must be not less than 5"
+        err "See help ($THIS_CMD -h)"
+        return 1
+      fi
+      break
+      ;;
+    esac
+  done
+
+  print_king_unko "$height"
+}
+
+usage() {
+  cat << EOS
+$THIS_CMD prints a king unko.
+
+Usage:
+    $THIS_CMD [OPTIONS] NUMBER
+
+OPTIONS:
+    -h --help       Display this help and exit
+    -v --version    Display this version and exit
+EOS
+}
+
+## print_king_unko はキングウンコを任意の高さで出力する。
+print_king_unko() {
+  local height="$1"
+  print_unko "$height" | set_parts
+}
+
+## print_unko は単純にうんこを任意の高さで出力する。
+## トップには王冠がセットされる。
+##
+## うんこの高さ(h)とhに達するまでの変数iに対するうんこ(u)とパディング(p)算出の式は以下
+##
+## ウンコの数を求める関数 U
+##   U(i)  = 2i - 1   (1 < i)
+##   U'(i) = 0        (1 = i)
+##
+## パディングの数を求める関数 P
+##   P(h,i)  = h - (i - 1)  (1 < i)
+##   P'(h,i) = h + 1        (i = 1)
+print_unko() {
+  local height="$1"
+
+  for ((i=1; i<=height; i++)); do
+    if ((i == 1)); then
+      # i=1の時は王冠を出力
+      local p=$((height + 1))
+      local pad="$(repeat_str "$p" "$SPACE")"
+      echo "${pad}${TOP}"
+    else
+      # うんこを出力
+      local u=$((2 * i - 1))
+      local p=$((height - (i - 1)))
+      local unko="$(repeat_str "$u" "$UNKO")"
+      local pad="$(repeat_str "$p" "$SPACE")"
+      echo "${pad}${LEFT_BRACKET}${unko}${RIGHT_BRACKET}"
+    fi
+  done
+}
+
+## set_parts は目や口などのパーツをうんこにセットする。
+set_parts() {
+  # NOTE:
+  #   sedの置換後の文字列に変数を使うとセパレータ文字が使えなくなるのでsedを使わ
+  #   ない。
+  awk \
+    -v unko="$UNKO" \
+    -v eye="$EYE" \
+    -v nose="$NOSE" \
+    -v mouse="$MOUSE" \
+    'NR==3{
+       r = unko unko unko unko unko
+       s = unko eye unko eye unko
+       gsub(r, s)
+       print
+     }
+     NR==4{
+       r = unko unko unko unko unko unko unko
+       s = unko unko unko nose unko unko unko
+       gsub(r, s)
+       print
+     }
+     NR==5{
+       r = unko unko unko unko unko unko unko unko unko
+       s = unko unko unko unko mouse unko unko unko unko
+       gsub(r, s)
+       print
+     }
+     NR<3 || 5<NR { print }'
+}
+
+## repeat_str は任意の回数分、任意の文字を連続した1行のテキストを出力する。
+repeat_str() {
+  local n=$1
+  local str=$2
+  awk \
+    -v n="$n" \
+    -v str="$str" \
+    'BEGIN{ for (i=0; i<n; i++) { printf "%s", str } }'
+  echo
+}
+
+err() {
+  echo -e "[ ERR ] $*" >&2
+}
+
+main ${1+"$@"}
+exit $?
