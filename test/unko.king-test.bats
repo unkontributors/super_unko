@@ -63,3 +63,12 @@ readonly TARGET_COMMAND="$(pwd)/../bin/unko.king"
   [ "${lines[4]}" = "　　（💩💩💩💩👄💩💩💩💩）" ]
   [ "${lines[5]}" = "　（💩💩💩💩💩💩💩💩💩💩💩）" ]
 }
+
+@test "オプション以外の引数は数値のみ受け付ける" {
+  for i in a whoami '$(whoami)' あ 漢字 "" - "*" / "?" '_[$(whoami >&2)]'; do
+    run "$TARGET_COMMAND" "$i"
+    [ "$status" -ne 0 ]
+    [[ "$output" =~ ^.*ERR.*Invalid.*number.*$ ]]
+  done
+}
+
