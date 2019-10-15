@@ -31,6 +31,12 @@ main() {
         ;;
       *)
         height="$opt"
+
+        if ! [[ "$height" =~ ^[[:digit:]]+$ ]]; then
+          err "Invalid number '$height'"
+          return 1
+        fi
+
         if ((height < 5)); then
           err "Height must be not less than 5"
           err "See help ($THIS_CMD -h)"
