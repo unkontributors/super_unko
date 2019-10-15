@@ -35,7 +35,7 @@ main() {
         ;;
       setup)
         # フォーマットとlintに使うDockerイメージを取得
-        docker-compose pull --parallel formatter linter
+        docker-compose pull formatter linter
         ;;
       format)
         # コードフォーマットにかける
