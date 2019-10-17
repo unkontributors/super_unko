@@ -88,7 +88,7 @@ $THIS_CMD prints a king unko.
 Usage:
     $THIS_CMD -h | --help
     $THIS_CMD -v | --version
-    $THIS_CMD [number] [--] [-s [sub-options...]]
+    $THIS_CMD [number] [shout] [sub options...]
 
 Examples:
     $THIS_CMD
@@ -101,8 +101,6 @@ Examples:
 Options:
     -h --help                   Display this help and exit
     -v --version                Display this version and exit
-    -s --shout [sub-options]    A king shouts words. It is arguments of
-                                'echo-sd' that options after '-s'.
 
 Sub options:
     You can use options of 'echo-sd'.
