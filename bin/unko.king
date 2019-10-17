@@ -3,7 +3,7 @@
 set -eu
 
 readonly THIS_CMD="${0##*/}"
-readonly VERSION="v1.0.0"
+readonly VERSION="v1.1.0"
 
 # Unko parts
 readonly TOP="${T:-👑}"
@@ -17,36 +17,67 @@ readonly SPACE="${S:-　}"
 
 main() {
   local height=5
-  while ((0 < $#)); do
-    local opt="$1"
-    shift
-    case "$opt" in
-      -h | --help)
-        usage
-        return
-        ;;
-      -v | --version)
-        echo "$VERSION"
-        return
-        ;;
-      *)
-        height="$opt"
 
-        if ! [[ "$height" =~ ^[[:digit:]]+$ ]]; then
-          err "Invalid number '$height'"
-          return 1
-        fi
+  if (($# < 1)); then
+    print_king_unko "$height"
+    return
+  fi
 
-        if ((height < 5)); then
-          err "Height must be not less than 5"
-          err "See help ($THIS_CMD -h)"
-          return 1
-        fi
-        break
-        ;;
-    esac
-  done
+  # 第1引数はヘルプ、バージョン、コマンド、段数のいずれか。
+  #
+  # サブコマンドの判定を2回行っている理由は、デフォルト値を使用してサブコマンド
+  # を実行したいケースを処理するため。
+  local opt="$1"
+  shift
+  case "$opt" in
+    -h | --help)
+      usage
+      return
+      ;;
+    -v | --version)
+      echo "$VERSION"
+      return
+      ;;
+    shout)
+      echo-sd "$@"
+      print_king_unko "$height"
+      return
+      ;;
+    *)
+      height="$opt"
 
+      if ! [[ "$height" =~ ^[[:digit:]]+$ ]]; then
+        err "Invalid number '$height'"
+        return 1
+      fi
+
+      if ((height < 5)); then
+        err "Height must be not less than 5"
+        err "See help ($THIS_CMD -h)"
+        return 1
+      fi
+      ;;
+  esac
+
+  # 引数がなければkingを出力して終了
+  if (($# < 1)); then
+    print_king_unko "$height"
+    return
+  fi
+
+  # サブコマンドとその引数として処理
+  local sub_cmd="$1"
+  shift
+  case "$sub_cmd" in
+    shout)
+      echo-sd "$@"
+      ;;
+    *)
+      err "Invalid sub command '$sub_cmd'"
+      err "See help ($THIS_CMD -h)"
+      return 1
+      ;;
+  esac
   print_king_unko "$height"
 }
 
@@ -55,11 +86,27 @@ usage() {
 $THIS_CMD prints a king unko.
 
 Usage:
-    $THIS_CMD [OPTIONS] NUMBER
+    $THIS_CMD -h | --help
+    $THIS_CMD -v | --version
+    $THIS_CMD [number] [--] [-s [sub-options...]]
 
-OPTIONS:
-    -h --help       Display this help and exit
-    -v --version    Display this version and exit
+Examples:
+    $THIS_CMD
+    $THIS_CMD 5
+    $THIS_CMD shout おはようんこ
+    $THIS_CMD 6 shout こんにちわーるど
+    $THIS_CMD 7 shout --square こんばんわーるど
+    echo さようんこなら | $THIS_CMD 8 shout -s
+
+Options:
+    -h --help                   Display this help and exit
+    -v --version                Display this version and exit
+    -s --shout [sub-options]    A king shouts words. It is arguments of
+                                'echo-sd' that options after '-s'.
+
+Sub options:
+    You can use options of 'echo-sd'.
+    See 'echo-sd --help'.
 EOS
 }
 
