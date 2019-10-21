@@ -27,6 +27,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 | unko.life     | Play 💩's game of life. |
 | unko.any      | Simple wrapper to 💩 substitution for unko.shout. |
 | unko.king     | Build your king shift tower. |
+| unko.fizzbuzz | No need to implement FizzBuzz. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
