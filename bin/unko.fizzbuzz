@@ -3,11 +3,11 @@
 UNKO_FIZZ='💩'
 UNKO_BUZZ='🍺'
 
-king_unko(){
+king_unko() {
   unko.shout "$1"
 }
 
-usage(){
+usage() {
   cat << EOM
 $0: $0 [unsigned_int]
 
@@ -17,34 +17,32 @@ EOM
   exit 0
 }
 
-if [ $# -ne 1 ] ; then
+if [ $# -ne 1 ]; then
   usage
 fi
 
-is_integer(){
+is_integer() {
   IPT=$1
   expr "$IPT" : "[0-9]*$" >&/dev/null
-  if [ $? -lt 2 ] ; then
+  if [ $? -lt 2 ]; then
     return 0
   else
     return 1
   fi
 }
 
-if  ! is_integer "$1" ; then
+if ! is_integer "$1"; then
   usage
 fi
 
-for (( NUM=1; NUM <= $1; NUM++ ))
-do
-  if  [ $((NUM % 3)) -eq 0 ] && [ $((NUM % 5)) -eq 0 ]  ; then
+for ((NUM = 1; NUM <= $1; NUM++)); do
+  if [ $((NUM % 3)) -eq 0 ] && [ $((NUM % 5)) -eq 0 ]; then
     king_unko "fizzbuzz"
-  elif [ $((NUM % 5)) -eq 0 ] ; then
+  elif [ $((NUM % 5)) -eq 0 ]; then
     echo "$UNKO_BUZZ < buzz"
-  elif [ $((NUM % 3)) -eq 0 ] ; then
-    echo "$UNKO_FIZZ < fizz" 
+  elif [ $((NUM % 3)) -eq 0 ]; then
+    echo "$UNKO_FIZZ < fizz"
   else
     echo $NUM
   fi
 done
-
