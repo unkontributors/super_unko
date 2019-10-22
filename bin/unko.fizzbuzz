@@ -1,0 +1,47 @@
+#!/bin/bash
+
+UNKO_FIZZ='💩'
+UNKO_BUZZ='🍺'
+
+king_unko() {
+  unko.shout "$1"
+}
+
+usage() {
+  cat << EOM
+$0: $0 [unsigned_int]
+
+$0: print fizzbuzz unkonized.
+
+EOM
+  exit 0
+}
+
+if [ $# -ne 1 ]; then
+  usage
+fi
+
+is_integer() {
+  IPT=$1
+  if [[ "$IPT" =~ ^[0-9]+$ ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+if ! is_integer "$1"; then
+  usage
+fi
+
+for ((NUM = 1; NUM <= $1; NUM++)); do
+  if [ $((NUM % 3)) -eq 0 ] && [ $((NUM % 5)) -eq 0 ]; then
+    king_unko "fizzbuzz"
+  elif [ $((NUM % 5)) -eq 0 ]; then
+    echo "$UNKO_BUZZ < buzz"
+  elif [ $((NUM % 3)) -eq 0 ]; then
+    echo "$UNKO_FIZZ < fizz"
+  else
+    echo $NUM
+  fi
+done
