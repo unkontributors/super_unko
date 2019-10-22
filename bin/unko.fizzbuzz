@@ -23,8 +23,7 @@ fi
 
 is_integer() {
   IPT=$1
-  expr "$IPT" : "[0-9]*$" >&/dev/null
-  if [ $? -lt 2 ]; then
+  if [[ "$IPT" =~ ^[0-9]+$ ]]; then
     return 0
   else
     return 1
