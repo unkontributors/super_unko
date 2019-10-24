@@ -1,6 +1,18 @@
 #!/usr/bin/env bats
 
 readonly TARGET_COMMAND="$(pwd)/../bin/unko.fizzbuzz"
+readonly BASH_REQUIRE_VERSION=4.0
+
+#==============================================================================
+# NOTE:
+#   echo-sdはBash4.0以下では動かないため、Bash4.1以上のみテストする
+#==============================================================================
+
+bash_version=$(bash --version | grep -Eo "[0-9]+\.[0-9]+" | head -n 1)
+if [ $(echo "$BASH_REQUIRE_VERSION < $bash_version" | bc) -eq 0 ]; then
+  echo "  Bash${BASH_REQUIRE_VERSION}以下はスキップ"
+  exit 0
+fi
 
 @test "引数がない時はヘルプを出力する" {
   run "$TARGET_COMMAND"
