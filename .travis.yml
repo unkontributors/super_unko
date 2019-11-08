@@ -74,9 +74,11 @@ before_install:
   - wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz
 
 install:
-    ## Build base image and linter image and formatter image
   - mkdir -p $CACHE_DIR
-  - docker-compose build --parallel
+    ## Build super_unko image
+  - docker-compose build
+    ## Build linter and formatter image
+  - docker-compose -f docker-compose-tools.yml build linter formatter
     ## Build CI image
   - docker-compose -f docker-compose-ci.yml build ci_sh_${SH_VERSION}
     ## kcov
