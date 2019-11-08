@@ -6,6 +6,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: default
+    image: unkontributors/super_unko/ci_sh_default:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
@@ -17,6 +18,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: 3.2
+    image: unkontributors/super_unko/ci_sh_3.2:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
@@ -28,6 +30,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: 4.0
+    image: unkontributors/super_unko/ci_sh_4.0:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
@@ -39,6 +42,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: 4.1
+    image: unkontributors/super_unko/ci_sh_4.1:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
@@ -50,6 +54,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: 4.2
+    image: unkontributors/super_unko/ci_sh_4.2:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
@@ -61,6 +66,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: 4.3
+    image: unkontributors/super_unko/ci_sh_4.3:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
@@ -72,6 +78,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: 4.4
+    image: unkontributors/super_unko/ci_sh_4.4:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
@@ -83,6 +90,7 @@ services:
       context: ./build/ci
       args:
         SH_VERSION: 5.0
+    image: unkontributors/super_unko/ci_sh_5.0:latest
     volumes:
       - "$PWD:/usr/local/src/super_unko"
     working_dir: /usr/local/src/super_unko
