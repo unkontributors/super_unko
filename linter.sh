@@ -14,6 +14,9 @@ readonly RESET=$'\x1b[m'
 # デフォルトの静的解析対象
 readonly DEFAULT_TARGET_FILES=(*.sh bin/*)
 
+# docker-composeコマンド
+readonly DC_CMD=(docker-compose -f docker-compose-tools.yml)
+
 test_count=0
 err_count=0
 
@@ -35,7 +38,7 @@ main() {
         ;;
       setup)
         # フォーマットとlintに使うDockerイメージを取得
-        docker-compose pull formatter linter
+        "${DC_CMD[@]}" pull formatter linter
         ;;
       format)
         # コードフォーマットにかける
@@ -114,7 +117,7 @@ cmd_format() {
 run_shfmt() {
   local files=("$@")
   local ret
-  docker-compose run formatter $overwrite "${files[@]}"
+  "${DC_CMD[@]}" run formatter $overwrite "${files[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))
@@ -150,7 +153,7 @@ cmd_lint() {
 run_shellcheck() {
   local files=("$@")
   local ret
-  docker-compose run linter "${files[@]}"
+  "${DC_CMD[@]}" run linter "${files[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))
