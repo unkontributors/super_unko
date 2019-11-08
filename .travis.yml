@@ -12,6 +12,16 @@ env:
     - UBUNTU_CACHE_FILE=$CACHE_DIR/ubuntu.tar.gz
     - SHFMT_CACHE_FILE=$CACHE_DIR/shfmt.tar.gz
     - SHELLCHECK_CACHE_FILE=$CACHE_DIR/shellcheck.tar.gz
+    - PATH=${PATH}:${HOME}/kcov/bin
+
+addons:
+  apt:
+    packages:
+      - binutils-dev
+      - libcurl4-openssl-dev
+      - libdw-dev
+      - libiberty-dev
+      - bats
 
 matrix:
   include:
@@ -60,6 +70,8 @@ before_install:
     if [[ -f "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tar.gz" ]]; then
       docker load -i "$CACHE_DIR/${NAME}-${TRAVIS_OS_NAME}-${SH_VERSION}.tar.gz"
     fi
+    # kcov - coverage
+  - wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz
 
 install:
     ## Build base image and linter image and formatter image
@@ -67,10 +79,33 @@ install:
   - docker-compose build --parallel
     ## Build CI image
   - docker-compose -f docker-compose-ci.yml build ci_sh_${SH_VERSION}
+    ## kcov
+  - tar xzf master.tar.gz
+  - cd kcov-master
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=${HOME}/kcov ..
+  - make
+  - make install
+  - cd ../..
+  - rm -rf kcov-master
+  - mkdir -p coverage
 
 script:
   - make lint
   - docker-compose -f docker-compose-ci.yml run ci_sh_${SH_VERSION}
+  - |
+    if [[ "$SH_VERSION" == default ]]; then
+      # コンテナ経由で実行しようとすると失敗するのでしかたなく直接実行
+      ./test.sh || true
+    fi
+
+after_success:
+  # ダミーで送信
+  - |
+    if [[ "$SH_VERSION" == default ]]; then
+      kcov --coveralls-id=$TRAVIS_JOB_ID test/coverage bin/unko.tower 3
+    fi
 
 before_cache:
   - docker save "ubuntu" | gzip -c > $UBUNTU_CACHE_FILE
