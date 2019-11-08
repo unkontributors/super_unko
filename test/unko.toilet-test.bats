@@ -1,15 +1,18 @@
 #!/usr/bin/env bats
+source functions.sh
 
 readonly TARGET_COMMAND="../bin/unko.toilet"
 
 @test "普通に実行" {
   run "$TARGET_COMMAND"
   [ "$status" -eq 0 ]
+  coverage "$TARGET_COMMAND"
 }
 
 @test "おかしなオプション--お菓子" {
   run "$TARGET_COMMAND" --お菓子
   [ "$status" -ne 0 ]
+  coverage "$TARGET_COMMAND" --お菓子
 }
 
 readonly HANAGE_BASE64="ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
@@ -43,13 +46,14 @@ ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAK"
   run bash -c "echo はなげ| $TARGET_COMMAND | base64"
   [ "$status" -eq 0 ]
   [ "$output" = "$HANAGE_BASE64" ]
+  coverage "$TARGET_COMMAND" <<< はなげ
 }
 
 @test "引数に" {
-  run bash -c "echo はなげ| $TARGET_COMMAND | base64"
-  run "$TARGET_COMMAND" はなげ | base64
+  run bash -c "$TARGET_COMMAND はなげ | base64"
   [ "$status" -eq 0 ]
   [ "$output" = "$HANAGE_BASE64" ]
+  coverage "$TARGET_COMMAND" はなげ
 }
 
 @test "flip" {
@@ -80,6 +84,7 @@ ICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgIAo=" ]
+  coverage "$TARGET_COMMAND" --flip
 }
 
 @test "flop" {
@@ -110,6 +115,7 @@ ICAgICAKICAgICAgICAgIPCfkqnwn5KpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgIPCfkqkgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgIAo=" ]
+  coverage "$TARGET_COMMAND" --flop
 }
 
 @test "180" {
@@ -140,6 +146,7 @@ ICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgIPCfkqnwn5KpICAgICAgICAgIAogICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIPCf
 kqkgICAgICAgIAo=" ]
+  coverage "$TARGET_COMMAND" --180
 }
 
 @test "right" {
@@ -171,6 +178,7 @@ ICAgICAgIAogICAgICAgICAgICAgICAg8J+SqfCfkqnwn5Kp8J+SqSAgICAgICAgICAgICAgICAg
 ICAg8J+SqfCfkqkgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=" ]
+  coverage "$TARGET_COMMAND" --right
 }
 
 @test "left" {
@@ -202,6 +210,7 @@ ICAgICAgICAgICAgICAgIPCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqSAgICAgICAgICAgICAgICAK
 n5Kp8J+SqSAgICAgICAgICAgIAogICAgICAgICAgICAgICAg8J+SqfCfkqkgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
 ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=" ]
+  coverage "$TARGET_COMMAND" --left
 }
 
 @test "border" {
@@ -240,6 +249,7 @@ ICAgICAgICAgICAgICAgICAg8J+SqQrwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCf
 kqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+S
 qfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp
 8J+SqfCfkqnwn5Kp8J+SqfCfkqnwn5Kp8J+SqQo=" ]
+  coverage "$TARGET_COMMAND" --border
 }
 
 readonly WIDTH_20="ICAgICAgICDwn5KpICAgICAgICAgICAgICAgICAgCiAgICAgICAgICDwn5Kp8J+SqSAgICAgICAg
@@ -272,22 +282,26 @@ ICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo="
   run bash -c "$TARGET_COMMAND -w 20 | base64"
   [ "$status" -eq 0 ]
   [ "$output" = "$WIDTH_20" ]
+  coverage "$TARGET_COMMAND" -w 20
 }
 
 @test "--width 20" {
   run bash -c "$TARGET_COMMAND --width 20 | base64"
   [ "$status" -eq 0 ]
   [ "$output" = "$WIDTH_20" ]
+  coverage "$TARGET_COMMAND" --width 20
 }
 
 @test "--help" {
   run bash -c "$TARGET_COMMAND --help"
   [ "$status" -ne 0 ]
+  coverage "$TARGET_COMMAND" --help
 }
 
 @test "-h" {
   run bash -c "$TARGET_COMMAND -h"
   [ "$status" -ne 0 ]
+  coverage "$TARGET_COMMAND" -h
 }
 
 @test "-h == --help" {
@@ -318,11 +332,13 @@ gZfjgb7jgZkKICAgICAgLS0xODAgICAgICAgICAgICAgICAgICAgMTgw5bqm5Zue6Lui44GX44G+
 @test "--version" {
   run "$TARGET_COMMAND" --version
   [ "$status" -eq 0 ]
+  coverage "$TARGET_COMMAND" --version
 }
 
 @test "-v" {
   run "$TARGET_COMMAND" -v
   [ "$status" -eq 0 ]
+  coverage "$TARGET_COMMAND" -v
 }
 
 @test "--version == -v" {

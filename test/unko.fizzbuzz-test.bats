@@ -1,4 +1,5 @@
 #!/usr/bin/env bats
+source functions.sh
 
 readonly TARGET_COMMAND="$(pwd)/../bin/unko.fizzbuzz"
 readonly BASH_REQUIRE_VERSION=4.0
@@ -18,6 +19,7 @@ fi
   run "$TARGET_COMMAND"
   [ "$status" -eq 0 ]
   [[ "${lines[0]}" =~ .*unko.fizzbuzz:* ]]
+  coverage "$TARGET_COMMAND"
 }
 
 @test "引数が正の整数でない時はヘルプを出力する" {
@@ -25,6 +27,7 @@ fi
     run "$TARGET_COMMAND" "$i"
     [ "$status" -eq 0 ]
     [[ "${lines[0]}" =~ .*unko.fizzbuzz:* ]]
+    coverage "$TARGET_COMMAND" "$i"
   done
 }
 
@@ -32,6 +35,7 @@ fi
   run "$TARGET_COMMAND" 0
   [ "$status" -eq 0 ]
   [[ "${lines[0]}" == "" ]]
+  coverage "$TARGET_COMMAND" 0
 }
 
 @test "引数が3のときは3まで出力する" {
@@ -41,6 +45,7 @@ fi
   [[ "${lines[1]}" == 2 ]]
   [[ "${lines[2]}" =~ .*fizz$ ]]
   [[ "${lines[3]}" == "" ]]
+  coverage "$TARGET_COMMAND" 3
 }
 
 @test "引数が16のときは16まで出力する" {
@@ -53,4 +58,5 @@ fi
   [[ "${lines[5]}" =~ .*fizz$ ]]
   [[ "${lines[14]}" =~ .*人人.* ]]
   [[ "${lines[15]}" =~ .*fizzbuzz.* ]]
+  coverage "$TARGET_COMMAND" 16
 }
