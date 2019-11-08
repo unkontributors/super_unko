@@ -22,7 +22,7 @@ clean: ## Clear files
 
 .PHONY: setup
 setup: ## Setup super_unko, linter, formatter and coverage tools docker image
-	docker-compose build --parallel
+	docker-compose build
 	docker-compose -f docker-compose-ci.yml build --parallel
 
 .PHONY: test-bash-version
