@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  formatter:
+    image: peterdavehello/shfmt
+    container_name: formatter
+    volumes:
+      - "$PWD:/work"
+    entrypoint:
+      - "shfmt"
+      - "-i"
+      - "2"
+      - "-ci"
+      - "-sr"
+      - "-d"
+
+  linter:
+    image: koalaman/shellcheck
+    container_name: linter
+    volumes:
+      - "$PWD:/work"
+    entrypoint:
+      - "shellcheck"
