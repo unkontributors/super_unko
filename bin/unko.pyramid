@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Sierpinski gasket is not unkoski gasket.
+# Sierpinski is Great mathematician.
+# unkoski is peoples who love the unko.
+
 SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
 readonly SCRIPT_NAME
 readonly VERSION=v1.0.0
@@ -28,7 +32,7 @@ rendering(){
 usage(){
   cat <<EOS
 
-$SCRIPT_NAME is render Sierpinski gasket by 💩.
+$SCRIPT_NAME is render unkoski gasket.
 Sorry, could not beautiful rendering by some environment...
 
 Usage:
