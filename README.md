@@ -17,6 +17,7 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 | unko.ls       | Shows various shit expression. |
 | unko.yes      | Generate 💩 shit forever. |
 | unko.tower    | Build your shit tower. |
+| unko.pyramid  | Build your shit pyramid. |
 | bigunko.show  | Big shit. |
 | unko.printpnm | Generate 💩 PNM image file. |
 | unko.puzzle   | Sliding block puzzle. |

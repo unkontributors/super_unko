@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
+readonly SCRIPT_NAME
+readonly VERSION=v1.0.0
+
+draw_pyramid(){
+  local n=${1:-1}
+  local pyramid=`cat -`
+
+  if [  "$n" -le 1 ]; then
+    echo "$pyramid"
+  else
+    local pad_n="$(( $(echo "$pyramid"|head -1|wc -c) / 2))"
+    local pad=`printf "% ${pad_n}s" `
+    cat <(
+      echo "$pyramid" | sed "s/.*/${pad}&${pad}/";
+      echo "$pyramid" | sed 's/.*/&&/';
+    ) | draw_pyramid "$(( $n - 1 ))"
+  fi
+}
+
+rendering(){
+  ## draw! 💩 turn!
+  echo _ | draw_pyramid ${1:-5} | sed 's/_/💩/g'
+}
+
+usage(){
+  cat <<EOS
+
+$SCRIPT_NAME is render Sierpinski gasket by 💩.
+Sorry, could not beautiful rendering by some environment...
+
+Usage:
+    $SCRIPT_NAME [unko_size (default:5)]
+Examples:
+    $SCRIPT_NAME 5
+Flags:
+    -h, --help          show help
+        --version       show version
+EOS
+}
+
+set_opts() {
+  while ((0 < $#)); do
+    local opt=$1
+    shift
+
+    case "$opt" in
+      '-h' | '--help')
+        usage
+        exit
+        ;;
+      '--version')
+        echo $VERSION
+        exit
+        ;;
+      -*)
+        log "illegal option -- $1"
+        exit 1
+        ;;
+      *)
+        unko_size=$opt
+        ;;
+    esac
+  done
+}
+
+set_opts ${1+"$@"}
+rendering "$unko_size"
