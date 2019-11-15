@@ -18,11 +18,12 @@ draw_pyramid() {
 rendering() {
   ## draw! 💩 turn!
   local pyramid_size="${1:-16}"
-  draw_pyramid $(printf "%0${pyramid_size}d1%0${pyramid_size}d")
+  draw_pyramid "$(printf "%0${pyramid_size}d1%0${pyramid_size}d")"
 }
 
+## unko.printpnmを参考に...
 log() {
-  echo "[$$] $@" >&2
+  echo -e "$SCRIPT_NAME: $*" >&2
 }
 
 usage() {
