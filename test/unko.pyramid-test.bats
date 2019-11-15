@@ -3,7 +3,7 @@ source functions.sh
 
 readonly TARGET_COMMAND="../bin/unko.pyramid"
 
-@test 'unko.pyramidは引数なしのときは5段' {
+@test 'unko.pyramidは引数なしのときは16段' {
   run "$TARGET_COMMAND"
   [ "$status" -eq 0 ]
   [ "${lines[0]}"  = "               💩               " ]
@@ -26,7 +26,7 @@ readonly TARGET_COMMAND="../bin/unko.pyramid"
 }
 
 @test 'unko.pyramidの美しさはブラウザのコードレビューでも確認できる' {
-  run bash -c "$TARGET_COMMAND 4|tr 💩 🎄|sed '1s/🎄/👑/';yes 💩|head -2|xargs printf '% 11s\n'"
+  run bash -c "$TARGET_COMMAND 8|tr 💩 🎄|sed '1s/🎄/👑/';yes 💩|head -2|xargs printf '% 11s\n'"
   [ "${lines[0]}"  = "       👑       " ]
   [ "${lines[1]}"  = "      🎄🎄      " ]
   [ "${lines[2]}"  = "     🎄  🎄     " ]
@@ -45,3 +45,4 @@ readonly TARGET_COMMAND="../bin/unko.pyramid"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "💩" ]
 }
+
