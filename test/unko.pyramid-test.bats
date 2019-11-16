@@ -46,3 +46,27 @@ readonly TARGET_COMMAND="../bin/unko.pyramid"
   [ "${lines[0]}" = "💩" ]
 }
 
+@test "オプション以外の第1引数は数値のみ受け付ける" {
+  for i in 0 16.5 a $ '_[$(whoami >&2)]' whoami '$(whoami)' あ 漢字 "*" / "?"; do
+    run "$TARGET_COMMAND" "$i"
+    [ "$status" -ne 0 ]
+    [ "$output" = "unko.pyramid: Invalid number '${i}'" ]
+  done
+}
+
+@test "第1引数に段数、第2引数が不正なケース" {
+  for i in 0 16.5 a $ '_[$(whoami >&2)]' whoami '$(whoami)' あ 漢字 "*" / "?"; do
+    run "$TARGET_COMMAND" 16 "$i"
+    [ "$status" -ne 0 ]
+    [ "$output" = "unko.pyramid: Invalid number '${i}'" ]
+  done
+}
+
+@test "-から始まる不正なオプションはエラー" {
+  for i in - -a --; do
+    run "$TARGET_COMMAND" "$i"
+    [ "$status" -ne 0 ]
+    [ "$output" = "unko.pyramid: illegal option '${i}'" ]
+  done
+}
+
