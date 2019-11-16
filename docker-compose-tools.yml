@@ -2,7 +2,7 @@ version: '3'
 
 services:
   formatter:
-    image: peterdavehello/shfmt
+    image: peterdavehello/shfmt:2.6.4
     container_name: formatter
     volumes:
       - "$PWD:/work"
@@ -15,7 +15,7 @@ services:
       - "-d"
 
   linter:
-    image: koalaman/shellcheck
+    image: koalaman/shellcheck:stable
     container_name: linter
     volumes:
       - "$PWD:/work"
