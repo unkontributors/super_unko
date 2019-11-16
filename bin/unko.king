@@ -51,6 +51,10 @@ main() {
         return 1
       fi
 
+      # 数値を8進数として解釈しないようにするために
+      # 0埋めの数値の先頭の0を削除
+      height="$(sed -E "s/^0+//" <<< "$height")"
+
       if ((height < 5)); then
         err "Height must be not less than 5"
         err "See help ($THIS_CMD -h)"

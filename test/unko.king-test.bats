@@ -54,6 +54,14 @@ readonly BASH_REQUIRE_VERSION=4.0
   coverage "$TARGET_COMMAND" 5
 }
 
+@test "0埋めの数値 (8進数のテスト)" {
+  for i in '05' '07' '08' '09' '010'; do
+    run "$TARGET_COMMAND" "$i"
+    [ "$status" -eq 0 ]
+    coverage "$TARGET_COMMAND" "$i"
+  done
+}
+
 @test "引数 5 未満はNG" {
   for i in -1 0 1 2 3 4; do
     run "$TARGET_COMMAND" $i
