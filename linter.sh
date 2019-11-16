@@ -117,7 +117,7 @@ cmd_format() {
 run_shfmt() {
   local files=("$@")
   local ret
-  "${DC_CMD[@]}" run formatter $overwrite "${files[@]}"
+  "${DC_CMD[@]}" run --rm formatter $overwrite "${files[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))
@@ -153,7 +153,7 @@ cmd_lint() {
 run_shellcheck() {
   local files=("$@")
   local ret
-  "${DC_CMD[@]}" run linter "${files[@]}"
+  "${DC_CMD[@]}" run --rm linter "${files[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))
