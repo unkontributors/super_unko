@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Sierpinski gasket is not unkoski gasket.
-# Sierpinski is Great mathematician.
+# Sierpinski is great mathematician.
 # unkoski is peoples who love the unko.
 
 SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
@@ -10,15 +10,18 @@ readonly VERSION=v1.0.0
 
 draw_pyramid() {
   local input="${1:-1}"
+  if [[ "$input" =~ ^1 ]]; then
+    return 0
+  fi
   echo "${input//10/💩}" | cut -c 2- | tr 01 ' 💩'
   next_input=$(echo "0${input}0" | awk -F '' '{l=length($0);for(i=1;i<=l-2;i++){printf ($i+$(i+2))%2}}')
-  [[ "$next_input" =~ ^1 ]] || draw_pyramid "$next_input"
+  draw_pyramid "$next_input"
 }
 
 rendering() {
   ## draw! 💩 turn!
   local pyramid_size="${1:-16}"
-  draw_pyramid "$(printf "%0${pyramid_size}d1%0${pyramid_size}d")"
+  draw_pyramid "$(printf "%0$((pyramid_size + 1))d%0${pyramid_size}d" 1)"
 }
 
 ## unko.printpnmを参考に...
@@ -40,9 +43,10 @@ Flags:
     -h, --help          show help
         --version       show version
 EOS
+  exit 0
 }
 
-set_opts() {
+main() {
   while ((0 < $#)); do
     local opt=$1
     shift
@@ -57,15 +61,22 @@ set_opts() {
         exit
         ;;
       -*)
-        log "illegal option -- $1"
+        log "illegal option '$opt'"
         exit 1
         ;;
       *)
         unko_size=$opt
+        if ! [[ $unko_size =~ ^[1-9]+[[:digit:]]*$ ]]; then
+          log "Invalid number '$unko_size'"
+          return 1
+        fi
         ;;
     esac
   done
+
+  rendering "$unko_size"
+  return 0
 }
 
-set_opts ${1+"$@"}
-rendering "$unko_size"
+main ${1+"$@"}
+exit $?
