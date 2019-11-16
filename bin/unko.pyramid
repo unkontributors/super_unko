@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+# Sierpinski gasket is not unkoski gasket.
+# Sierpinski is great mathematician.
+# unkoski is peoples who love the unko.
+
+SCRIPT_NAME="$(basename "${BASH_SOURCE:-$0}")"
+readonly SCRIPT_NAME
+readonly VERSION=v1.0.0
+
+draw_pyramid() {
+  local input="${1:-1}"
+  if [[ "$input" =~ ^1 ]]; then
+    return 0
+  fi
+  echo "${input//10/💩}" | cut -c 2- | tr 01 ' 💩'
+  next_input=$(echo "0${input}0" | awk -F '' '{l=length($0);for(i=1;i<=l-2;i++){printf ($i+$(i+2))%2}}')
+  draw_pyramid "$next_input"
+}
+
+rendering() {
+  ## draw! 💩 turn!
+  local pyramid_size="${1:-16}"
+  draw_pyramid "$(printf "%0$((pyramid_size + 1))d%0${pyramid_size}d" 1)"
+}
+
+## unko.printpnmを参考に...
+log() {
+  echo -e "$SCRIPT_NAME: $*" >&2
+}
+
+usage() {
+  cat << EOS
+
+$SCRIPT_NAME is render unkoski gasket.
+Sorry, could not beautiful rendering by some environment...
+
+Usage:
+    $SCRIPT_NAME [unko_size (default:16)]
+Examples:
+    $SCRIPT_NAME 16
+Flags:
+    -h, --help          show help
+        --version       show version
+EOS
+  exit 0
+}
+
+main() {
+  while ((0 < $#)); do
+    local opt=$1
+    shift
+
+    case "$opt" in
+      '-h' | '--help')
+        usage
+        exit
+        ;;
+      '--version')
+        echo $VERSION
+        exit
+        ;;
+      -*)
+        log "illegal option '$opt'"
+        exit 1
+        ;;
+      *)
+        unko_size=$opt
+        if ! [[ $unko_size =~ ^[1-9]+[[:digit:]]*$ ]]; then
+          log "Invalid number '$unko_size'"
+          return 1
+        fi
+        ;;
+    esac
+  done
+
+  rendering "$unko_size"
+  return 0
+}
+
+main ${1+"$@"}
+exit $?
