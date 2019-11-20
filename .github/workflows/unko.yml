@@ -1,0 +1,62 @@
+name: Test bash each version
+
+on: [push]
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Cache docker image
+        id: cache-bash-image
+        uses: actions/cache@v1
+        with:
+          path: ~/.ci-cache
+          key: bash-${{ hashFiles('**/Dockerfile') }}
+      - name: Load docker image
+        if: steps.cache-bash-image.outputs.cache-hit == 'true'
+        run: |
+          gunzip ~/.ci-cache/super_unko.gz
+          docker load -i ~/.ci-cache/super_unko
+      - name: Build super_unko image
+        if: steps.cache-bash-image.outputs.cache-hit != 'true'
+        run: docker-compose build super_unko
+      - run: mkdir -p ~/.ci-cache
+      - name: Save docker image cache
+        run: docker save "unkontributors/super_unko" | gzip -c > ~/.ci-cache/super_unko.gz
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [default, "3.2", "4.0", "4.1", "4.2", "4.3", "4.4", "5.0"]
+    needs: build-image
+    steps:
+      - uses: actions/checkout@v1
+      - name: Cache docker image
+        id: cache-bash-image
+        uses: actions/cache@v1
+        with:
+          path: ~/.ci-cache
+          key: bash-${{ hashFiles('**/Dockerfile') }}
+      - name: Load docker image
+        if: steps.cache-bash-image.outputs.cache-hit == 'true'
+        run: |
+          gunzip ~/.ci-cache/super_unko.gz
+          docker load -i ~/.ci-cache/super_unko
+      - name: Test
+        run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run format
+        run: ./linter.sh format
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run lint
+        run: ./linter.sh lint
