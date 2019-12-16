@@ -42,6 +42,6 @@ for ((NUM = 1; NUM <= $1; NUM++)); do
   elif [ $((NUM % 3)) -eq 0 ]; then
     echo "$UNKO_FIZZ < fizz"
   else
-    echo $NUM
+    echo "$NUM"
   fi
 done
