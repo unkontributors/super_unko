@@ -7,9 +7,9 @@ le="${LE:-${E:-👁}}" # Left Eye
 re="${RE:-${E:-👁}}" # Right Eye
 n="${N:-👃}"         # Nose
 m="${M:-👄}"         # Mouth
-l="${L:-（}"          # Left side
-r="${R:-）}"          # Right side
-s="${S:-　}"          # Space
+l="${L:-（}"         # Left side
+r="${R:-）}"         # Right side
+s="${S:-　}"         # Space
 cat << EOF
 $s$s$s$s$s$s$t
 $s$s$s$s$l$u$u$u$r
