@@ -1,4 +1,4 @@
-name: Test bash each version
+name: test
 
 on: [push]
 
