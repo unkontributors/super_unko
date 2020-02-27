@@ -4,8 +4,6 @@ on:
   push:
     paths-ignore:
       - 'LICENSE'
-      - 'README.*'
-      - 'doc/*.md'
       - 'pkg/*'
 
 jobs:
@@ -67,12 +65,14 @@ jobs:
       - name: Run lint
         run: ./linter.sh lint
 
-  update-packages:
+  update-repository:
     runs-on: ubuntu-latest
     needs: [test, format, lint]
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
+
+        # deb, rpmファイルの生成
       - name: Set latest tag version to output
         id: vars
         run: echo ::set-output name=tag::$(git tag -l '*.*.*' | sort -V | tail -n 1)
@@ -82,12 +82,25 @@ jobs:
         run: cat .tar2package.yml
       - name: Generate packages
         run: ./package.sh
-      - name: Git commit
+      - name: Git commit packages
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add pkg/*
-          git commit -m "update pkg/super_unko.deb and pkg/super_unko.rpm"
+          git commit -m ":arrow_up: [CI] update pkg/super_unko.deb and pkg/super_unko.rpm"
+
+        # READMEに目次を埋め込む
+      - name: Install gh-md-toc
+        run: |
+          wget https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
+          chmod +x gh-md-toc
+      - name: Insert TOC
+        run: ./gh-md-toc --insert *.md doc/*.md
+      - name: Git commit documents
+        run: |
+          git add *.md doc/*.md
+          git commit -m ":memo: [CI] update TOC"
+
       - name: Git push
         uses: ad-m/github-push-action@v0.5.0
         with:
