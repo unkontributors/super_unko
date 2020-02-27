@@ -78,7 +78,8 @@ jobs:
         run: echo ::set-output name=tag::$(git tag -l '*.*.*' | sort -V | tail -n 1)
       - name: Set tag version to .tar2package.yml
         run: sed -i 's:\$VERSION:${{ steps.vars.outputs.tag }}:g' .tar2package.yml
-      - run: Print .tar2package.yml
+      - name: Print .tar2package.yml
+        run: cat .tar2package.yml
       - name: Generate packages
         run: ./package.sh
       - name: Git commit
