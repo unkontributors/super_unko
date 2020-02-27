@@ -95,7 +95,12 @@ jobs:
           wget https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
           chmod +x gh-md-toc
       - name: Insert TOC
-        run: ./gh-md-toc --insert *.md doc/*.md
+        run: |
+          ./gh-md-toc --insert *.md doc/*.md
+          rm *.md.orig.*
+          rm *.md.toc.*
+          rm doc/*.md.orig.*
+          rm doc/*.md.toc.*
       - name: Git commit documents
         run: |
           git add *.md doc/*.md
