@@ -34,12 +34,13 @@ Table of Contents
          * [Code lint](README.md#code-lint)
          * [Code format and lint](README.md#code-format-and-lint)
       * [Testing](README.md#testing)
+      * [CI workflow](README.md#ci-workflow)
    * [Contribution](README.md#contribution)
    * [LICENSE](README.md#license)
    * [History](README.md#history)
    * [For Unkontributors (開発者向け)](README.md#for-unkontributors-開発者向け)
 
-<!-- Added by: jiro4989, at: 2020年  2月 28日 金曜日 03:26:23 JST -->
+<!-- Added by: runner, at: Thu Feb 27 23:21:52 UTC 2020 -->
 
 <!--te-->
 
