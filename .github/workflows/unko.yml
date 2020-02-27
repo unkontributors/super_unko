@@ -73,13 +73,20 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v1
+      - name: Set latest tag version to output
+        id: vars
+        run: echo ::set-output name=tag::$(git tag -l '*.*.*' | sort -V | tail -n 1)
+      - name: Set tag version to .tar2package.yml
+        run: sed -i 's:\$VERSION:${{ steps.vars.outputs.tag }}:g' .tar2package.yml
+      - run: Print .tar2package.yml
       - name: Generate packages
         run: ./package.sh
       - name: Git commit
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git commit -m "update pkg/super_unko.deb and pkg/super_unko.rpm" -a
+          git add pkg/*
+          git commit -m "update pkg/super_unko.deb and pkg/super_unko.rpm"
       - name: Git push
         uses: ad-m/github-push-action@v0.5.0
         with:
