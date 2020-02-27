@@ -11,6 +11,41 @@ Let's create shit commands!
 super_unko プロジェクトは世界で最もクリーンで洗練されたOSSプロジェクトの一つです。
 うんこなコマンドを作りましょう。
 
+Table of Contents
+
+<!--ts-->
+   * [super_unko](README.md#super_unko)
+   * [Commands](README.md#commands)
+   * [Installation](README.md#installation)
+      * [Linux](README.md#linux)
+         * [With yum (RHEL compatible distros)](README.md#with-yum-rhel-compatible-distros)
+         * [With apt (Debian base distros)](README.md#with-apt-debian-base-distros)
+         * [With AUR (ArchLinux base distros)](README.md#with-aur-archlinux-base-distros)
+      * [macOS](README.md#macos)
+      * [Docker](README.md#docker)
+      * [Zsh plugin manager](README.md#zsh-plugin-manager)
+      * [Additional Installation](README.md#additional-installation)
+   * [Usage](README.md#usage)
+   * [Development](README.md#development)
+      * [Codestyle and lint](README.md#codestyle-and-lint)
+         * [Help](README.md#help)
+         * [Code format](README.md#code-format)
+         * [Code format and save](README.md#code-format-and-save)
+         * [Code lint](README.md#code-lint)
+         * [Code format and lint](README.md#code-format-and-lint)
+      * [Testing](README.md#testing)
+   * [Contribution](README.md#contribution)
+   * [LICENSE](README.md#license)
+   * [History](README.md#history)
+   * [For Unkontributors (開発者向け)](README.md#for-unkontributors-開発者向け)
+
+<!-- Added by: jiro4989, at: 2020年  2月 28日 金曜日 03:26:23 JST -->
+
+<!--te-->
+
+Commands
+========================
+
 | Command       | Description |
 |---------------|-------------|
 | super_unko    | Controles sub unkommands |
@@ -38,9 +73,9 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 Installation
 ========================
 
-### Linux
+## Linux
 
-#### With `yum` (RHEL compatible distros)
+### With `yum` (RHEL compatible distros)
 
 ```
 $ sudo yum install https://git.io/superunko.rpm
@@ -53,7 +88,7 @@ $ sudo yum remove superunko
 ```
 
 
-#### With `apt` (Debian base distros)
+### With `apt` (Debian base distros)
 
 ```
 $ wget https://git.io/superunko.deb
@@ -66,7 +101,7 @@ Uninstall (not `super_unko`)
 $ sudo apt remove superunko
 ```
 
-#### With AUR (ArchLinux base distros)
+### With AUR (ArchLinux base distros)
 
 You can install `super_unko` from https://aur.archlinux.org/packages/super_unko-git/ with your favorite aur helper.
 
@@ -82,7 +117,7 @@ Uninstall (not `super_unko`)
 $ sudo pacman -R super_unko-git
 ```
 
-### macOS
+## macOS
 
 * With Homebrew
 
@@ -98,7 +133,7 @@ $ brew remove super_unko
 ```
 
 
-### Docker
+## Docker
 
 * With docker
 
@@ -110,7 +145,7 @@ $ docker-compose run super_unko unko.shout こんにちは
 $ docker run --rm -it unkontributors/super_unko unko.shout こんにちは
 ```
 
-### Zsh plugin manager
+## Zsh plugin manager
 
 Zsh plugin managers like [antigen](https://github.com/zsh-users/antigen), [zplug](https://github.com/zplug/zplug) can be adoptive.
 Not only commands can be used but also [`command_not_found_handler`](https://github.com/zsh-users/zsh/blob/master/README#L249) is updated.
@@ -122,7 +157,7 @@ It is extremely helpful for developers.
 antigen bundle "unkontributors/super_unko"
 ```
 
-### Additional Installation
+## Additional Installation
 
 - [unko.puzzle](./doc/unko.puzzle.md)
 - unko.shout - Need a [echo-sd](https://github.com/fumiyas/home-commands) command
@@ -154,7 +189,7 @@ $ ./unko.yes
 Development
 ========================
 
-### Codestyle and lint
+## Codestyle and lint
 
 We are checking code with [shfmt](https://github.com/mvdan/sh) and [shellcheck](https://github.com/koalaman/shellcheck).
 Please check your code by `linter.sh` if you want to add your origin unko commands.
@@ -175,37 +210,37 @@ And you **don't** need to install `shfmt` and `shellcheck`.
 
 Usage examples of `linter.sh` are below.
 
-#### Help
+### Help
 
 ```bash
 ./linter.sh help
 ```
 
-#### Code format
+### Code format
 
 ```bash
 ./linter.sh format
 ```
 
-#### Code format and save
+### Code format and save
 
 ```bash
 ./linter.sh format-save
 ```
 
-#### Code lint
+### Code lint
 
 ```bash
 ./linter.sh lint
 ```
 
-#### Code format and lint
+### Code format and lint
 
 ```bash
 ./linter.sh all
 ```
 
-### Testing
+## Testing
 
 We use the [bats](https://github.com/sstephenson/bats) testing framework.
 `test.sh` calls the `bats`. But you **don't** need to install `bats`.
