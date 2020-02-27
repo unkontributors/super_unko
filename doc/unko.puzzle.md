@@ -2,6 +2,11 @@
 
 sliding block puzzle
 
+Table of Contents
+
+<!--ts-->
+<!--te-->
+
 ## Requirements
 
 - X11
