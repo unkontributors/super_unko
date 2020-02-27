@@ -1,0 +1,47 @@
+@startuml
+
+start
+
+: git commit;
+: git push;
+
+partition "GitHub Actions" {
+  fork
+    : build docker image;
+    partition "test" {
+      fork
+        : test bash default;
+      fork again
+        : test bash 3.2;
+      fork again
+        : test bash 4.0;
+      fork again
+        : test bash 4.1;
+      fork again
+        : test bash 4.2;
+      fork again
+        : test bash 4.3;
+      fork again
+        : test bash 4.4;
+      fork again
+        : test bash 5.0;
+      end fork
+    }
+  fork again
+    : format;
+  fork again
+    : lint;
+  end fork
+  if (is branch master?) then (true)
+    partition "update-repository" {
+      : generate super_unko.deb;
+      : generate super_unko.rpm;
+      : generate markdown TOC;
+      : git push ;
+    }
+  endif
+}
+
+end
+
+@enduml

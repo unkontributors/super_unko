@@ -226,6 +226,13 @@ make check
 make test-bash-version
 ```
 
+## CI workflow
+
+CI workflow runs when you pushed.
+Workflow diagram is below.
+
+![CI push](./doc/ci-push.svg)
+
 Contribution
 ========================
 Welcome! Welcome!
