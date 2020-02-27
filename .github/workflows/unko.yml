@@ -1,6 +1,12 @@
 name: test
 
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.*'
+      - 'doc/*.md'
+      - 'pkg/*'
 
 jobs:
   build-image:
