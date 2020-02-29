@@ -255,7 +255,7 @@ make test
 ```
 
 Run below for testing on multiple Bash versions.
-Please do that and fix it if tests failed on Travis CI.
+Please do that and fix it if tests failed on CI.
 
 ```bash
 make check
