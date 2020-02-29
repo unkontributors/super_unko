@@ -7,8 +7,8 @@ usage: ## Print help
 
 .PHONY: setup
 setup: ## Setup docker images
-	docker-compose build --parallel
-	docker-compose -f docker-compose-ci.yml build --parallel
+	docker-compose build
+	docker-compose -f docker-compose-ci.yml build
 
 .PHONY: check
 check: test lint ## Run tests and linter
