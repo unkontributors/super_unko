@@ -7,8 +7,20 @@ on:
       - 'pkg/*'
 
 jobs:
+  skip:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skip job"
+
+  before:
+    runs-on: ubuntu-latest
+    if: "! contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - run: echo "no [skip ci]"
+
   build-image:
     runs-on: ubuntu-latest
+    needs: before
     steps:
       - uses: actions/checkout@v1
       - name: Cache docker image
@@ -53,6 +65,7 @@ jobs:
 
   format:
     runs-on: ubuntu-latest
+    needs: before
     steps:
       - uses: actions/checkout@v1
       - name: Run format
@@ -60,6 +73,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    needs: before
     steps:
       - uses: actions/checkout@v1
       - name: Run lint
