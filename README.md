@@ -277,8 +277,13 @@ Welcome! Welcome!
 
 LICENSE
 ==============
+#### Source Code
 💩 LICENSE
  (Something like BSD license)
+
+#### Logo
+Creative 💩 license
+(Something like public domain)
 
 History
 ==============
