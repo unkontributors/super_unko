@@ -1,5 +1,7 @@
-super_unko
-===========================================
+<h1 align="center">
+  <img src="img/logo.png" width=50% />
+</h1>
+
 [![License](https://img.shields.io/badge/license-%F0%9F%92%A9-orange.svg)](./LICENSE)
 [![Build Status](https://travis-ci.org/unkontributors/super_unko.svg?branch=master)](https://travis-ci.org/unkontributors/super_unko)
 [![Coverage Status](https://coveralls.io/repos/github/unkontributors/super_unko/badge.svg?branch=master)](https://coveralls.io/github/unkontributors/super_unko?branch=master)
