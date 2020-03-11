@@ -12,7 +12,7 @@ Table of Contents
          * [brew/linuxbrew](doc/unko.toilet.md#brewlinuxbrew)
       * [Usage](doc/unko.toilet.md#usage)
 
-<!-- Added by: runner, at: Sat Mar  7 19:51:14 UTC 2020 -->
+<!-- Added by: runner, at: Wed Mar 11 20:40:18 UTC 2020 -->
 
 <!--te-->
 

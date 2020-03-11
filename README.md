@@ -16,7 +16,6 @@ super_unko プロジェクトは世界で最もクリーンで洗練されたOSS
 Table of Contents
 
 <!--ts-->
-   * [super_unko](README.md#super_unko)
    * [Commands](README.md#commands)
    * [Installation](README.md#installation)
       * [Linux](README.md#linux)
@@ -39,10 +38,12 @@ Table of Contents
       * [CI workflow](README.md#ci-workflow)
    * [Contribution](README.md#contribution)
    * [LICENSE](README.md#license)
+            * [Source Code](README.md#source-code)
+            * [Logo](README.md#logo)
    * [History](README.md#history)
    * [For Unkontributors (開発者向け)](README.md#for-unkontributors-開発者向け)
 
-<!-- Added by: runner, at: Sat Mar  7 19:51:13 UTC 2020 -->
+<!-- Added by: runner, at: Wed Mar 11 20:40:18 UTC 2020 -->
 
 <!--te-->
 
