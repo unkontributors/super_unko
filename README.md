@@ -278,11 +278,12 @@ Welcome! Welcome!
 
 LICENSE
 ==============
-#### Source Code
+
+## Source Code
 💩 LICENSE
  (Something like BSD license)
 
-#### Logo
+## Logo
 Creative 💩 license
 (Something like public domain)
 
