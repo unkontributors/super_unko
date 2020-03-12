@@ -117,10 +117,7 @@ jobs:
       - name: Insert TOC
         run: |
           ./gh-md-toc --insert *.md doc/*.md
-          rm *.md.orig.*
-          rm *.md.toc.*
-          rm doc/*.md.orig.*
-          rm doc/*.md.toc.*
+          rm *.md.orig.* *.md.toc.* doc/*.md.orig.* doc/*.md.toc.*
       - name: Git commit documents
         run: |
           git add *.md doc/*.md
