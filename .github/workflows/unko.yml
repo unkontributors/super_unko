@@ -6,20 +6,26 @@ on:
       - 'LICENSE'
       - 'pkg/*'
 
+env:
+  RUNS_ON: ubuntu-latest
+  CACHE_DIR: ~/.ci-cache
+  GROUP_NAME: unkontributors
+  APP_NAME: super_unko
+
 jobs:
   skip:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNS_ON }}
     steps:
       - run: echo "Skip job"
 
   before:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNS_ON }}
     if: "! contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - run: echo "no [skip ci]"
 
   build-image:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNS_ON }}
     needs: before
     steps:
       - uses: actions/checkout@v1
@@ -27,22 +33,22 @@ jobs:
         id: cache-bash-image
         uses: actions/cache@v1
         with:
-          path: ~/.ci-cache
+          path: ${{ env.CACHE_DIR }}
           key: bash-${{ hashFiles('**/Dockerfile') }}
       - name: Load docker image
         if: steps.cache-bash-image.outputs.cache-hit == 'true'
         run: |
-          gunzip ~/.ci-cache/super_unko.gz
-          docker load -i ~/.ci-cache/super_unko
-      - name: Build super_unko image
+          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
+          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
+      - name: Build ${{ env.APP_NAME }} image
         if: steps.cache-bash-image.outputs.cache-hit != 'true'
-        run: docker-compose build super_unko
-      - run: mkdir -p ~/.ci-cache
+        run: docker-compose build ${{ env.APP_NAME }}
+      - run: mkdir -p ${{ env.CACHE_DIR }}
       - name: Save docker image cache
-        run: docker save "unkontributors/super_unko" | gzip -c > ~/.ci-cache/super_unko.gz
+        run: docker save "${{ env.GROUP_NAME }}/${{ env.APP_NAME }}" | gzip -c > ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNS_ON }}
     strategy:
       matrix:
         version: [default, "3.2", "4.0", "4.1", "4.2", "4.3", "4.4", "5.0"]
@@ -53,18 +59,18 @@ jobs:
         id: cache-bash-image
         uses: actions/cache@v1
         with:
-          path: ~/.ci-cache
+          path: ${{ env.CACHE_DIR }}
           key: bash-${{ hashFiles('**/Dockerfile') }}
       - name: Load docker image
         if: steps.cache-bash-image.outputs.cache-hit == 'true'
         run: |
-          gunzip ~/.ci-cache/super_unko.gz
-          docker load -i ~/.ci-cache/super_unko
+          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
+          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 
   format:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNS_ON }}
     needs: before
     steps:
       - uses: actions/checkout@v1
@@ -72,7 +78,7 @@ jobs:
         run: ./linter.sh format
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNS_ON }}
     needs: before
     steps:
       - uses: actions/checkout@v1
@@ -80,7 +86,7 @@ jobs:
         run: ./linter.sh lint
 
   update-repository:
-    runs-on: ubuntu-latest
+    runs-on: ${{ env.RUNS_ON }}
     needs: [test, format, lint]
     if: github.ref == 'refs/heads/master'
     steps:
