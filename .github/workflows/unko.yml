@@ -7,6 +7,7 @@ on:
       - 'pkg/*'
 
 env:
+  APP_NAME: super_unko
   CACHE_DIR: ~/.ci-cache
 
 jobs:
@@ -35,14 +36,14 @@ jobs:
       - name: Load docker image
         if: steps.cache-bash-image.outputs.cache-hit == 'true'
         run: |
-          gunzip ${{ env.CACHE_DIR }}/super_unko.gz
-          docker load -i ${{ env.CACHE_DIR }}/super_unko
-      - name: Build super_unko image
+          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
+          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
+      - name: Build ${{ env.APP_NAME }} image
         if: steps.cache-bash-image.outputs.cache-hit != 'true'
-        run: docker-compose build super_unko
+        run: docker-compose build ${{ env.APP_NAME }}
       - run: mkdir -p ${{ env.CACHE_DIR }}
       - name: Save docker image cache
-        run: docker save "unkontributors/super_unko" | gzip -c > ${{ env.CACHE_DIR }}/super_unko.gz
+        run: docker save "unkontributors/${{ env.APP_NAME }}" | gzip -c > ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
 
   test:
     runs-on: ubuntu-latest
@@ -61,8 +62,8 @@ jobs:
       - name: Load docker image
         if: steps.cache-bash-image.outputs.cache-hit == 'true'
         run: |
-          gunzip ${{ env.CACHE_DIR }}/super_unko.gz
-          docker load -i ${{ env.CACHE_DIR }}/super_unko
+          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
+          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 
@@ -104,7 +105,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add pkg/*
-          git commit -m ":arrow_up: [CI] update pkg/super_unko.deb and pkg/super_unko.rpm"
+          git commit -m ":arrow_up: [CI] update pkg/${{ env.APP_NAME }}.deb and pkg/${{ env.APP_NAME }}.rpm"
 
         # READMEに目次を埋め込む
       - name: Install gh-md-toc
