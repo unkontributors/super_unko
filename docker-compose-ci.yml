@@ -17,7 +17,8 @@ services:
     build:
       context: *ci_image_dir
       args:
-        SH_VERSION: 3.2
+        # Because bats supports 3.2.57 or more https://github.com/bats-core/bats-core
+        SH_VERSION: 3.2.57
 
   ci_sh_4.0:
     <<: *default
