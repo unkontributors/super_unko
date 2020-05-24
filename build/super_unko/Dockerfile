@@ -1,5 +1,5 @@
 # vim: tw=0:
-FROM ubuntu:19.04
+FROM ubuntu:20.04
 
 RUN echo -e $'\n\
 ＿人人人人人人人人人人人人人人人人人人人人人人＿\n\
