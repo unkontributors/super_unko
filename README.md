@@ -303,6 +303,8 @@ Codebase is supposed to be scanned with code formatter and static analysis tools
 Please make sure prepared static checks are passed by running `./liner.sh all` before submitting your PR.
 It would be appreciated if you could add tests to `./test.sh`.
 
+Please make sure the default branch of this repository is `oshiri` (which means "bum") not `master`.
+
 bin 以下になんか思いついたコマンドを放り投げてください。
 docker が入った環境で `bash package.sh` すると pkg 以下に各種インストーラーが作成されます。
 
@@ -310,3 +312,5 @@ CIでコードフォーマットと静的解析にかけてコード品質を維
 PRするときは`./linter.sh all`で静的解析をパスすることを確認してください。
 
 可能なら`./test.sh`にもテストコードを追加していただけると助かります。
+
+なお、このリポジトリのデフォルトのブランチは`oshiri`であり`master`ではありません。
