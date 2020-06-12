@@ -18,7 +18,7 @@ Table of Contents
          * [macOS](doc/unko.puzzle.md#macos-1)
       * [for development](doc/unko.puzzle.md#for-development)
 
-<!-- Added by: runner, at: Mon May 25 13:51:45 UTC 2020 -->
+<!-- Added by: runner, at: Fri Jun 12 12:18:52 UTC 2020 -->
 
 <!--te-->
 
