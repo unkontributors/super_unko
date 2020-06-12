@@ -82,7 +82,7 @@ Installation
 ### With `yum` (RHEL compatible distros)
 
 ```
-$ sudo yum install https://git.io/superunko.rpm
+$ sudo yum install https://git.io/superunko.linux.rpm
 ```
 
 Uninstall (not `super_unko`)
@@ -95,8 +95,8 @@ $ sudo yum remove superunko
 ### With `apt` (Debian base distros)
 
 ```
-$ wget https://git.io/superunko.deb
-$ sudo dpkg -i ./superunko.deb
+$ wget https://git.io/superunko.linux.deb
+$ sudo dpkg -i ./superunko.linux.deb
 ```
 
 Uninstall (not `super_unko`)
