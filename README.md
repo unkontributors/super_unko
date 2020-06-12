@@ -3,8 +3,8 @@
 </h1>
 
 [![License](https://img.shields.io/badge/license-%F0%9F%92%A9-orange.svg)](./LICENSE)
-[![Build Status](https://travis-ci.org/unkontributors/super_unko.svg?branch=master)](https://travis-ci.org/unkontributors/super_unko)
-[![Coverage Status](https://coveralls.io/repos/github/unkontributors/super_unko/badge.svg?branch=master)](https://coveralls.io/github/unkontributors/super_unko?branch=master)
+[![Build Status](https://travis-ci.org/unkontributors/super_unko.svg?branch=oshiri)](https://travis-ci.org/unkontributors/super_unko)
+[![Coverage Status](https://coveralls.io/repos/github/unkontributors/super_unko/badge.svg?branch=oshiri)](https://coveralls.io/github/unkontributors/super_unko?branch=oshiri)
 ![GitHub Actions Build Status](https://github.com/unkontributors/super_unko/workflows/test/badge.svg)
 
 super_unko project is the one of the awesome, clean and sophisticated OSS project in the world.

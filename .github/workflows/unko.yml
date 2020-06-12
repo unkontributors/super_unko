@@ -86,7 +86,7 @@ jobs:
   update-repository:
     runs-on: ubuntu-latest
     needs: [test, format, lint]
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/oshiri'
     steps:
       - uses: actions/checkout@v1
 
@@ -110,7 +110,7 @@ jobs:
         # READMEに目次を埋め込む
       - name: Install gh-md-toc
         run: |
-          wget https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
+          wget https://raw.githubusercontent.com/ekalinin/github-markdown-toc/oshiri/gh-md-toc
           chmod +x gh-md-toc
       - name: Insert TOC
         run: |
