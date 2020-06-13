@@ -32,7 +32,7 @@ partition "GitHub Actions" {
   fork again
     : lint;
   end fork
-  if (is branch master?) then (true)
+  if (is branch oshiri?) then (true)
     partition "update-repository" {
       : generate super_unko.deb;
       : generate super_unko.rpm;
