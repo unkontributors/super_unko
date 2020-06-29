@@ -8,7 +8,7 @@
 ![GitHub Actions Build Status](https://github.com/unkontributors/super_unko/workflows/test/badge.svg)
 
 super_unko project is the one of the awesome, clean and sophisticated OSS project in the world.
-Let's create shit commands!
+Let's create poop commands!
 
 super_unko プロジェクトは世界で最もクリーンで洗練されたOSSプロジェクトの一つです。
 うんこなコマンドを作りましょう。
@@ -53,12 +53,12 @@ Commands
 | Command       | Description |
 |---------------|-------------|
 | super_unko    | Controles sub unkommands |
-| unko.tr       | Convert various expressions equals to shit into 💩 (shit). |
-| unko.ls       | Shows various shit expression. |
-| unko.yes      | Generate 💩 shit forever. |
-| unko.tower    | Build your shit tower. |
-| unko.pyramid  | Build your shit pyramid. |
-| bigunko.show  | Big shit. |
+| unko.tr       | Convert various expressions equals to poop into 💩 (poop). |
+| unko.ls       | Shows various poop expression. |
+| unko.yes      | Generate 💩 poop forever. |
+| unko.tower    | Build your poop tower. |
+| unko.pyramid  | Build your poop pyramid. |
+| bigunko.show  | Big poop. |
 | unko.printpnm | Generate 💩 PNM image file. |
 | unko.puzzle   | Sliding block puzzle. |
 | unko.toilet   | Display large 💩 characters. |
