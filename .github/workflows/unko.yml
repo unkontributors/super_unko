@@ -8,7 +8,6 @@ on:
 
 env:
   APP_NAME: super_unko
-  CACHE_DIR: ~/.ci-cache
 
 jobs:
   skip:
@@ -27,23 +26,9 @@ jobs:
     needs: before
     steps:
       - uses: actions/checkout@v1
-      - name: Cache docker image
-        id: cache-bash-image
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.CACHE_DIR }}
-          key: bash-${{ hashFiles('**/Dockerfile') }}
-      - name: Load docker image
-        if: steps.cache-bash-image.outputs.cache-hit == 'true'
-        run: |
-          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
-          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
+      - uses: satackey/action-docker-layer-caching@v0.0.8
       - name: Build ${{ env.APP_NAME }} image
-        if: steps.cache-bash-image.outputs.cache-hit != 'true'
         run: docker-compose build ${{ env.APP_NAME }}
-      - run: mkdir -p ${{ env.CACHE_DIR }}
-      - name: Save docker image cache
-        run: docker save "unkontributors/${{ env.APP_NAME }}" | gzip -c > ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
 
   test:
     runs-on: ubuntu-latest
@@ -53,17 +38,7 @@ jobs:
     needs: build-image
     steps:
       - uses: actions/checkout@v1
-      - name: Cache docker image
-        id: cache-bash-image
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.CACHE_DIR }}
-          key: bash-${{ hashFiles('**/Dockerfile') }}
-      - name: Load docker image
-        if: steps.cache-bash-image.outputs.cache-hit == 'true'
-        run: |
-          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
-          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
+      - uses: satackey/action-docker-layer-caching@v0.0.8
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 
