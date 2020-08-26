@@ -1,10 +1,11 @@
-version: '3'
+version: '3.7'
 
 services:
   super_unko:
     build:
       context: ./
-      dockerfile: ./build/super_unko/Dockerfile
+      dockerfile: ./docker/Dockerfile
+      target: base
     image: unkontributors/super_unko
 
   formatter:

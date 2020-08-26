@@ -1,5 +1,6 @@
 name: test
 
+# wip
 on:
   push:
     paths-ignore:
@@ -21,32 +22,19 @@ jobs:
     steps:
       - run: echo "no [skip ci]"
 
-  build-image:
-    runs-on: ubuntu-latest
-    needs: before
-    steps:
-      - uses: actions/checkout@v2
-      - uses: satackey/action-docker-layer-caching@v0.0.8
-        with:
-          key: docker-image-cache-base-{hash}
-          restore-keys: |
-            docker-image-cache-base-
-      - name: Build ${{ env.APP_NAME }} image
-        run: docker-compose build ${{ env.APP_NAME }}
-
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         version: [default, "3.2", "4.0", "4.1", "4.2", "4.3", "4.4", "5.0"]
-    needs: build-image
+    needs: before
     steps:
       - uses: actions/checkout@v2
       - uses: satackey/action-docker-layer-caching@v0.0.8
         with:
-          key: docker-image-cache-ci-${{ matrix.version }}-{hash}
+          key: docker-image-cache-${{ matrix.version }}-{hash}
           restore-keys: |
-            docker-image-cache-ci-${{ matrix.version }}-
+            docker-image-cache-${{ matrix.version }}-
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 

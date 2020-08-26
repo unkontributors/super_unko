@@ -1,9 +1,14 @@
-version: '3'
+version: '3.7'
+
+x-build: &build
+  context: .
+  dockerfile: ./docker/Dockerfile
+  target: ci
 
 services:
   ci_sh_default: &default
     build:
-      context: &ci_image_dir ./build/ci
+      <<: *build
       args:
         SH_VERSION: default
     volumes:
@@ -15,7 +20,7 @@ services:
   ci_sh_3.2:
     <<: *default
     build:
-      context: *ci_image_dir
+      <<: *build
       args:
         # Because bats supports 3.2.57 or more https://github.com/bats-core/bats-core
         SH_VERSION: 3.2.57
@@ -23,41 +28,41 @@ services:
   ci_sh_4.0:
     <<: *default
     build:
-      context: *ci_image_dir
+      <<: *build
       args:
         SH_VERSION: 4.0
 
   ci_sh_4.1:
     <<: *default
     build:
-      context: *ci_image_dir
+      <<: *build
       args:
         SH_VERSION: 4.1
 
   ci_sh_4.2:
     <<: *default
     build:
-      context: *ci_image_dir
+      <<: *build
       args:
         SH_VERSION: 4.2
 
   ci_sh_4.3:
     <<: *default
     build:
-      context: *ci_image_dir
+      <<: *build
       args:
         SH_VERSION: 4.3
 
   ci_sh_4.4:
     <<: *default
     build:
-      context: *ci_image_dir
+      <<: *build
       args:
         SH_VERSION: 4.4
 
   ci_sh_5.0:
     <<: *default
     build:
-      context: *ci_image_dir
+      <<: *build
       args:
         SH_VERSION: 5.0
