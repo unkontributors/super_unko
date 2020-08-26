@@ -1,6 +1,5 @@
 name: test
 
-# wip
 on:
   push:
     paths-ignore:
