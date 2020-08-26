@@ -8,7 +8,7 @@ on:
 
 env:
   APP_NAME: super_unko
-  CACHE_DIR: ~/.ci-cache
+  DOCKER_BUILDKIT: 1
 
 jobs:
   skip:
@@ -22,48 +22,19 @@ jobs:
     steps:
       - run: echo "no [skip ci]"
 
-  build-image:
-    runs-on: ubuntu-latest
-    needs: before
-    steps:
-      - uses: actions/checkout@v1
-      - name: Cache docker image
-        id: cache-bash-image
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.CACHE_DIR }}
-          key: bash-${{ hashFiles('**/Dockerfile') }}
-      - name: Load docker image
-        if: steps.cache-bash-image.outputs.cache-hit == 'true'
-        run: |
-          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
-          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
-      - name: Build ${{ env.APP_NAME }} image
-        if: steps.cache-bash-image.outputs.cache-hit != 'true'
-        run: docker-compose build ${{ env.APP_NAME }}
-      - run: mkdir -p ${{ env.CACHE_DIR }}
-      - name: Save docker image cache
-        run: docker save "unkontributors/${{ env.APP_NAME }}" | gzip -c > ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
-
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         version: [default, "3.2", "4.0", "4.1", "4.2", "4.3", "4.4", "5.0"]
-    needs: build-image
+    needs: before
     steps:
-      - uses: actions/checkout@v1
-      - name: Cache docker image
-        id: cache-bash-image
-        uses: actions/cache@v1
+      - uses: actions/checkout@v2
+      - uses: satackey/action-docker-layer-caching@v0.0.8
         with:
-          path: ${{ env.CACHE_DIR }}
-          key: bash-${{ hashFiles('**/Dockerfile') }}
-      - name: Load docker image
-        if: steps.cache-bash-image.outputs.cache-hit == 'true'
-        run: |
-          gunzip ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}.gz
-          docker load -i ${{ env.CACHE_DIR }}/${{ env.APP_NAME }}
+          key: docker-image-cache-${{ matrix.version }}-{hash}
+          restore-keys: |
+            docker-image-cache-${{ matrix.version }}-
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 
@@ -71,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: before
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Run format
         run: ./linter.sh format
 
@@ -79,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: before
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Run lint
         run: ./linter.sh lint
 
@@ -88,7 +59,7 @@ jobs:
     needs: [test, format, lint]
     if: github.ref == 'refs/heads/oshiri'
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
         # deb, rpmファイルの生成
       - name: Set latest tag version to output
