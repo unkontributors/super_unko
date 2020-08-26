@@ -8,6 +8,7 @@ on:
 
 env:
   APP_NAME: super_unko
+  DOCKER_BUILDKIT: 1
 
 jobs:
   skip:
