@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: before
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: satackey/action-docker-layer-caching@v0.0.8
       - name: Build ${{ env.APP_NAME }} image
         run: docker-compose build ${{ env.APP_NAME }}
@@ -37,7 +37,7 @@ jobs:
         version: [default, "3.2", "4.0", "4.1", "4.2", "4.3", "4.4", "5.0"]
     needs: build-image
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: satackey/action-docker-layer-caching@v0.0.8
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: before
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Run format
         run: ./linter.sh format
 
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: before
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Run lint
         run: ./linter.sh lint
 
@@ -63,7 +63,7 @@ jobs:
     needs: [test, format, lint]
     if: github.ref == 'refs/heads/oshiri'
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
         # deb, rpmファイルの生成
       - name: Set latest tag version to output
