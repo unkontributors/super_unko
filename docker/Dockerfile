@@ -1,5 +1,5 @@
 # vim: tw=0:
-FROM ubuntu:20.04
+FROM ubuntu:20.04 AS base
 
 RUN echo -e $'\n\
 ＿人人人人人人人人人人人人人人人人人人人人人人＿\n\
@@ -39,3 +39,15 @@ RUN echo -e $'\n\
 　　　（💩👁💩👁💩）\n\
 　　（💩💩💩👃💩💩💩）\n\
 　（💩💩💩💩👄💩💩💩💩）'
+
+FROM base AS runtime
+
+ARG SH_VERSION=default
+
+# Install bash-x.x
+COPY ./install_bash.sh /tmp/install_bash.sh
+RUN apt update -yqq \
+    && apt install -y --no-install-recommends build-essential bats byacc \
+    && rm -rf /var/lib/apt/lists/* \
+    && /tmp/install_bash.sh ${SH_VERSION} \
+    && ./install.sh
