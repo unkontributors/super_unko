@@ -1,6 +1,5 @@
 name: test
 
-# test
 on:
   push:
     paths-ignore:
@@ -28,6 +27,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: satackey/action-docker-layer-caching@v0.0.8
+        with:
+          key: docker-image-cache-base-{hash}
+          restore-keys: |
+            docker-image-cache-base-
       - name: Build ${{ env.APP_NAME }} image
         run: docker-compose build ${{ env.APP_NAME }}
 
@@ -40,6 +43,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: satackey/action-docker-layer-caching@v0.0.8
+        with:
+          key: docker-image-cache-ci-${{ matrix.version }}-{hash}
+          restore-keys: |
+            docker-image-cache-ci-${{ matrix.version }}-
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 
