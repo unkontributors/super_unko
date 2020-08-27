@@ -64,9 +64,13 @@ jobs:
         # deb, rpmファイルの生成
       - name: Set latest tag version to output
         id: vars
-        run: echo ::set-output name=tag::$(git tag -l '*.*.*' | sort -V | tail -n 1)
+        run: |
+          git tag -l '*.*.*' | sort -V | tail -n 1
+          echo ::set-output name=tag::$(git tag -l '*.*.*' | sort -V | tail -n 1)
       - name: Set tag version to .tar2package.yml
-        run: sed -i 's:\$VERSION:${{ steps.vars.outputs.tag }}:g' .tar2package.yml
+        run: |
+          echo ${{ steps.vars.outputs.tag }}
+          sed -i 's:\$VERSION:${{ steps.vars.outputs.tag }}:g' .tar2package.yml
       - name: Print .tar2package.yml
         run: cat .tar2package.yml
       - name: Generate packages
