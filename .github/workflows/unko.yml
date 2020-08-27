@@ -60,6 +60,8 @@ jobs:
     if: github.ref == 'refs/heads/oshiri'
     steps:
       - uses: actions/checkout@v2
+        with:
+              fetch-depth: 0
 
         # deb, rpmファイルの生成
       - name: Set latest tag version to output
