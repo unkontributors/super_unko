@@ -30,11 +30,12 @@ jobs:
     needs: before
     steps:
       - uses: actions/checkout@v2
-      - uses: satackey/action-docker-layer-caching@v0.0.8
-        with:
-          key: docker-image-cache-${{ matrix.version }}-{hash}
-          restore-keys: |
-            docker-image-cache-${{ matrix.version }}-
+      # FIXME: #95
+      # - uses: satackey/action-docker-layer-caching@v0.0.8
+      #   with:
+      #     key: docker-image-cache-${{ matrix.version }}-{hash}
+      #     restore-keys: |
+      #       docker-image-cache-${{ matrix.version }}-
       - name: Test
         run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 
@@ -61,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-              fetch-depth: 0
+          fetch-depth: 0
 
         # deb, rpmファイルの生成
       - name: Set latest tag version to output
