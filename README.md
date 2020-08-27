@@ -43,7 +43,7 @@ Table of Contents
    * [History](README.md#history)
    * [For Unkontributors (開発者向け)](README.md#for-unkontributors-開発者向け)
 
-<!-- Added by: runner, at: Thu Aug 27 21:33:14 UTC 2020 -->
+<!-- Added by: runner, at: Thu Aug 27 22:47:31 UTC 2020 -->
 
 <!--te-->
 
