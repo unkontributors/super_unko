@@ -10,12 +10,11 @@ LIB_DIR="${THIS_DIR}/../lib/super_unko"
 LIB_DIR="/usr/lib/super_unko"
 readonly LIB_DIR
 
-
 TLDs=("com")
 
 for tld in "${TLDs[@]}"; do
-    while read -r unko; do
-        ping -c 1 -s 1 -W 0.25 "${unko}.${tld}" 2> /dev/null 1>&2 && echo "Success ping to ${unko}.${tld}"
-    done < <(cut -d "," -f 1 < "${LIB_DIR}/unko.csv" | sed "1d")
+  while read -r unko; do
+    ping -c 1 -s 1 -W 0.25 "${unko}.${tld}" 2> /dev/null 1>&2 && echo "Success ping to ${unko}.${tld}"
+  done < <(cut -d "," -f 1 < "${LIB_DIR}/unko.csv" | sed "1d")
 done
 exit 0
