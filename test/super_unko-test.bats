@@ -60,6 +60,12 @@ readonly TARGET_COMMAND="$(pwd)/../bin/super_unko"
   coverage "$TARGET_COMMAND" bigshow
 }
 
+#@test "unko.pingを呼び出す" {
+#  run "$TARGET_COMMAND" ping
+#  [ "$status" -eq 0 ]
+#  coverage "$TARGET_COMMAND" ping
+#}
+
 @test "存在しないコマンドのときは異常終了する" {
   run "$TARGET_COMMAND" unchi
   [ "$status" -ne 0 ]
