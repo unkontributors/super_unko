@@ -70,6 +70,7 @@ Commands
 | unko.any      | Simple wrapper to 💩 substitution for unko.shout. |
 | unko.king     | Build your king shift tower. |
 | unko.fizzbuzz | No need to implement FizzBuzz. |
+| unko.ping     | Ping the 💩 domain. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
