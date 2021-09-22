@@ -7,7 +7,6 @@ THIS_DIR=$(
 readonly THIS_DIR
 
 LIB_DIR="${THIS_DIR}/../lib/super_unko"
-LIB_DIR="/usr/lib/super_unko"
 readonly LIB_DIR
 
 TLDs=("com")
