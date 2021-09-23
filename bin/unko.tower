@@ -93,7 +93,7 @@ main() {
     ## -ovalue → -o value (inspired by echo-sd)
     if [[ -n "${_opt}" ]] && [[ -z "${_opt##-[sm]?*}" ]]; then
       set -- "${_opt#??}" ${1+"$@"}
-      _opt="${_opt%$1}"
+      _opt="${_opt%"${1}"}"
     fi
 
     case "$_opt" in
