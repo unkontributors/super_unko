@@ -5,14 +5,14 @@
 Table of Contents
 
 <!--ts-->
-   * [unko.toilet](doc/unko.toilet.md#unkotoilet)
-      * [Requirements](doc/unko.toilet.md#requirements)
-         * [Additional installation](doc/unko.toilet.md#additional-installation)
-         * [apt](doc/unko.toilet.md#apt)
-         * [brew/linuxbrew](doc/unko.toilet.md#brewlinuxbrew)
-      * [Usage](doc/unko.toilet.md#usage)
+* [unko.toilet](doc/unko.toilet.md#unkotoilet)
+   * [Requirements](doc/unko.toilet.md#requirements)
+      * [Additional installation](doc/unko.toilet.md#additional-installation)
+      * [apt](doc/unko.toilet.md#apt)
+      * [brew/linuxbrew](doc/unko.toilet.md#brewlinuxbrew)
+   * [Usage](doc/unko.toilet.md#usage)
 
-<!-- Added by: runner, at: Thu Aug 27 22:47:31 UTC 2020 -->
+<!-- Added by: runner, at: Thu Sep 23 17:25:06 UTC 2021 -->
 
 <!--te-->
 

@@ -5,20 +5,20 @@ sliding block puzzle
 Table of Contents
 
 <!--ts-->
-   * [unko.puzzle](doc/unko.puzzle.md#unkopuzzle)
-      * [Requirements](doc/unko.puzzle.md#requirements)
-      * [Additional installation](doc/unko.puzzle.md#additional-installation)
-         * [Linux](doc/unko.puzzle.md#linux)
-            * [With yum (RHEL compatible distros)](doc/unko.puzzle.md#with-yum-rhel-compatible-distros)
-            * [With apt (Debian base distros)](doc/unko.puzzle.md#with-apt-debian-base-distros)
-         * [macOS](doc/unko.puzzle.md#macos)
-            * [With Homebrew](doc/unko.puzzle.md#with-homebrew)
-      * [Usage](doc/unko.puzzle.md#usage)
-         * [Linux](doc/unko.puzzle.md#linux-1)
-         * [macOS](doc/unko.puzzle.md#macos-1)
-      * [for development](doc/unko.puzzle.md#for-development)
+* [unko.puzzle](doc/unko.puzzle.md#unkopuzzle)
+   * [Requirements](doc/unko.puzzle.md#requirements)
+   * [Additional installation](doc/unko.puzzle.md#additional-installation)
+      * [Linux](doc/unko.puzzle.md#linux)
+         * [With yum (RHEL compatible distros)](doc/unko.puzzle.md#with-yum-rhel-compatible-distros)
+         * [With apt (Debian base distros)](doc/unko.puzzle.md#with-apt-debian-base-distros)
+      * [macOS](doc/unko.puzzle.md#macos)
+         * [With Homebrew](doc/unko.puzzle.md#with-homebrew)
+   * [Usage](doc/unko.puzzle.md#usage)
+      * [Linux](doc/unko.puzzle.md#linux-1)
+      * [macOS](doc/unko.puzzle.md#macos-1)
+   * [for development](doc/unko.puzzle.md#for-development)
 
-<!-- Added by: runner, at: Thu Aug 27 22:47:31 UTC 2020 -->
+<!-- Added by: runner, at: Thu Sep 23 17:25:06 UTC 2021 -->
 
 <!--te-->
 
