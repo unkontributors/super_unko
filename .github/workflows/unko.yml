@@ -2,8 +2,20 @@ name: test
 
 on:
   push:
+    branches:
+      - oshiri
     paths-ignore:
       - 'LICENSE'
+      - 'README.*'
+      - 'doc/*'
+      - 'img/*'
+      - 'pkg/*'
+  pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.*'
+      - 'doc/*'
+      - 'img/*'
       - 'pkg/*'
 
 env:
