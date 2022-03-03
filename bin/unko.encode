@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ "$LANG" = zh* ]] || [[ "$LANG" = en* ]]; then
+  export TEXTDOMAINDIR="/usr/share/locale-langpack/${LANG%%.*}/LC_MESSAGES"
+else
+  export TEXTDOMAINDIR="/usr/share/locale-langpack/${LANG%%_*}/LC_MESSAGES"
+fi
+export TEXTDOMAIN=libc
+
 UNKO_OCT="うんこウンコ💩👑"
 usage() {
   echo "Usage: $0 [OPTION] [FILE]"
@@ -49,7 +56,15 @@ done
 if [ "$FILE" = - ]; then
   "$EXEC_COMMAND"
 else
-  "$EXEC_COMMAND" < "$FILE"
+  if [ -f "$FILE" ]; then
+    "$EXEC_COMMAND" < "$FILE"
+  elif [ -d "$FILE" ]; then
+    printf '%s: %s: %s\n' "$0" "$FILE" $"Is a directory" >&2
+    exit 1
+  elif ! [ -e "$FILE" ]; then
+    printf '%s: %s: %s\n' "$0" "$FILE" $"No such file or directory" >&2
+    exit 1
+  fi
 fi
 
 exit 0
