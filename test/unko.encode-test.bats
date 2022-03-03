@@ -5,6 +5,7 @@ readonly TARGET_COMMAND="../bin/unko.encode"
 
 @test "-h でヘルプを出力する" {
   run "$TARGET_COMMAND" -h
+  echo "$output"
   [ "$status" -eq 0 ]
   [[ "${lines[0]}" =~ ^Usage:.* ]]
   coverage "$TARGET_COMMAND" -h
@@ -12,6 +13,7 @@ readonly TARGET_COMMAND="../bin/unko.encode"
 
 @test "--help でヘルプを出力する" {
   run "$TARGET_COMMAND" --help
+  echo "$output"
   [ "$status" -eq 0 ]
   [[ "${lines[0]}" =~ ^Usage:.* ]]
   coverage "$TARGET_COMMAND" --help
@@ -19,6 +21,7 @@ readonly TARGET_COMMAND="../bin/unko.encode"
 
 @test '引数なしのときは標準入力をエンコード' {
   run "$TARGET_COMMAND" <<< うんこ
+  echo "$output"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "ウンウこうんこう💩ウンウこうこここウウンウこうんここウうんこ" ]
   coverage "$TARGET_COMMAND" <<< うんこ
@@ -26,6 +29,7 @@ readonly TARGET_COMMAND="../bin/unko.encode"
 
 @test '-d で標準入力をデコード {
   run "$TARGET_COMMAND" -d <<< ウンウこうんこう💩ウンウこうこここウウンウこうんここウうんこ
+  echo "$output"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "うんこ" ]
   coverage "$TARGET_COMMAND" -d <<< ウンウこうんこう💩ウンウこうこここウウンウこうんここウうんこ
@@ -33,6 +37,7 @@ readonly TARGET_COMMAND="../bin/unko.encode"
 
 @test '--decode で標準入力をデコード {
   run "$TARGET_COMMAND" --decode <<< ウンウこうんこう💩ウンウこうこここウウンウこうんここウうんこ
+  echo "$output"
   [ "$status" -eq 0 ]
   [ "${lines[0]}" = "うんこ" ]
   coverage "$TARGET_COMMAND" --decode <<< ウンウこうんこう💩ウンウこうこここウウンウこうんここウうんこ
@@ -50,6 +55,7 @@ readonly TARGET_COMMAND="../bin/unko.encode"
 @test 'ディレクトリの場合エラー' {
   export LANG=ja_JP.UTF-8
   run "$TARGET_COMMAND" .
+  echo "$output"
   [ "$status" -eq 1 ]
   [[ "${lines[0]}" =~ .*ディレクトリです ]]
   coverage LANG=ja_JP.UTF-8 "$TARGET_COMMAND" .
@@ -67,6 +73,7 @@ readonly TARGET_COMMAND="../bin/unko.encode"
 @test 'ディレクトリの場合エラー(英語版)' {
   export LANG=en_US.UTF-8
   run "$TARGET_COMMAND" .
+  echo "$output"
   [ "$status" -eq 1 ]
   [[ "${lines[0]}" =~ .*"Is a directory" ]]
   coverage LANG=en_US.UTF-8 "$TARGET_COMMAND" .
