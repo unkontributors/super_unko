@@ -15,6 +15,7 @@ RUN echo -e $'\n\
 ENV LANG ja_JP.UTF-8
 RUN apt update -yqq \
     && apt install -y --no-install-recommends \
+       language-pack-ja-base \
        toilet \
        figlet \
        bc \
