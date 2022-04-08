@@ -9,13 +9,10 @@ readonly THIS_DIR
 LIB_DIR="${THIS_DIR}/../lib/super_unko"
 readonly LIB_DIR
 
-case ${OSTYPE} in
-  darwin*)
-    COW_FILE="${LIB_DIR}/unko_mb.cow"
-    ;;
-  *)
-    COW_FILE="${LIB_DIR}/unko.cow"
-    ;;
-esac
+COW_FILE="${LIB_DIR}/unko_mb.cow"
+if ! (cowsay -f "${COW_FILE}" 'うんこ' | grep -qe 'うんこ' &&
+  cowsay -f "${COW_FILE}" 'もりもり' | grep -qe '💩'); then
+  COW_FILE="${LIB_DIR}/unko.cow"
+fi
 
 cowthink -f "${COW_FILE}" "$@"
