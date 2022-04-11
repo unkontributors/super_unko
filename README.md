@@ -71,6 +71,7 @@ Commands
 | unko.king     | Build your king shift tower. |
 | unko.fizzbuzz | No need to implement FizzBuzz. |
 | unko.ping     | Ping the 💩 domain. |
+| unko.encode   | Encode/Decode data and print to standard output. |
 | unko.date     | TBD |
 | unko.awk      | TBD |
 | unko.xargs    | TBD |
