@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+UNKO="💩"
+if [ "$(uname)" == "Darwin" ]; then
+  UNKO_REPO_URL='https://github.com/unkontributors/super_unko'
+  open "$UNKO_REPO_URL"
+fi
+echo -n "$UNKO"
+echo -n "    "
+echo -n "$UNKO"
+
+exit 0
