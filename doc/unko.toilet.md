@@ -12,7 +12,8 @@ Table of Contents
       * [brew/linuxbrew](doc/unko.toilet.md#brewlinuxbrew)
    * [Usage](doc/unko.toilet.md#usage)
 
-<!-- Added by: runner, at: Tue Nov  2 00:32:55 UTC 2021 -->
+<!-- Created by https://github.com/ekalinin/github-markdown-toc -->
+<!-- Added by: runner, at: Mon Apr 11 14:53:36 UTC 2022 -->
 
 <!--te-->
 

@@ -18,7 +18,8 @@ Table of Contents
       * [macOS](doc/unko.puzzle.md#macos-1)
    * [for development](doc/unko.puzzle.md#for-development)
 
-<!-- Added by: runner, at: Tue Nov  2 00:32:55 UTC 2021 -->
+<!-- Created by https://github.com/ekalinin/github-markdown-toc -->
+<!-- Added by: runner, at: Mon Apr 11 14:53:36 UTC 2022 -->
 
 <!--te-->
 
