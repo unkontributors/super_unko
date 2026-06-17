@@ -49,7 +49,7 @@ jobs:
       #     restore-keys: |
       #       docker-image-cache-${{ matrix.version }}-
       - name: Test
-        run: docker-compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
+        run: docker compose -f docker-compose-ci.yml run ci_sh_${{ matrix.version }}
 
   format:
     runs-on: ubuntu-latest

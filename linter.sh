@@ -17,6 +17,17 @@ readonly DEFAULT_TARGET_FILES=(*.sh bin/*)
 test_count=0
 err_count=0
 
+docker_compose() {
+  if docker compose version >/dev/null 2>&1; then
+    docker compose "$@"
+  elif command -v docker-compose >/dev/null 2>&1; then
+    docker-compose "$@"
+  else
+    echo "docker compose or docker-compose command was not found." >&2
+    return 127
+  fi
+}
+
 main() {
   # 引数なしのときはヘルプを出力して終了
   if [[ $# -lt 1 ]]; then
@@ -35,7 +46,7 @@ main() {
         ;;
       setup)
         # フォーマットとlintに使うDockerイメージを取得
-        docker-compose pull formatter linter
+        docker_compose pull formatter linter
         ;;
       format)
         # コードフォーマットにかける
@@ -113,8 +124,13 @@ cmd_format() {
 ## フォーマットにかける。
 run_shfmt() {
   local files=("$@")
+  local args=(run formatter)
   local ret
-  docker-compose run formatter $overwrite "${files[@]}"
+  if [[ -n "$overwrite" ]]; then
+    args+=("$overwrite")
+  fi
+  args+=("${files[@]}")
+  docker_compose "${args[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))
@@ -150,7 +166,7 @@ cmd_lint() {
 run_shellcheck() {
   local files=("$@")
   local ret
-  docker-compose run linter "${files[@]}"
+  docker_compose run linter "${files[@]}"
   ret=$?
   if [[ "$ret" -ne 0 ]]; then
     err_count=$((err_count + 1))
