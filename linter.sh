@@ -18,9 +18,9 @@ test_count=0
 err_count=0
 
 docker_compose() {
-  if docker compose version >/dev/null 2>&1; then
+  if docker compose version > /dev/null 2>&1; then
     docker compose "$@"
-  elif command -v docker-compose >/dev/null 2>&1; then
+  elif command -v docker-compose > /dev/null 2>&1; then
     docker-compose "$@"
   else
     echo "docker compose or docker-compose command was not found." >&2
