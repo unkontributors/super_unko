@@ -13,7 +13,7 @@ Table of Contents
    * [Usage](doc/unko.toilet.md#usage)
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
-<!-- Added by: runner, at: Mon Apr 11 15:08:44 UTC 2022 -->
+<!-- Added by: runner, at: Wed Jun 17 16:46:58 UTC 2026 -->
 
 <!--te-->
 
